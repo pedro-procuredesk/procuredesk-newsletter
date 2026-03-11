@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Spend Brief — ProcureDesk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #E5E7EB;
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .email-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #F9FAFB;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #111827;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    background: #4F46E5;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+    font-style: italic;
+  }
+  .logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .logo-text span { color: #4F46E5; }
+  .header-pill {
+    background: rgba(79,70,229,0.15);
+    border: 1px solid rgba(79,70,229,0.4);
+    color: #818CF8;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: #111827;
+    padding: 40px 32px 44px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid #4F46E5;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #6366F1;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+    margin-bottom: 16px;
+  }
+  .hero-title em {
+    color: #818CF8;
+    font-style: normal;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: #9CA3AF;
+    line-height: 1.65;
+    max-width: 500px;
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  .hero-meta {
+    font-size: 12px;
+    color: #4B5563;
+    border-top: 1px solid #1F2937;
+    padding-top: 16px;
+    font-weight: 500;
+  }
+
+  /* ── IN THIS ISSUE ── */
+  .issue-box {
+    background: #fff;
+    border-left: 4px solid #4F46E5;
+    margin: 24px 28px;
+    padding: 20px 22px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .issue-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #4F46E5;
+    margin-bottom: 12px;
+  }
+  .issue-list {
+    list-style: none;
+  }
+  .issue-list li {
+    font-size: 14px;
+    padding: 5px 0;
+    color: #374151;
+    line-height: 1.5;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  .issue-list li:last-child { border-bottom: none; }
+  .issue-list li::before {
+    content: "→ ";
+    color: #4F46E5;
+    font-weight: 700;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-bar {
+    background: #1F2937;
+    padding: 9px 32px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-bar-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4F46E5;
+    display: inline-block;
+  }
+
+  /* ── FEATURE CARD ── */
+  .feature-card {
+    background: #fff;
+    margin-bottom: 3px;
+  }
+  .feature-hero-band {
+    background: linear-gradient(135deg, #111827 0%, #1e1b4b 60%, #3730a3 100%);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-hero-band::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; right: -30px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(79,70,229,0.25);
+  }
+  .event-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,70,229,0.25);
+    border: 1px solid rgba(129,140,248,0.4);
+    color: #A5B4FC;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .feature-hero-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .feature-hero-sub {
+    font-size: 14px;
+    color: #9CA3AF;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+    max-width: 440px;
+  }
+  .feature-date-chip {
+    display: inline-block;
+    margin-top: 16px;
+    background: #4F46E5;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .feature-body {
+    padding: 26px 32px 30px;
+  }
+  .feature-body p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #374151;
+    margin-bottom: 16px;
+  }
+  .feature-body p strong { color: #111827; font-weight: 600; }
+
+  .callout {
+    background: #EEF2FF;
+    border-left: 3px solid #4F46E5;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3730A3;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .stop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 18px 0;
+  }
+  .stop-item {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 14px;
+  }
+  .stop-letter {
+    font-size: 22px;
+    font-weight: 900;
+    color: #4F46E5;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stop-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .stop-desc {
+    font-size: 12px;
+    color: #6B7280;
+    line-height: 1.5;
+  }
+
+  .primary-btn {
+    display: inline-block;
+    background: #4F46E5;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    margin-top: 4px;
+  }
+  .primary-btn:hover { background: #4338CA; }
+
+  /* ── QUICK DROPS ── */
+  .quick-drops {
+    background: #fff;
+    margin-bottom: 3px;
+    padding: 26px 32px;
+  }
+  .quick-drops-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+  .quick-item {
+    display: flex;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #F3F4F6;
+    align-items: flex-start;
+  }
+  .quick-item:last-child { border-bottom: none; }
+  .quick-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4F46E5;
+    margin-top: 6px;
+  }
+  .quick-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+  }
+  .quick-content a {
+    color: #4F46E5;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .quick-content a:hover { text-decoration: underline; }
+
+  /* ── STATS ── */
+  .stats-block {
+    background: #111827;
+    padding: 36px 32px;
+    text-align: center;
+  }
+  .stats-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #6366F1;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .stats-number {
+    font-size: 60px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .stats-number span { color: #818CF8; }
+  .stats-desc {
+    font-size: 15px;
+    color: #9CA3AF;
+    max-width: 400px;
+    margin: 0 auto 20px;
+    line-height: 1.65;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+    border: 1px solid #1F2937;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .stats-cell {
+    flex: 1;
+    padding: 16px 12px;
+    border-right: 1px solid #1F2937;
+    text-align: center;
+  }
+  .stats-cell:last-child { border-right: none; }
+  .stats-cell-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .stats-cell-label {
+    font-size: 11px;
+    color: #6B7280;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .ghost-btn {
+    display: inline-block;
+    border: 1.5px solid #374151;
+    color: #9CA3AF;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 8px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .ghost-btn:hover { border-color: #4F46E5; color: #818CF8; }
+
+  /* ── COMPARISON ── */
+  .compare-card {
+    background: #fff;
+    margin-bottom: 3px;
+    padding: 26px 32px;
+  }
+  .compare-tag {
+    display: inline-block;
+    background: #EEF2FF;
+    color: #4F46E5;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .compare-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+  .compare-card p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #6B7280;
+    margin-bottom: 16px;
+  }
+  table.ctable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  table.ctable th {
+    background: #111827;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  table.ctable th:first-child { color: #9CA3AF; }
+  table.ctable td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #F3F4F6;
+    color: #374151;
+    vertical-align: middle;
+  }
+  table.ctable tr:last-child td { border-bottom: none; }
+  table.ctable tr:nth-child(even) td { background: #F9FAFB; }
+  .yes { color: #059669; font-weight: 600; }
+  .no  { color: #DC2626; font-weight: 600; }
+  .partial { color: #D97706; font-weight: 600; }
+  .note-text {
+    font-size: 12px;
+    color: #9CA3AF;
+    line-height: 1.5;
+    margin-top: 4px;
+    padding: 12px;
+    background: #F9FAFB;
+    border-radius: 4px;
+    border: 1px solid #E5E7EB;
+  }
+
+  /* ── TRENDING ── */
+  .trending-wrap {
+    background: #fff;
+    margin-bottom: 3px;
+    padding: 26px 32px;
+  }
+  .trending-inner {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px;
+    background: #F9FAFB;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+  }
+  .trending-badge {
+    flex-shrink: 0;
+    background: #4F46E5;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .trending-content h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+  }
+  .trending-content p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #6B7280;
+  }
+  .trending-content a {
+    color: #4F46E5;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* ── CTA DEMO ── */
+  .cta-demo {
+    background: #4F46E5;
+    padding: 36px 32px;
+    text-align: center;
+  }
+  .cta-demo h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .cta-demo p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 22px;
+    line-height: 1.6;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-white-btn {
+    display: inline-block;
+    background: #fff;
+    color: #4F46E5;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+  }
+  .cta-sub {
+    display: block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ── LEAD MAGNETS ── */
+  .lead-strip {
+    background: #fff;
+    padding: 26px 32px;
+    margin-bottom: 3px;
+  }
+  .lead-strip-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+    letter-spacing: -0.2px;
+  }
+  .lead-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+  .lead-item:hover { border-color: #4F46E5; }
+  .lead-icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    background: #EEF2FF;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .lead-info .l-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #4F46E5;
+    margin-bottom: 2px;
+  }
+  .lead-info .l-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+  }
+  .lead-arrow {
+    margin-left: auto;
+    color: #D1D5DB;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #111827;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .footer-logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .footer-mark {
+    width: 24px; height: 24px;
+    background: #4F46E5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: #fff;
+    font-style: italic;
+  }
+  .footer-wordmark {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .footer-wordmark span { color: #818CF8; }
+  .footer-tagline {
+    font-size: 13px;
+    color: #4B5563;
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .footer-links {
+    margin-bottom: 16px;
+  }
+  .footer-links a {
+    color: #6B7280;
+    font-size: 12px;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+  }
+  .footer-links a:hover { color: #818CF8; }
+  .footer-divider {
+    border: none;
+    border-top: 1px solid #1F2937;
+    margin: 16px 0;
+  }
+  .footer-unsub {
+    font-size: 11px;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .footer-unsub a { color: #374151; text-decoration: underline; }
+
+  .gap { height: 3px; background: #E5E7EB; }
+</style>
+</head>
+<body>
+<div class="email-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-logo">
+      <div class="logo-mark">PD</div>
+      <div class="logo-text">Procure<span>Desk</span></div>
+    </div>
+    <div class="header-pill">The Spend Brief</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">📬 Weekly Procurement Intelligence</div>
+    <div class="hero-title">MRO spend is bleeding<br/>your budget — <em>invisibly.</em></div>
+    <div class="hero-sub">
+      Every week, finance leaders overpay on maintenance, repair & operations purchasing — 
+      not because they're careless, but because visibility comes after the invoice. 
+      This week: a live framework to fix that, tool comparisons, and your ROI in 2 minutes.
+    </div>
+    <div class="hero-meta">Wednesday, March 11, 2026 &nbsp;·&nbsp; 5-min read &nbsp;·&nbsp; The ProcureDesk Team</div>
+  </div>
+
+  <!-- IN THIS ISSUE -->
+  <div class="issue-box">
+    <div class="issue-label">⚡ In this issue</div>
+    <ul class="issue-list">
+      <li><strong>Webinar:</strong> The STOP-MRO Framework — live March 25 @ 2PM EST</li>
+      <li><strong>Comparison:</strong> Stampli vs. Bill.com — which one fits mid-market?</li>
+      <li><strong>Integration:</strong> Sage Intacct + Microsoft Business Central now live</li>
+      <li><strong>Stat:</strong> How much CFO capacity manual P2P is actually consuming</li>
+      <li><strong>Tools:</strong> Calculate your procurement ROI and check your readiness score</li>
+    </ul>
+  </div>
+
+  <!-- FEATURED EVENT -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Featured Event</div>
+  <div class="feature-card">
+    <div class="feature-hero-band">
+      <div class="event-badge">🎙 Free Webinar &nbsp;·&nbsp; 30 Minutes</div>
+      <div class="feature-hero-title">Master the STOP-MRO<br/>Framework</div>
+      <div class="feature-hero-sub">The 4-step system for total spend visibility and predictable control — without adding administrative bloat or slowing down your plant.</div>
+      <div class="feature-date-chip">📅 March 25, 2026 @ 2:00 PM EST</div>
+    </div>
+    <div class="feature-body">
+      <p>Every month, plant managers swipe corporate cards and maintenance teams buy whatever they need to keep operations running — and Finance finds out <strong>after the invoice arrives.</strong> That's a financial autopsy, and it's happening across most mid-market manufacturing companies.</p>
+      <div class="callout">
+        "Relying on GL statements to control MRO spend? By the time you see it, the money is already gone."
+      </div>
+      <p>In this free 30-minute session, you'll walk away with a repeatable system — not just theory — to stop reactive spending before it starts.</p>
+      <div class="stop-grid">
+        <div class="stop-item">
+          <div class="stop-letter">S</div>
+          <div class="stop-title">See the Spend</div>
+          <div class="stop-desc">Visibility before the purchase, not after the invoice.</div>
+        </div>
+        <div class="stop-item">
+          <div class="stop-letter">T</div>
+          <div class="stop-title">Tighten the Gate</div>
+          <div class="stop-desc">Lightweight approvals that protect cash — not production.</div>
+        </div>
+        <div class="stop-item">
+          <div class="stop-letter">O</div>
+          <div class="stop-title">Order the Right Way</div>
+          <div class="stop-desc">Preferred catalogs. Volume discounts. Zero free-text chaos.</div>
+        </div>
+        <div class="stop-item">
+          <div class="stop-letter">P</div>
+          <div class="stop-title">Prove & Predict</div>
+          <div class="stop-desc">Turn volatile maintenance costs into forecastable numbers.</div>
+        </div>
+      </div>
+      <a href="https://resources.procuredesk.com/webinar-stop-mro-framework" class="primary-btn">→ Save Your Spot — It's Free</a>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- QUICK DROPS -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Quick Drops</div>
+  <div class="quick-drops">
+    <div class="quick-drops-title">What's new at ProcureDesk & across the market</div>
+    <div class="quick-item">
+      <div class="quick-dot"></div>
+      <div class="quick-content">
+        <a href="https://www.procuredesk.com/sage-intacct-procuredesk-integration/">Sage Intacct integration is live.</a> Sync POs, budgets and approvals between your ERP and procurement layer automatically — no spreadsheet middlemen, no manual reconciliation.
+      </div>
+    </div>
+    <div class="quick-item">
+      <div class="quick-dot"></div>
+      <div class="quick-content">
+        <a href="https://www.procuredesk.com/microsoft-business-central-procurement-integration/">Microsoft Business Central users:</a> ProcureDesk's integration now covers automated PO sync, 3-way matching and real-time budget visibility inside your existing ERP workflow.
+      </div>
+    </div>
+    <div class="quick-item">
+      <div class="quick-dot"></div>
+      <div class="quick-content">
+        <a href="https://www.procuredesk.com/mro-inventory-management/">MRO Inventory Management guide →</a> If your team still manages maintenance inventory on spreadsheets or tribal knowledge, this is your starting point for a real system.
+      </div>
+    </div>
+    <div class="quick-item">
+      <div class="quick-dot"></div>
+      <div class="quick-content">
+        <a href="https://youtu.be/sGuVSLeq0eo?si=0IK3l5pORX6YHoMZ">5-minute video walkthrough →</a> See exactly how ProcureDesk eliminates manual procurement tasks for finance teams — from PO creation to invoice approval.
+      </div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- STATS -->
+  <div class="section-bar"><span class="section-bar-dot"></span>By the Numbers</div>
+  <div class="stats-block">
+    <div class="stats-eyebrow">📊 Stat of the week</div>
+    <div class="stats-number">73<span>%</span></div>
+    <div class="stats-desc">
+      of CFOs in manufacturing identify manual procure-to-pay processes as their #1 source of finance team capacity loss — not headcount, not strategy. Process.
+    </div>
+    <div class="stats-row">
+      <div class="stats-cell">
+        <div class="stats-cell-num">~8 hrs</div>
+        <div class="stats-cell-label">lost per finance FTE / week on manual PO follow-up</div>
+      </div>
+      <div class="stats-cell">
+        <div class="stats-cell-num">3×</div>
+        <div class="stats-cell-label">more invoice errors without 3-way match automation</div>
+      </div>
+      <div class="stats-cell">
+        <div class="stats-cell-num">$0</div>
+        <div class="stats-cell-label">extra headcount needed — just the right system in place</div>
+      </div>
+    </div>
+    <a href="https://www.procuredesk.com/manufacturing-procure-to-pay-automation-cfo-capacity/" class="ghost-btn">Read the full breakdown →</a>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- COMPARISON -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Tool Breakdown</div>
+  <div class="compare-card">
+    <span class="compare-tag">CFO's Guide</span>
+    <div class="compare-title">Stampli vs. Bill.com: which actually fits a mid-market finance team?</div>
+    <p>Both are popular. Both promise AP automation. But they're built for very different contexts — and picking the wrong one means a painful, expensive migration 18 months from now.</p>
+    <table class="ctable">
+      <tr>
+        <th style="width:38%">Feature</th>
+        <th>Stampli</th>
+        <th>Bill.com</th>
+      </tr>
+      <tr>
+        <td>Best fit</td>
+        <td>Mid-market AP teams</td>
+        <td>SMB / accounting firms</td>
+      </tr>
+      <tr>
+        <td>PO matching</td>
+        <td><span class="yes">✓ Yes</span></td>
+        <td><span class="partial">⚠ Limited</span></td>
+      </tr>
+      <tr>
+        <td>ERP integrations</td>
+        <td><span class="yes">✓ Deep</span></td>
+        <td><span class="yes">✓ Broad</span></td>
+      </tr>
+      <tr>
+        <td>Procurement module</td>
+        <td><span class="no">✗ None</span></td>
+        <td><span class="no">✗ None</span></td>
+      </tr>
+      <tr>
+        <td>Approval workflows</td>
+        <td><span class="yes">✓ Flexible</span></td>
+        <td><span class="partial">Basic only</span></td>
+      </tr>
+      <tr>
+        <td>Full P2P cycle</td>
+        <td><span class="no">✗ AP only</span></td>
+        <td><span class="no">✗ AP only</span></td>
+      </tr>
+    </table>
+    <div class="note-text">
+      Neither tool covers the full procure-to-pay cycle. Adding a dedicated procurement layer upstream — handling POs, budgets, and approvals before the invoice exists — is where the real control gap gets filled.
+    </div>
+    <a href="https://www.procuredesk.com/stampli-vs-bill-com/" class="primary-btn" style="margin-top:16px;">Read the full comparison →</a>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- TRENDING -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Trending</div>
+  <div class="trending-wrap">
+    <div class="trending-inner">
+      <div class="trending-badge">This<br/>Week</div>
+      <div class="trending-content">
+        <h4>AvidXchange vs. Bill.com — the AP automation rematch</h4>
+        <p>The comparison CFOs keep asking about. We broke down invoice volume handling, mid-market complexity, and real ERP integration depth between both platforms. The answer depends more on your transaction scale than your budget. <a href="https://www.procuredesk.com/avidxchange-vs-bill-com/">Read the breakdown →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- CTA DEMO -->
+  <div class="cta-demo">
+    <h3>See ProcureDesk in 20 minutes.</h3>
+    <p>No slide decks. No generic walkthroughs. We map the demo directly to your ERP, your team size, and your current approval structure.</p>
+    <a href="https://www.procuredesk.com/request-a-demo/" class="cta-white-btn">→ Request a Live Demo</a>
+    <span class="cta-sub">Free · No commitment · Tailored to your stack</span>
+  </div>
+
+  <div class="gap"></div>
+
+  <!-- LEAD MAGNETS -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Resources</div>
+  <div class="lead-strip">
+    <div class="lead-strip-title">🧰 Tools & guides for finance and procurement leaders</div>
+    <a href="https://www.procuredesk.com/roi-calculator/" class="lead-item">
+      <div class="lead-icon">💰</div>
+      <div class="lead-info">
+        <div class="l-tag">Free Tool</div>
+        <div class="l-title">ROI Calculator — Find out what manual procurement is actually costing you</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+    <a href="https://www.procuredesk.com/spend-control-readiness-scorecard-lp/" class="lead-item">
+      <div class="lead-icon">📋</div>
+      <div class="lead-info">
+        <div class="l-tag">Assessment</div>
+        <div class="l-title">Spend Control Readiness Scorecard — Where does your team stand today?</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+    <a href="https://www.procuredesk.com/mro-inventory-management/" class="lead-item">
+      <div class="lead-icon">🔧</div>
+      <div class="lead-info">
+        <div class="l-tag">Guide</div>
+        <div class="l-title">MRO Inventory Management — The complete CFO playbook</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo-wrap">
+      <div class="footer-mark">PD</div>
+      <div class="footer-wordmark">Procure<span>Desk</span></div>
+    </div>
+    <div class="footer-tagline">
+      Spend visibility and procurement control for mid-market finance teams.<br/>
+      No fluff. No vendor bias. Just what CFOs need to know.
+    </div>
+    <div class="footer-links">
+      <a href="https://www.procuredesk.com/request-a-demo/">Request Demo</a>
+      <a href="https://www.procuredesk.com/features/">Features</a>
+      <a href="https://www.procuredesk.com">Website</a>
+    </div>
+    <hr class="footer-divider"/>
+    <div class="footer-unsub">
+      You're receiving this because you opted in at procuredesk.com.<br/>
+      <a href="#">Unsubscribe</a> · <a href="#">Update preferences</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
