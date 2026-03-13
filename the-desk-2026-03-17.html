@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Desk — Issue #1 — ProcureDesk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #E5E7EB; font-family: 'Inter', sans-serif; color: #111827; -webkit-font-smoothing: antialiased; }
+  .email-wrap { max-width: 640px; margin: 0 auto; background: #F9FAFB; }
+
+  /* HEADER */
+  .header { background: #111827; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header-pill { background: rgba(79,70,229,0.15); border: 1px solid rgba(79,70,229,0.4); color: #818CF8; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.8px; text-transform: uppercase; }
+
+  /* HERO */
+  .hero { background: #111827; padding: 40px 32px 44px; position: relative; overflow: hidden; border-bottom: 3px solid #4F46E5; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(79,70,229,0.18) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #6366F1; text-transform: uppercase; margin-bottom: 14px; }
+  .hero-title { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -0.8px; margin-bottom: 16px; }
+  .hero-title em { color: #818CF8; font-style: normal; }
+  .hero-sub { font-size: 15px; color: #9CA3AF; line-height: 1.65; max-width: 500px; margin-bottom: 24px; font-weight: 400; }
+  .hero-meta { font-size: 12px; color: #4B5563; border-top: 1px solid #1F2937; padding-top: 16px; font-weight: 500; }
+
+  /* IN THIS ISSUE */
+  .issue-box { background: #fff; border-left: 4px solid #4F46E5; margin: 24px 28px; padding: 20px 22px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .issue-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4F46E5; margin-bottom: 12px; }
+  .issue-list { list-style: none; }
+  .issue-list li { font-size: 14px; padding: 5px 0; color: #374151; line-height: 1.5; border-bottom: 1px solid #F3F4F6; }
+  .issue-list li:last-child { border-bottom: none; }
+  .issue-list li::before { content: "→ "; color: #4F46E5; font-weight: 700; }
+
+  /* SECTION BAR */
+  .section-bar { background: #1F2937; padding: 9px 32px; font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #9CA3AF; display: flex; align-items: center; gap: 8px; }
+  .section-bar-dot { width: 6px; height: 6px; border-radius: 50%; background: #4F46E5; display: inline-block; }
+
+  /* FEATURE CARD */
+  .feature-card { background: #fff; margin-bottom: 3px; }
+  .feature-hero-band { background: linear-gradient(135deg, #111827 0%, #1e1b4b 60%, #3730a3 100%); padding: 36px 32px; position: relative; overflow: hidden; }
+  .feature-hero-band::after { content: ''; position: absolute; bottom: -30px; right: -30px; width: 180px; height: 180px; border-radius: 50%; background: rgba(79,70,229,0.25); }
+  .event-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(79,70,229,0.25); border: 1px solid rgba(129,140,248,0.4); color: #A5B4FC; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 16px; }
+  .feature-hero-title { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 10px; position: relative; z-index: 1; }
+  .feature-hero-sub { font-size: 14px; color: #9CA3AF; line-height: 1.6; position: relative; z-index: 1; max-width: 440px; }
+  .feature-date-chip { display: inline-block; margin-top: 16px; background: #4F46E5; color: #fff; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 4px; position: relative; z-index: 1; }
+  .feature-body { padding: 26px 32px 30px; }
+  .feature-body p { font-size: 15px; line-height: 1.7; color: #374151; margin-bottom: 16px; }
+  .callout-box { background: #EEF2FF; border-left: 3px solid #4F46E5; padding: 14px 18px; margin: 18px 0; border-radius: 0 4px 4px 0; font-size: 14px; color: #3730A3; font-style: italic; font-weight: 500; line-height: 1.6; }
+  .framework-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; }
+  .framework-cell { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 6px; padding: 14px; }
+  .framework-letter { font-size: 22px; font-weight: 900; color: #4F46E5; line-height: 1; margin-bottom: 4px; }
+  .framework-title { font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .framework-desc { font-size: 12px; color: #6B7280; line-height: 1.5; }
+  .feature-cta { display: inline-block; background: #4F46E5; color: #fff; font-size: 14px; font-weight: 600; padding: 12px 22px; border-radius: 6px; text-decoration: none; margin-top: 4px; }
+
+  /* QUICK DROPS */
+  .drops-card { background: #fff; margin-bottom: 3px; padding: 26px 32px; }
+  .drops-title { font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 16px; letter-spacing: -0.3px; }
+  .drop-item { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid #F3F4F6; align-items: flex-start; }
+  .drop-item:last-child { border-bottom: none; }
+  .drop-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: #4F46E5; margin-top: 6px; display: block; }
+  .drop-text { font-size: 14px; line-height: 1.6; color: #374151; margin: 0; }
+  .drop-text a { color: #4F46E5; font-weight: 600; text-decoration: none; }
+
+  /* SACHIN CALLOUT */
+  .sachin-card { background: #fff; margin-bottom: 3px; padding: 26px 32px; }
+  .sachin-inner { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px 22px; }
+  .sachin-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sachin-avatar { width: 36px; height: 36px; border-radius: 50%; background: #4F46E5; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .sachin-name { font-size: 13px; font-weight: 700; color: #111827; }
+  .sachin-role { font-size: 11px; color: #6B7280; }
+  .sachin-body { font-size: 14px; line-height: 1.7; color: #374151; font-style: italic; margin-bottom: 12px; }
+  .sachin-link { font-size: 12px; font-weight: 600; color: #4F46E5; text-decoration: none; }
+
+  /* STATS */
+  .stats-block { background: #111827; padding: 36px 32px; text-align: center; }
+  .stats-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #6366F1; text-transform: uppercase; margin-bottom: 10px; }
+  .stats-big { font-size: 60px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 12px; }
+  .stats-big span { color: #818CF8; }
+  .stats-context { font-size: 15px; color: #9CA3AF; max-width: 400px; margin: 0 auto 20px; line-height: 1.65; }
+  .stats-row { display: flex; border: 1px solid #1F2937; border-radius: 8px; overflow: hidden; margin: 20px 0; }
+  .stat-cell { flex: 1; padding: 16px 12px; border-right: 1px solid #1F2937; text-align: center; }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 3px; }
+  .stat-label { font-size: 11px; color: #6B7280; line-height: 1.4; }
+  .stats-link { display: inline-block; border: 1.5px solid #374151; color: #9CA3AF; font-size: 13px; font-weight: 600; padding: 10px 20px; border-radius: 6px; text-decoration: none; }
+
+  /* TOOL BREAKDOWN */
+  .tool-card { background: #fff; margin-bottom: 3px; padding: 26px 32px; }
+  .tool-badge { display: inline-block; background: #EEF2FF; color: #4F46E5; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; margin-bottom: 12px; }
+  .tool-title { font-size: 20px; font-weight: 800; color: #111827; letter-spacing: -0.4px; margin-bottom: 10px; }
+  .tool-setup { font-size: 14px; line-height: 1.65; color: #6B7280; margin-bottom: 16px; }
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; border-radius: 6px; overflow: hidden; }
+  .comp-table th { background: #111827; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; }
+  .comp-table th:first-child { color: #9CA3AF; }
+  .comp-table th:not(:first-child) { color: #fff; }
+  .comp-table td { padding: 10px 14px; border-bottom: 1px solid #F3F4F6; color: #374151; }
+  .comp-table td:first-child { color: #111827; font-weight: 600; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .tool-note { font-size: 12px; color: #9CA3AF; line-height: 1.5; padding: 12px; background: #F9FAFB; border-radius: 4px; border: 1px solid #E5E7EB; margin-top: 4px; }
+  .tool-cta { display: inline-block; background: #4F46E5; color: #fff; font-size: 14px; font-weight: 600; padding: 12px 22px; border-radius: 6px; text-decoration: none; margin-top: 16px; }
+
+  /* TRENDING */
+  .trending-card { background: #fff; margin-bottom: 3px; padding: 26px 32px; }
+  .trending-inner { display: flex; gap: 16px; align-items: flex-start; padding: 16px; background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB; }
+  .trending-badge { flex-shrink: 0; background: #4F46E5; color: #fff; font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 4px; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.4; }
+  .trending-title { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .trending-body { font-size: 13px; line-height: 1.6; color: #6B7280; }
+  .trending-body a { color: #4F46E5; font-weight: 600; text-decoration: none; }
+
+  /* DEMO CTA */
+  .demo-cta { background: #4F46E5; padding: 36px 32px; text-align: center; }
+  .demo-title { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .demo-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 22px; line-height: 1.6; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .demo-btn { display: inline-block; background: #fff; color: #4F46E5; font-size: 14px; font-weight: 700; padding: 13px 28px; border-radius: 6px; text-decoration: none; }
+  .demo-fine { display: block; margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* RESOURCES */
+  .resources-card { background: #fff; padding: 26px 32px; margin-bottom: 3px; }
+  .resources-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 14px; }
+  .lead-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1.5px solid #E5E7EB; border-radius: 8px; text-decoration: none; margin-bottom: 8px; }
+  .lead-item:last-child { margin-bottom: 0; }
+  .lead-icon { flex-shrink: 0; width: 38px; height: 38px; background: #EEF2FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .lead-info { flex: 1; }
+  .l-tag { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #4F46E5; margin-bottom: 2px; }
+  .l-title { font-size: 13px; font-weight: 600; color: #111827; line-height: 1.3; }
+  .lead-arrow { margin-left: auto; color: #D1D5DB; font-size: 18px; flex-shrink: 0; }
+
+  /* FOOTER */
+  .footer { background: #111827; padding: 30px 32px; text-align: center; }
+  .footer-logo-wrap { margin-bottom: 10px; }
+  .footer-tagline { font-size: 13px; color: #4B5563; margin-bottom: 18px; line-height: 1.6; }
+  .footer-links { margin-bottom: 16px; }
+  .footer-links a { color: #6B7280; font-size: 12px; text-decoration: none; margin: 0 10px; }
+  .footer-divider { border: none; border-top: 1px solid #1F2937; margin: 16px 0; }
+  .footer-unsub { font-size: 11px; color: #374151; line-height: 1.6; }
+  .footer-unsub a { color: #374151; text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="email-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTY2OCIgaGVpZ2h0PSI4NzQiIHZpZXdCb3g9IjAgMCA1NjY4IDg3NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExMTAuMzEgNjg0Ljg0OUgxMzc3LjA0VjYwMy40NzlIMTMxMS4wMVY1MDEuMTY5SDEzOTYuOTJDMTQzMS4xOCA1MDEuMTY5IDE0NjIuNjkgNDkzLjk1OSAxNDkxLjQ1IDQ3OS41NEMxNTIwLjIyIDQ2NS4xMiAxNTQyLjk3IDQ0NS4wOTIgMTU1OS43MyA0MTkuNDU2QzE1NzYuNzQgMzkzLjgyMiAxNTg1LjI0IDM2NS4zMjYgMTU4NS4yNCAzMzMuOTY4QzE1ODUuMjQgMzA5LjkzNSAxNTgwLjk5IDI4OC40MjEgMTU3Mi40OSAyNjkuNDIzQzE1NjQuMjMgMjUwLjE5NyAxNTUyLjIzIDIzMy44MzEgMTUzNi40NyAyMjAuMzI3QzE1MjAuNzEgMjA2LjgyMyAxNTAxLjcxIDE5Ni41MjMgMTQ3OS40NSAxODkuNDI4QzE0NTcuMTkgMTgyLjEwMyAxNDMyLjgxIDE3OC40NDEgMTQwNi4zIDE3OC40NDFIMTExMC4zMVYyNjIuMjEzSDExNzEuODNWNjAzLjQ3OUgxMTEwLjMxVjY4NC44NDlaTTEzMTEuMDEgNDE3LjA1M1YyNTguMDkzSDEzNjMuMTVDMTM3OS40MSAyNTguMDkzIDEzOTMuNDIgMjYxLjI5OCAxNDA1LjE3IDI2Ny43MDZDMTQxNi45MyAyNzQuMTE1IDE0MjYuMDUgMjgzLjI3MSAxNDMyLjU2IDI5NS4xNzNDMTQzOS4wNiAzMDYuODQ2IDE0NDIuMzEgMzIwLjY5MyAxNDQyLjMxIDMzNi43MTVDMTQ0Mi4zMSAzNTMuNjUzIDE0MzguOTMgMzY4LjE4NyAxNDMyLjE4IDM4MC4zMThDMTQyNS42OCAzOTIuMjIgMTQxNS45MiA0MDEuMzc2IDE0MDIuOTIgNDA3Ljc4NEMxMzkwLjE3IDQxMy45NjQgMTM3NC45MSA0MTcuMDUzIDEzNTcuMTUgNDE3LjA1M0gxMzExLjAxWiIgZmlsbD0iI0ZGRkZGRiIvPgo8cGF0aCBkPSJNMTYwNS40MiA2ODQuODY1VjYwNC41MjZIMTY1Ni44MVY0MDcuOEgxNjA1LjQyVjMyNi43NzVIMTc2NS45OFY0MDAuNTlDMTc3Ny43MyAzNzcuNzAyIDE3ODguOTkgMzYwLjUzNSAxNzk5Ljc0IDM0OS4wOTFDMTgxMC43NCAzMzcuODc1IDE4MjQuMTMgMzI5Ljk3OSAxODM5Ljg4IDMyNS40MDFDMTg1NS44OSAzMjAuODI0IDE4NzcuNTIgMzE4LjMwNiAxOTA0Ljc4IDMxNy44NDhWNDI2LjY4M0MxODc3LjI3IDQyOC4wNTYgMTg1Ny43NiA0MzAuMzQ1IDE4NDYuMjYgNDMzLjU1MUMxODM0Ljc2IDQzNi43NTQgMTgyMi43NSA0NDMuMjc3IDE4MTAuMjQgNDUzLjExOEMxNzk3Ljk5IDQ2NC4xMDQgMTc4OS4xMSA0NzguNjM4IDE3ODMuNjEgNDk2LjcyQzE3ODMuMzYgNDk3LjYzNyAxNzgyLjYxIDUwMC4wMzkgMTc4MS4zNiA1MDMuOTMxQzE3ODAuMzYgNTA3LjU5NSAxNzc5LjIzIDUxMy42NiAxNzc3Ljk4IDUyMi4xMjlDMTc3Ni45OCA1MzAuNTk3IDE3NzYuMjMgNTQwLjg5NiAxNzc1LjczIDU1My4wMjhDMTc3NS4yMyA1NjUuMzg4IDE3NzQuOTggNTgyLjU1NSAxNzc0Ljk4IDYwNC41MjZIMTg0NS44OFY2ODQuODY1SDE2MDUuNDJaIiBmaWxsPSIjRkZGRkZGIi8+CjxwYXRoIGQ9Ik0yMDkzLjg2IDMxOS4yMDdDMjEyOS42MyAzMTkuMjA3IDIxNjIuMjYgMzI3LjMzMyAyMTkxLjc3IDM0My41ODNDMjIyMS4yOSAzNTkuODM1IDIyNDQuNTUgMzgyLjE1MSAyMjYxLjU1IDQxMC41MzJDMjI3OC41NiA0MzguNjg1IDIyODcuMDYgNDY5LjgxMyAyMjg3LjA2IDUwMy45MTdDMjI4Ny4wNiA1MzkuMTY2IDIyNzguNTYgNTcxLjIwOCAyMjYxLjU1IDYwMC4wNDlDMjI0NC41NSA2MjguNjU5IDIyMjEuMTYgNjUxLjIwNiAyMTkxLjQgNjY3LjY4NEMyMTYxLjY0IDY4My45MzYgMjEyOC42MyA2OTIuMDYxIDIwOTIuMzYgNjkyLjA2MUMyMDU1LjYgNjkyLjA2MSAyMDIyLjU5IDY4NC4xNjMgMTk5My4zMyA2NjguMzcyQzE5NjQuMzEgNjUyLjU3OCAxOTQxLjY4IDYzMC43MiAxOTI1LjQyIDYwMi43OTZDMTkwOS4xNyA1NzQuODcyIDE5MDEuMDQgNTQzLjQgMTkwMS4wNCA1MDguMzgxQzE5MDEuMDQgNDcyLjkwNSAxOTA5LjU0IDQ0MC43NDUgMTkyNi41NSA0MTEuOTA2QzE5NDMuNTUgMzgzLjA2NiAxOTY2LjY5IDM2MC40MDcgMTk5NS45NSAzNDMuOTI2QzIwMjUuNDYgMzI3LjQ0NyAyMDU4LjEgMzE5LjIwNyAyMDkzLjg2IDMxOS4yMDdaTTIwOTMuODYgNDA2Ljc1NkgyMDkzLjExQzIwNzAuMzUgNDA2Ljc1NiAyMDUyLjcyIDQxNS4yMjQgMjA0MC4yMiA0MzIuMTYxQzIwMjcuOTYgNDQ4Ljg3IDIwMjEuODMgNDcyLjMzMiAyMDIxLjgzIDUwMi41NDVDMjAyMS44MyA1NDAuMDgxIDIwMjkuMzQgNTY3LjMxOSAyMDQ0LjM0IDU4NC4yNTZDMjA1Ni42IDU5Ny43NTkgMjA3My43MyA2MDQuNTEyIDIwOTUuNzQgNjA0LjUxMkMyMTIwLjUgNjA0LjUxMiAyMTM4LjYzIDU5NS43IDIxNTAuMTMgNTc4LjA3NkMyMTYwLjM5IDU2Mi4yODIgMjE2NS41MSA1MzkuNzM5IDIxNjUuNTEgNTEwLjQ0QzIxNjUuNTEgNDc2Ljc5NCAyMTU5LjM5IDQ1MS4xNTkgMjE0Ny4xNCA0MzMuNTM3QzIxMzQuODggNDE1LjY4MSAyMTE3LjEyIDQwNi43NTYgMjA5My44NiA0MDYuNzU2WiIgZmlsbD0iI0ZGRkZGRiIvPgo8cGF0aCBkPSJNMjY5Ny4wMyA1NzMuNjEyTDI2MDIuNSA1MzUuMTU5QzI1OTAuOTkgNTU4LjI3OSAyNTc4LjczIDU3NC43NTggMjU2NS43MyA1ODQuNTk5QzI1NTIuNzIgNTk0LjIxMyAyNTM1Ljk3IDU5OS4wMiAyNTE1LjQ2IDU5OS4wMkMyNDg5LjQ1IDU5OS4wMiAyNDY5LjIgNTkwLjIwNiAyNDU0LjY5IDU3Mi41ODRDMjQ0MC4xOCA1NTQuNzI5IDI0MzIuOTMgNTMzLjU1OCAyNDMyLjkzIDUwOS4wNjdDMjQzMi45MyA0OTIuMzYgMjQzNi4zIDQ3Ni41NjYgMjQ0My4wNiA0NjEuNjg4QzI0NDkuODEgNDQ2LjU4MiAyNDU5Ljk0IDQzNC40NTIgMjQ3My40NCA0MjUuMjk2QzI0ODYuOTUgNDE1LjkxMiAyNTAzLjA4IDQxMS4yMTkgMjUyMS44MyA0MTEuMjE5QzI1NDMuMDkgNDExLjIxOSAyNTYwLjYgNDE2LjE0IDI1NzQuMzUgNDI1Ljk4MUMyNTg4LjEyIDQzNS41OTUgMjU5OS40OSA0NTAuNTg4IDI2MDguNSA0NzAuOTU4SDI2OTAuMjhMMjY4OS45MSAzMjIuNjQxSDI2MDYuOTlWMzUxLjQ4QzI1ODguMjQgMzM5LjEyIDI1NzEuMjQgMzMwLjY1MiAyNTU1Ljk4IDMyNi4wNzRDMjU0MC43MiAzMjEuNDk3IDI1MjIuMDkgMzE5LjIwNyAyNTAwLjA4IDMxOS4yMDdDMjQ2NC4wNyAzMTkuMjA3IDI0MzEuNDMgMzI3LjEwNCAyNDAyLjE3IDM0Mi44OTdDMjM3Mi45MSAzNTguNDYxIDIzNTAuMDIgMzgwLjA5MSAyMzMzLjUxIDQwNy43ODZDMjMxNy4yNiA0MzUuNDggMjMwOS4xMyA0NjYuNjEgMjMwOS4xMyA1MDEuMTcxQzIzMDkuMTMgNTM3LjU2MyAyMzE3Ljc2IDU3MC4xODEgMjMzNS4wMiA1OTkuMDJDMjM1Mi41MiA2MjcuODU5IDIzNzYuNzggNjUwLjQwNSAyNDA3LjggNjY2LjY1NEMyNDM5LjA2IDY4Mi42NzggMjQ3NC40NCA2OTAuNjg4IDI1MTMuOTYgNjkwLjY4OEMyNTQ0LjQ4IDY5MC42ODggMjU3MS44NiA2ODYuMTA5IDI1OTYuMTIgNjc2Ljk1NkMyNjIwLjYzIDY2OC4wMjcgMjY0MS4zOCA2NTQuODY3IDI2NTguMzkgNjM3LjQ3MkMyNjc1LjQgNjE5Ljg0OCAyNjg4LjI4IDU5OC41NjIgMjY5Ny4wMyA1NzMuNjEyWiIgZmlsbD0iI0ZGRkZGRiIvPgo8cGF0aCBkPSJNMjcxNS4zNyA0MDcuNzg3SDI3NjcuNTJWNTc0Ljk4N0MyNzY3LjUyIDYxMi41MjQgMjc3Ni40IDY0MS4yNSAyNzk0LjE2IDY2MS4xNjJDMjgxMi4xNiA2ODAuODQ1IDI4MzguMjkgNjkwLjY4OSAyODcyLjU2IDY5MC42ODlDMjkwOC44MiA2OTAuNjg5IDI5NDMuOTcgNjc2LjA0MSAyOTc3Ljk3IDY0Ni43NDJWNjg0Ljg1MkgzMTUwLjE3VjYwNC41MTNIMzA5Ny42NVYzMjYuNzYySDI5MjYuNThWNDA3Ljc4N0gyOTc3Ljk3VjU2OS40OTRDMjk1OC45NyA1ODYuNDMxIDI5MzkuMjEgNTk0LjkwMSAyOTE4LjcgNTk0LjkwMUMyOTA0LjY5IDU5NC45MDEgMjg5NC41NyA1OTAuNDM3IDI4ODguMzIgNTgxLjUxMUMyODgyLjA2IDU3Mi4zNTUgMjg3OC45NCA1NTcuMzY0IDI4NzguOTQgNTM2LjUzNFYzMjYuNzYySDI3MTUuMzdWNDA3Ljc4N1oiIGZpbGw9IiNGRkZGRkYiLz4KPHBhdGggZD0iTTMxNzEuODUgNjg0Ljg2NVY2MDQuNTI2SDMyMjMuMjVWNDA3LjhIMzE3MS44NVYzMjYuNzc1SDMzMzIuNDJWNDAwLjU5QzMzNDQuMTcgMzc3LjcwMiAzMzU1LjQyIDM2MC41MzUgMzM2Ni4xOCAzNDkuMDkxQzMzNzcuMTggMzM3Ljg3NSAzMzkwLjU3IDMyOS45NzkgMzQwNi4zMiAzMjUuNDAxQzM0MjIuMzIgMzIwLjgyNCAzNDQzLjk1IDMxOC4zMDYgMzQ3MS4yMSAzMTcuODQ4VjQyNi42ODNDMzQ0My43MSA0MjguMDU2IDM0MjQuMiA0MzAuMzQ1IDM0MTIuNjkgNDMzLjU1MUMzNDAxLjE5IDQzNi43NTQgMzM4OS4xOCA0NDMuMjc3IDMzNzYuNjggNDUzLjExOEMzMzY0LjQyIDQ2NC4xMDQgMzM1NS41NCA0NzguNjM4IDMzNTAuMDUgNDk2LjcyQzMzNDkuNzkgNDk3LjYzNyAzMzQ5LjA0IDUwMC4wMzkgMzM0Ny43OSA1MDMuOTMxQzMzNDYuNzkgNTA3LjU5NSAzMzQ1LjY2IDUxMy42NiAzMzQ0LjQxIDUyMi4xMjlDMzM0My40MSA1MzAuNTk3IDMzNDIuNjcgNTQwLjg5NiAzMzQyLjE2IDU1My4wMjhDMzM0MS42NyA1NjUuMzg4IDMzNDEuNDIgNTgyLjU1NSAzMzQxLjQyIDYwNC41MjZIMzQxMi4zMlY2ODQuODY1SDMxNzEuODVaIiBmaWxsPSIjRkZGRkZGIi8+CjxwYXRoIGQ9Ik0zODQ2LjMzIDU5Ni4yODhDMzgyOS41OCA2MjkuNDc2IDM4MDYuMDYgNjU0LjE5NSAzNzc1Ljc5IDY3MC40NDRDMzc0NS43NyA2ODYuNjk2IDM3MDkuMTUgNjk0LjgyMSAzNjY1Ljg3IDY5NC44MjFDMzYzNi42MSA2OTQuODIxIDM2MDkuNzMgNjkwLjQ3MyAzNTg1LjIzIDY4MS43NzZDMzU2MC45NyA2NzMuMDc3IDM1NDAuMTkgNjYwLjYwMyAzNTIyLjk1IDY0NC4zNTJDMzUwNS43IDYyOC4xMDIgMzQ5Mi40NCA2MDguNjQ3IDM0ODMuMTcgNTg1Ljk4NkMzNDc0LjE5IDU2My4zMjcgMzQ2OS42OCA1MzguMTQ5IDM0NjkuNjggNTEwLjQ1NEMzNDY5LjY4IDQ3My4zNzcgMzQ3Ny45NCA0NDAuMTg4IDM0OTQuNDMgNDEwLjg5QzM1MTEuMTkgMzgxLjU5MyAzNTM0LjMzIDM1OC44MTggMzU2My44NSAzNDIuNTY4QzM1OTMuMzQgMzI2LjA4OCAzNjI2Ljg2IDMxNy44NDggMzY2NC4zOCAzMTcuODQ4QzM2OTEuODggMzE3Ljg0OCAzNzE3LjE2IDMyMi4xOTYgMzc0MC4xNSAzMzAuODk0QzM3NjIuOTEgMzQwLjA1IDM3ODIuNDQgMzUyLjk4MiAzNzk4LjY3IDM2OS42OTFDMzgxNC45MyAzODYuMTcgMzgyNy40NCA0MDYuMDgzIDM4MzYuMiA0MjkuNDI5QzM4NDEuOTQgNDQ0LjUzNCAzODQ1LjU4IDQ1OC43MjUgMzg0Ny4wOCA0NzIuMDAxQzM4NDguNTkgNDg1LjI3OSAzODQ5LjMzIDUwNC41MDQgMzg0OS4zMyA1MjkuNjgxSDM1ODIuNkMzNTg1LjM0IDU0Ny4wNzUgMzU5MC42IDU2Mi4xODIgMzU5OC4zNCA1NzQuOTk5QzM2MDYuMTEgNTg3LjU4OSAzNjE2LjExIDU5Ny4yMDMgMzYyOC4zNSA2MDMuODRDMzY0MC42MyA2MTAuNDc5IDM2NTQuMzggNjEzLjc5NyAzNjY5LjYzIDYxMy43OTdDMzY4Ny40IDYxMy43OTcgMzcwMi4xMyA2MTAuMzYzIDM3MTMuODkgNjAzLjQ5NUMzNzI1LjY0IDU5Ni42MjkgMzczNy4yOSA1ODQuODQzIDM3NDguNzggNTY4LjEzM0wzODQ2LjMzIDU5Ni4yODhaTTM1ODUuNiA0NjYuODUySDM3MzAuNDFDMzcyOC4xNiA0NDUuNzk2IDM3MjAuNjQgNDI4Ljk3MSAzNzA3LjkgNDE2LjM4NEMzNjk1LjE0IDQwNC4yNTIgMzY3OC41IDM5OC4xODcgMzY1OCAzOTguMTg3QzM2MzcuNDggMzk4LjE4NyAzNjIwLjg3IDQwNC4zNjYgMzYwOC4xMSA0MTYuNzI2QzM1OTQuODUgNDI5LjMxNCAzNTg3LjMzIDQ0Ni4wMjMgMzU4NS42IDQ2Ni44NTJaIiBmaWxsPSIjRkZGRkZGIi8+CjxwYXRoIGQ9Ik0zODY1LjY0IDY4NC44NDlWNjAzLjEzNkgzOTI3LjE2VjI2Mi4yMTNIMzg2NS42NFYxNzguNDQxSDQxMzEuMjVDNDIwNC4yOCAxNzguNDQxIDQyNjEuNzggMTkwLjkxNSA0MzAzLjgxIDIxNS44NjRDNDMyNi44MSAyMjkuMTM5IDQzNDYuNjkgMjQ2Ljk5MiA0MzYzLjQ3IDI2OS40MjNDNDM4MC4yMiAyOTEuNjI1IDQzOTIuOTcgMzE3LjAzMSA0NDAxLjcxIDM0NS42NDJDNDQxMC43MyAzNzQuMDI0IDQ0MTUuMjMgNDA0LjM1MSA0NDE1LjIzIDQzNi42MjNDNDQxNS4yMyA0NzQuNjE5IDQ0MDkuNDkgNTA5LjA2NCA0Mzk3Ljk2IDUzOS45NjRDNDM4Ni40NiA1NzAuNjM2IDQzNjkuNzEgNTk2Ljg0MiA0MzQ3LjY5IDYxOC41ODhDNDMyNS42OCA2NDAuMTAyIDQyOTguOTMgNjU2LjU4MyA0MjY3LjQyIDY2OC4wMjVDNDIzNi4xNyA2NzkuMjQyIDQyMDAuODkgNjg0Ljg0OSA0MTYxLjY0IDY4NC44NDlIMzg2NS42NFpNNDA2Ni4zNCA2MDUuODgySDQxMjAuMzZDNDE1Ni4xMiA2MDUuODgyIDQxODUuNTEgNTk4LjkwMiA0MjA4LjUyIDU4NC45NEM0MjMxLjU0IDU3MC43NDkgNDI0OC4wNCA1NDkuNjkzIDQyNTguMDQgNTIxLjc3QzQyNjYuMDQgNDk5LjU2NiA0MjcwLjA1IDQ3My4wMTYgNDI3MC4wNSA0NDIuMTE2QzQyNzAuMDUgNDIyLjY2MSA0MjY4LjE3IDQwMy41NDkgNDI2NC40MiAzODQuNzhDNDI2MC40MyAzNjUuNzgzIDQyNTQuOTIgMzQ4Ljg0NyA0MjQ3LjkyIDMzMy45NjhDNDI0MS4xNyAzMTguODYyIDQyMzMuMTYgMzA2LjYxNiA0MjIzLjg5IDI5Ny4yMzNDNDIwOC4xNSAyODMuNSA0MTg5Ljc3IDI3My41NDMgNDE2OC43NSAyNjcuMzYzQzQxNTUuNzUgMjYzLjQ3MiA0MTQyLjExIDI2MC45NTQgNDEyNy44NiAyNTkuODFDNDExMy44NiAyNTguNjY1IDQwOTMuMzUgMjU4LjA5MyA0MDY2LjM0IDI1OC4wOTNWNjA1Ljg4MloiIGZpbGw9IiNGRkZGRkYiLz48cGF0aCBkPSJNNDgxMy4xOSA1OTYuMjg4QzQ3OTYuNDQgNjI5LjQ3NiA0NzcyLjk1IDY1NC4xOTUgNDc0Mi42OCA2NzAuNDQ0QzQ3MTIuNjYgNjg2LjY5NiA0Njc2LjA0IDY5NC44MjEgNDYzMi43NiA2OTQuODIxQzQ2MDMuNSA2OTQuODIxIDQ1NzYuNjIgNjkwLjQ3MyA0NTUyLjEyIDY4MS43NzZDNDUyNy44NSA2NzMuMDc3IDQ1MDcuMDggNjYwLjYwMyA0NDg5Ljg0IDY0NC4zNTJDNDQ3Mi41OSA2MjguMTAyIDQ0NTkuMzMgNjA4LjY0NyA0NDUwLjA2IDU4NS45ODZDNDQ0MS4wNyA1NjMuMzI3IDQ0MzYuNTYgNTM4LjE0OSA0NDM2LjU2IDUxMC40NTRDNDQzNi41NiA0NzMuMzc3IDQ0NDQuODIgNDQwLjE4OCA0NDYxLjMyIDQxMC44OUM0NDc4LjA4IDM4MS41OTMgNDUwMS4yMiAzNTguODE4IDQ1MzAuNzEgMzQyLjU2OEM0NTYwLjIzIDMyNi4wODggNDU5My43NCAzMTcuODQ4IDQ2MzEuMjYgMzE3Ljg0OEM0NjU4Ljc3IDMxNy44NDggNDY4NC4wNCAzMjIuMTk2IDQ3MDcuMDQgMzMwLjg5NEM0NzI5LjggMzQwLjA1IDQ3NDkuMjkgMzUyLjk4MiA0NzY1LjU1IDM2OS42OTFDNDc4MS44MiAzODYuMTcgNDc5NC4zMyA0MDYuMDgzIDQ4MDMuMDggNDI5LjQyOUM0ODA4LjgyIDQ0NC41MzQgNDgxMi40NyA0NTguNzI1IDQ4MTMuOTUgNDcyLjAwMUM0ODE1LjQ0IDQ4NS4yNzkgNDgxNi4yIDUwNC41MDQgNDgxNi4yIDUyOS42ODFINDU0OS40OEM0NTUyLjIzIDU0Ny4wNzUgNDU1Ny40OCA1NjIuMTgyIDQ1NjUuMjMgNTc0Ljk5OUM0NTczIDU4Ny41ODkgNDU4MyA1OTcuMjAzIDQ1OTUuMjQgNjAzLjg0QzQ2MDcuNSA2MTAuNDc5IDQ2MjEuMjcgNjEzLjc5NyA0NjM2LjUyIDYxMy43OTdDNDY1NC4yNiA2MTMuNzk3IDQ2NjkuMDIgNjEwLjM2MyA0NjgwLjc4IDYwMy40OTVDNDY5Mi41MyA1OTYuNjI5IDQ3MDQuMTggNTg0Ljg0MyA0NzE1LjY3IDU2OC4xMzNMNDgxMy4xOSA1OTYuMjg4Wk00NTUyLjQ5IDQ2Ni44NTJINDY5Ny4zQzQ2OTUuMDUgNDQ1Ljc5NiA0Njg3LjUzIDQyOC45NzEgNDY3NC43NyA0MTYuMzg0QzQ2NjIuMDMgNDA0LjI1MiA0NjQ1LjM5IDM5OC4xODcgNDYyNC44OCAzOTguMTg3QzQ2MDQuMzcgMzk4LjE4NyA0NTg3LjczIDQwNC4zNjYgNDU3NC45OSA0MTYuNzI2QzQ1NjEuNzQgNDI5LjMxNCA0NTU0LjIyIDQ0Ni4wMjMgNDU1Mi40OSA0NjYuODUyWiIgZmlsbD0iI0ZGRkZGRiIvPjxwYXRoIGQ9Ik00ODU2LjYxIDU1NS40MjJINDk0NC4zOUM0OTQ5LjEzIDU3MS42NzEgNDk1NC43NiA1ODQuMjYxIDQ5NjEuMjcgNTkzLjE4OEM0OTY3Ljc2IDYwMS44ODUgNDk3Ni4xNCA2MDcuOTUgNDk4Ni40IDYxMS4zODRDNDk5Ni45MSA2MTUuMDQ1IDUwMTAuNzcgNjE2Ljg3NiA1MDI4LjA1IDYxNi44NzZDNTA0MS4zIDYxNi44NzYgNTA1NC4zIDYxMy4zMyA1MDY3LjA0IDYwNi4yMzVDNTA4MC4wNyA1OTkuMzY3IDUwODYuNTcgNTkxLjEyNiA1MDg2LjU3IDU4MS41MTRDNTA4Ni41NyA1NzMuOTYyIDUwODEuOTUgNTY2LjYzNiA1MDcyLjY4IDU1OS41NDFDNTA2Ny4xOSA1NTUuNjUgNTA1OS41NiA1NTMuMTMzIDUwNDkuOCA1NTEuOTg4QzUwNDAuMDMgNTUwLjYxNSA1MDI0Ljc4IDU0OC42NyA1MDA0LjA0IDU0Ni4xNTFDNDk4My41MyA1NDMuNjM1IDQ5NjYuNjQgNTQwLjc3MyA0OTUzLjM4IDUzNy41NjhDNDkyMi42MSA1MzAuMDE0IDQ4OTYuNzMgNTE3LjU0MiA0ODc1LjczIDUwMC4xNDVDNDg1NC43MyA0ODIuNTIgNDg0NC4yMiA0NTkuOTc3IDQ4NDQuMjIgNDMyLjUxQzQ4NDQuMjIgNDA5LjM5MyA0ODUwLjk3IDM4OS4yNSA0ODY0LjQ4IDM3Mi4wODRDNDg3Ny45OCAzNTQuOTE4IDQ4OTUuNDkgMzQxLjk4NiA0OTE3LjAxIDMzMy4yODhDNDkzOC41IDMyNC4zNjIgNDk2MS4yNyAzMTkuODk4IDQ5ODUuMjcgMzE5Ljg5OEM1MDIxLjc4IDMxOS44OTggNTA1Mi42OCAzMjguNzExIDUwNzcuOTMgMzQ2LjMzNVYzMjYuNzY1SDUxNjMuNDZWNDM1LjI1OEg1MDc3LjkzQzUwNjkuNDQgNDE5LjAwNSA1MDU5LjU2IDQwOC4wMTkgNTA0OC4yOSA0MDIuMjk3QzUwMzcuMDQgMzk2LjU3NiA1MDIwLjU0IDM5My43MTQgNDk5OC43OSAzOTMuNzE0QzQ5NjMuNTIgMzkzLjcxNCA0OTQ1Ljg5IDQwMi44NjkgNDk0NS44OSA0MjEuMTgxQzQ5NDUuODkgNDI4LjczNSA0OTQ5LjUxIDQzNC4zNDIgNDk1Ni43NSA0MzguMDAzQzQ5NjQgNDQxLjY2NSA0OTc4LjAxIDQ0NS40NDEgNDk5OC43OSA0NDkuMzMyQzUwMzIuMjkgNDU1LjI4NSA1MDU4LjE3IDQ2MC4zMiA1MDc2LjQ0IDQ2NC40MzhDNTA5NC45NSA0NjguNTYgNTEwOC45NiA0NzIuMjIyIDUxMTguNDYgNDc1LjQyNkM1MTI4LjE5IDQ3OC40MDIgNTEzNS43MSA0ODEuNjA1IDUxNDAuOTYgNDg1LjAzOUM1MTQ2LjIyIDQ4OC40NzMgNTE1Mi43MiA0OTMuNzM4IDUxNjAuNDcgNTAwLjgzM0M1MTgwLjIyIDUxOS4zNzMgNTE5MC4xIDU0Mi43MTcgNTE5MC4xIDU3MC44N0M1MTkwLjEgNTk2LjUwNSA1MTgzLjM1IDYxOC4zNjQgNTE2OS44NSA2MzYuNDQ3QzUxNTYuMzQgNjU0LjI5OSA1MTM4LjQ2IDY2Ny41NzQgNTExNi4yMSA2NzYuMjcyQzUwOTQuMTkgNjg1LjQyOCA1MDcwLjE5IDY5MC4wMDYgNTA0NC4xNiA2OTAuMDA2QzUwMDUuOTIgNjkwLjAwNiA0OTcyLjY0IDY4MS41MzcgNDk0NC4zOSA2NjQuNlY2ODUuMTk4SDQ4NTYuNjFWNTU1LjQyMloiIGZpbGw9IiNGRkZGRkYiLz48cGF0aCBkPSJNNTIwNS44OSA2ODQuODQ5SDU0MjYuMTFWNjA0LjUxSDUzNzUuNDVWNTA4LjM3OUw1NTM0LjUyIDY4NC44NDlINTY1OS44MVY2MDQuNTFINTYwNi45MUw1NTAzLjc2IDQ5Mi4yNDNMNTYxMi45MiAzOTYuNDU1SDU2NTYuOFYzMjYuNzU5SDU0MjYuMTFWMzk2LjQ1NUg1NDk3TDUzNzMuOTUgNDk4LjQyM1YxNzguNDQxSDUyMDUuODlWMjYwLjg0SDUyNTcuMjdWNjA0LjUxSDUyMDUuODlWNjg0Ljg0OVoiIGZpbGw9IiNGRkZGRkYiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTc4Ljg2OTEgMS45MDY2OEg1NDYuNzZDNTQ2Ljc2IDEuOTA2NjggNjkxLjUxMiAtMTYuMTgwOSA3NzMuOTcgNTkuMDYzNUM3NzMuOTcgNTkuMDYzNSA4NjMuNjYgMTI1LjYyNSA4NTkuMzIgMjM5LjkzOEM4NTQuOTggMzU0LjI1MSA4NTkuMzIgNjE3LjYwNSA4NTkuMzIgNjE3LjYwNUM4NTkuMzIgNjE3LjYwNSA4NzUuMjMzIDg0NC43ODQgNjI0Ljk2OCA4NjkuMzgzSDI3MS45OTRMMTI0LjA3MiA2NzUuNDg1TDQ3Ny40MTMgNjc0LjAzOEM0NzcuNDEzIDY3NC4wMzggNjE2LjI4OCA2NjguMjUgNjYyLjU4IDUzNi41NzNDNzA4Ljg3MiA0MDQuODk2IDY2Mi41OCAzMDAuNzEyIDYxMC41MDIgMjQ3LjE3M0M2MTAuNTAyIDI0Ny4xNzMgNTY5LjE4NiAyMDQuMTY4IDQ3OC40NTUgMTk5LjUzOEMzODcuNzIzIDE5NC45MDggNzguODcwMSAxOTYuNzYgNzguODcwMSAxOTYuNzZWMS45MDY2OEg3OC44NjkxWiIgZmlsbD0iI0ZGRkZGRiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjExLjc4NSA4NzMuMjc3SDBMMTQ0LjY2MiAyNjkuMDEySDQ2Mi45MTdDNDYyLjkxNyAyNjkuMDEyIDU5My42OTIgMjgwLjU4OCA2MTUuNjggMzkxLjcxN0M2MTUuNjggMzkxLjcxNyA2NTEuNTU2IDUyNC44NDEgNTQyLjc3MSA1ODYuMTk0QzU0Mi43NzEgNTg2LjE5NCA0NjUuMDkzIDYzNy4yNjggMzMzLjk5NSA2MTguMDA1TDM3MC4yODggNDgwLjk0NUg0NjguNzk2VjQ0MS42NzlIMzMzLjI1NEwyMTEuNzg1IDg3My4yNzlWODczLjI3N1oiIGZpbGw9IiNGRkZGRkYiLz48L3N2Zz4=" alt="ProcureDesk" style="height:26px;width:auto;display:block;" />
+    <span class="header-pill">The Desk &nbsp;·&nbsp; #001</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">📬 Weekly Procurement Intelligence</div>
+    <h1 class="hero-title">Your MRO spend isn't a supply problem. <em>It's a visibility problem.</em></h1>
+    <p class="hero-sub">Most manufacturing CFOs know MRO is a black hole. Few have a system to fix it. This week: a live framework to close that gap — plus what compliance and speed actually have in common.</p>
+    <p class="hero-meta">Monday, March 17, 2026 &nbsp;·&nbsp; 5-min read &nbsp;·&nbsp; The ProcureDesk Team</p>
+  </div>
+
+  <!-- IN THIS ISSUE -->
+  <div class="issue-box">
+    <div class="issue-label">⚡ In this issue</div>
+    <ul class="issue-list">
+      <li><strong>STOP-MRO Webinar:</strong> Free live session on March 25 — a framework that fixes how manufacturers handle MRO purchasing</li>
+      <li><strong>MRO Inventory Guide:</strong> Why stockouts happen and the process changes that prevent them</li>
+      <li><strong>Stampli vs. Bill.com:</strong> Which AP platform actually fits a mid-market finance team</li>
+      <li><strong>New Integrations:</strong> Sage Intacct and Microsoft Business Central now connected to ProcureDesk</li>
+      <li><strong>From the CEO's Desk:</strong> Why compliance doesn't slow you down — manual signatures do. Sachin's take + a 5-min demo</li>
+    </ul>
+  </div>
+
+  <!-- FEATURED STORY -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Featured Story</div>
+  <div class="feature-card">
+    <div class="feature-hero-band">
+      <div class="event-badge">🗓 Free Live Webinar · 30 Minutes</div>
+      <h2 class="feature-hero-title">The STOP-MRO Framework: Fix How Your Team Buys Maintenance, Repair & Operations</h2>
+      <p class="feature-hero-sub">Most MRO purchasing runs on habit, not process. This webinar shows you how to change that — without a six-month implementation.</p>
+      <span class="feature-date-chip">📅 Tuesday, March 25 · 2 PM EST</span>
+    </div>
+    <div class="feature-body">
+      <p>MRO is the category CFOs most often underestimate. It's not the biggest line item — but it's the most uncontrolled one. Purchases happen across departments. Vendors multiply. Stock levels are guessed, not managed. And by the time someone notices the problem, a line has already gone down or a budget has already blown past.</p>
+      <div class="callout-box">"The issue isn't that teams spend too much on MRO. It's that nobody can see what's being spent, by whom, or why — until it's too late."</div>
+      <p>The STOP-MRO Framework is a practical, four-part approach to getting MRO under control without overhauling your entire procurement stack. In 30 minutes, you'll walk away with a clear picture of where your biggest leaks are and a concrete starting point for fixing them.</p>
+      <div class="framework-grid">
+        <div class="framework-cell">
+          <div class="framework-letter">S</div>
+          <div class="framework-title">Standardize</div>
+          <div class="framework-desc">Define approved vendors, part numbers, and reorder points by category</div>
+        </div>
+        <div class="framework-cell">
+          <div class="framework-letter">T</div>
+          <div class="framework-title">Track</div>
+          <div class="framework-desc">Build real-time visibility into stock levels, open POs, and spend by location</div>
+        </div>
+        <div class="framework-cell">
+          <div class="framework-letter">O</div>
+          <div class="framework-title">Optimize</div>
+          <div class="framework-desc">Consolidate vendors, reduce emergency orders, and negotiate on volume</div>
+        </div>
+        <div class="framework-cell">
+          <div class="framework-letter">P</div>
+          <div class="framework-title">Protect</div>
+          <div class="framework-desc">Set approval rules that prevent maverick spend before it happens</div>
+        </div>
+      </div>
+      <a href="https://resources.procuredesk.com/webinar-stop-mro-framework?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=featured-story-cta" class="feature-cta">→ Save Your Spot — It's Free</a>
+    </div>
+  </div>
+
+  <!-- QUICK DROPS -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Quick Drops</div>
+  <div class="drops-card">
+    <p class="drops-title">What's new this week</p>
+
+    <div class="drop-item">
+      <span class="drop-dot"></span>
+      <p class="drop-text"><a href="https://www.procuredesk.com/mro-inventory-management/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=drop-mro-guide">MRO Inventory Management Guide</a>: A deep dive into why stockouts keep happening — and the specific process changes that prevent them. Good pre-reading before the March 25 webinar.</p>
+    </div>
+
+    <div class="drop-item">
+      <span class="drop-dot"></span>
+      <p class="drop-text"><a href="https://www.procuredesk.com/sage-intacct-procuredesk-integration/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=drop-sage-intacct">Sage Intacct + ProcureDesk</a>: The integration is live. If your team runs Sage Intacct, procurement data now syncs directly — no manual exports, no reconciliation headaches.</p>
+    </div>
+
+    <div class="drop-item">
+      <span class="drop-dot"></span>
+      <p class="drop-text"><a href="https://www.procuredesk.com/microsoft-business-central-procurement-integration/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=drop-business-central">Microsoft Business Central Integration</a>: Same story for Business Central users. Full procurement-to-ERP sync, out of the box.</p>
+    </div>
+
+    <div class="drop-item">
+      <span class="drop-dot"></span>
+      <p class="drop-text"><a href="https://youtu.be/sGuVSLeq0eo?si=0IK3l5pORX6YHoMZ&utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=drop-youtube-walkthrough">ProcureDesk Walkthrough (YouTube)</a>: 10-minute overview of how the platform works end-to-end. Worth sending to a colleague who keeps asking "what does it actually do?"</p>
+    </div>
+  </div>
+
+  <!-- CEO'S TAKE -->
+  <div class="section-bar"><span class="section-bar-dot"></span>From the CEO's Desk</div>
+  <div class="sachin-card">
+    <div class="sachin-inner">
+      <div class="sachin-meta">
+        <div class="sachin-avatar">S</div>
+        <div>
+          <div class="sachin-name">Sachin Sharma</div>
+          <div class="sachin-role">Founder & CEO, ProcureDesk</div>
+        </div>
+      </div>
+      <p class="sachin-body">Compliance doesn't slow businesses down. Manual signatures do. I regularly talk to construction and manufacturing teams trying to tighten controls by adding a second or third approval layer to every purchase. But if it already takes days to approve a material requisition, an extra sign-off typically creates more shadow ops in the field as crews find workarounds to keep production moving. True compliance is a byproduct of a clean process. Fix the cycle time first, then automate the guardrails so accuracy becomes automatic.</p>
+      <a href="https://www.linkedin.com/posts/sachinshar_can-compliance-actually-be-a-speed-enabler-activity-7436771778292760578-50pu?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=ceo-desk-linkedin" class="sachin-link">Watch the 5-min demo on LinkedIn →</a>
+    </div>
+  </div>
+
+  <!-- STAT OF THE WEEK -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Stat of the Week</div>
+  <div class="stats-block">
+    <div class="stats-eyebrow">📊 Stat of the week</div>
+    <div class="stats-big">73<span>%</span></div>
+    <p class="stats-context">of manufacturing CFOs cite manual procure-to-pay processes as their top operational capacity drain — not headcount, not technology, not supply chain. The process itself.</p>
+    <div class="stats-row">
+      <div class="stat-cell">
+        <div class="stat-num">~8 hrs</div>
+        <div class="stat-label">lost per finance FTE weekly to manual PO follow-up</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">23%</div>
+        <div class="stat-label">of company spend goes through rogue purchasing channels</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">3–4 days</div>
+        <div class="stat-label">average approval cycle time without automated workflows</div>
+      </div>
+    </div>
+    <a href="https://www.procuredesk.com/roi-calculator/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=stat-roi-calculator" class="stats-link">Calculate your team's cost →</a>
+  </div>
+
+  <!-- TOOL BREAKDOWN -->
+  <div class="section-bar"><span class="section-bar-dot"></span>CFO's Guide</div>
+  <div class="tool-card">
+    <span class="tool-badge">Head-to-Head</span>
+    <h3 class="tool-title">Stampli vs. Bill.com: Which One Is Actually Built for Mid-Market AP?</h3>
+    <p class="tool-setup">Both are widely used. Both automate invoice processing. But they're built for different companies with different needs — and picking the wrong one creates more work, not less. Here's the honest breakdown.</p>
+    <table class="comp-table">
+      <tr>
+        <th>Feature</th>
+        <th>Stampli</th>
+        <th>Bill.com</th>
+      </tr>
+      <tr>
+        <td>Best fit</td>
+        <td>Mid-market, complex workflows</td>
+        <td>Small business, simple AP/AR</td>
+      </tr>
+      <tr>
+        <td>ERP integration</td>
+        <td>70+ ERPs, full native support</td>
+        <td>Limited — adapts to their model</td>
+      </tr>
+      <tr>
+        <td>Invoice collaboration</td>
+        <td>Built-in threaded communication</td>
+        <td>Basic, no inline discussion</td>
+      </tr>
+      <tr>
+        <td>Vendor payments</td>
+        <td>Flexible — pay inside or outside</td>
+        <td>Pushes vendors to their network</td>
+      </tr>
+      <tr>
+        <td>Pricing</td>
+        <td>Custom quote only</td>
+        <td>Published subscription tiers</td>
+      </tr>
+      <tr>
+        <td>AR automation</td>
+        <td>Not included</td>
+        <td>Yes — combined AP + AR</td>
+      </tr>
+    </table>
+    <p class="tool-note">Neither platform connects purchasing to AP. If your team is still managing POs in spreadsheets and reconciling them to invoices manually, the bottleneck is upstream — not in the AP tool. That's where a procurement layer changes the equation.</p>
+    <a href="https://www.procuredesk.com/stampli-vs-bill-com/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=tool-stampli-billcom" class="tool-cta">Read the full comparison →</a>
+  </div>
+
+  <!-- TRENDING -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Trending</div>
+  <div class="trending-card">
+    <div class="trending-inner">
+      <div class="trending-badge">This<br/>Week</div>
+      <div>
+        <p class="trending-title">AvidXchange vs. Bill.com: A Different Kind of AP Decision</p>
+        <p class="trending-body">If your company processes high invoice volumes in industries like construction, real estate, or healthcare, Bill.com's generalist approach starts to show its limits. AvidXchange is purpose-built for those environments — with industry-specific solutions and a payments platform that works at scale. The trade-off is setup complexity and a steeper learning curve. Worth knowing before you sign. <a href="https://www.procuredesk.com/avidxchange-vs-bill-com/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=trending-avidxchange">Read the breakdown →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO CTA -->
+  <div class="demo-cta">
+    <h3 class="demo-title">See ProcureDesk in 20 minutes.</h3>
+    <p class="demo-sub">We'll show you exactly how procurement and AP automation works for a team your size — no slides, no pitch deck. Just the product.</p>
+    <a href="https://www.procuredesk.com/request-a-demo/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=demo-cta-button" class="demo-btn">→ Request a Live Demo</a>
+    <span class="demo-fine">Free · No commitment · Tailored to your stack</span>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="section-bar"><span class="section-bar-dot"></span>Resources</div>
+  <div class="resources-card">
+    <p class="resources-title">🧰 Tools worth bookmarking</p>
+
+    <a href="https://www.procuredesk.com/roi-calculator/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=resource-roi-calculator" class="lead-item">
+      <div class="lead-icon">🧮</div>
+      <div class="lead-info">
+        <div class="l-tag">Free Tool</div>
+        <div class="l-title">ROI Calculator — See what manual purchasing is actually costing you</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+
+    <a href="https://www.procuredesk.com/spend-control-readiness-scorecard-lp/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=resource-scorecard" class="lead-item">
+      <div class="lead-icon">📋</div>
+      <div class="lead-info">
+        <div class="l-tag">Assessment</div>
+        <div class="l-title">Spend Control Readiness Scorecard — Know exactly where your process stands</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+
+    <a href="https://www.procuredesk.com/mro-inventory-management/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=resource-mro-guide" class="lead-item">
+      <div class="lead-icon">🔧</div>
+      <div class="lead-info">
+        <div class="l-tag">Guide</div>
+        <div class="l-title">MRO Inventory Management — The complete CFO playbook on preventing stockouts</div>
+      </div>
+      <div class="lead-arrow">›</div>
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo-wrap">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTY2OCIgaGVpZ2h0PSI4NzQiIHZpZXdCb3g9IjAgMCA1NjY4IDg3NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExMTAuMzEgNjg0Ljg0OUgxMzc3LjA0VjYwMy40NzlIMTMxMS4wMVY1MDEuMTY5SDEzOTYuOTJDMTQzMS4xOCA1MDEuMTY5IDE0NjIuNjkgNDkzLjk1OSAxNDkxLjQ1IDQ3OS41NEMxNTIwLjIyIDQ2NS4xMiAxNTQyLjk3IDQ0NS4wOTIgMTU1OS43MyA0MTkuNDU2QzE1NzYuNzQgMzkzLjgyMiAxNTg1LjI0IDM2NS4zMjYgMTU4NS4yNCAzMzMuOTY4QzE1ODUuMjQgMzA5LjkzNSAxNTgwLjk5IDI4OC40MjEgMTU3Mi40OSAyNjkuNDIzQzE1NjQuMjMgMjUwLjE5NyAxNTUyLjIzIDIzMy44MzEgMTUzNi40NyAyMjAuMzI3QzE1MjAuNzEgMjA2LjgyMyAxNTAxLjcxIDE5Ni41MjMgMTQ3OS40NSAxODkuNDI4QzE0NTcuMTkgMTgyLjEwMyAxNDMyLjgxIDE3OC40NDEgMTQwNi4zIDE3OC40NDFIMTExMC4zMVYyNjIuMjEzSDExNzEuODNWNjAzLjQ3OUgxMTEwLjMxVjY4NC44NDlaTTEzMTEuMDEgNDE3LjA1M1YyNTguMDkzSDEzNjMuMTVDMTM3OS40MSAyNTguMDkzIDEzOTMuNDIgMjYxLjI5OCAxNDA1LjE3IDI2Ny43MDZDMTQxNi45MyAyNzQuMTE1IDE0MjYuMDUgMjgzLjI3MSAxNDMyLjU2IDI5NS4xNzNDMTQzOS4wNiAzMDYuODQ2IDE0NDIuMzEgMzIwLjY5MyAxNDQyLjMxIDMzNi43MTVDMTQ0Mi4zMSAzNTMuNjUzIDE0MzguOTMgMzY4LjE4NyAxNDMyLjE4IDM4MC4zMThDMTQyNS42OCAzOTIuMjIgMTQxNS45MiA0MDEuMzc2IDE0MDIuOTIgNDA3Ljc4NEMxMzkwLjE3IDQxMy45NjQgMTM3NC45MSA0MTcuMDUzIDEzNTcuMTUgNDE3LjA1M0gxMzExLjAxWiIgZmlsbD0iI0ZGRkZGRiIvPgo8cGF0aCBkPSJNMTYwNS40MiA2ODQuODY1VjYwNC41MjZIMTY1Ni44MVY0MDcuOEgxNjA1LjQyVjMyNi43NzVIMTc2NS45OFY0MDAuNTlDMTc3Ny43MyAzNzcuNzAyIDE3ODguOTkgMzYwLjUzNSAxNzk5Ljc0IDM0OS4wOTFDMTgxMC43NCAzMzcuODc1IDE4MjQuMTMgMzI5Ljk3OSAxODM5Ljg4IDMyNS40MDFDMTg1NS44OSAzMjAuODI0IDE4NzcuNTIgMzE4LjMwNiAxOTA0Ljc4IDMxNy44NDhWNDI2LjY4M0MxODc3LjI3IDQyOC4wNTYgMTg1Ny43NiA0MzAuMzQ1IDE4NDYuMjYgNDMzLjU1MUMxODM0Ljc2IDQzNi43NTQgMTgyMi43NSA0NDMuMjc3IDE4MTAuMjQgNDUzLjExOEMxNzk3Ljk5IDQ2NC4xMDQgMTc4OS4xMSA0NzguNjM4IDE3ODMuNjEgNDk2LjcyQzE3ODMuMzYgNDk3LjYzNyAxNzgyLjYxIDUwMC4wMzkgMTc4MS4zNiA1MDMuOTMxQzE3ODAuMzYgNTA3LjU5NSAxNzc5LjIzIDUxMy42NiAxNzc3Ljk4IDUyMi4xMjlDMTc3Ni45OCA1MzAuNTk3IDE3NzYuMjMgNTQwLjg5NiAxNzc1LjczIDU1My4wMjhDMTc3NS4yMyA1NjUuMzg4IDE3NzQuOTggNTgyLjU1NSAxNzc0Ljk4IDYwNC41MjZIMTg0NS44OFY2ODQuODY1SDE2MDUuNDJaIiBmaWxsPSIjRkZGRkZGIi8+CjxwYXRoIGQ9Ik0yMDkzLjg2IDMxOS4yMDdDMjEyOS42MyAzMTkuMjA3IDIxNjIuMjYgMzI3LjMzMyAyMTkxLjc3IDM0My41ODNDMjIyMS4yOSAzNTkuODM1IDIyNDQuNTUgMzgyLjE1MSAyMjYxLjU1IDQxMC41MzJDMjI3OC41NiA0MzguNjg1IDIyODcuMDYgNDY5LjgxMyAyMjg3LjA2IDUwMy45MTdDMjI4Ny4wNiA1MzkuMTY2IDIyNzguNTYgNTcxLjIwOCAyMjYxLjU1IDYwMC4wNDlDMjI0NC41NSA2MjguNjU5IDIyMjEuMTYgNjUxLjIwNiAyMTkxLjQgNjY3LjY4NEMyMTYxLjY0IDY4My45MzYgMjEyOC42MyA2OTIuMDYxIDIwOTIuMzYgNjkyLjA2MUMyMDU1LjYgNjkyLjA2MSAyMDIyLjU5IDY4NC4xNjMgMTk5My4zMyA2NjguMzcyQzE5NjQuMzEgNjUyLjU3OCAxOTQxLjY4IDYzMC43MiAxOTI1LjQyIDYwMi43OTZDMTkwOS4xNyA1NzQuODcyIDE5MDEuMDQgNTQzLjQgMTkwMS4wNCA1MDguMzgxQzE5MDEuMDQgNDcyLjkwNSAxOTA5LjU0IDQ0MC43NDUgMTkyNi41NSA0MTEuOTA2QzE5NDMuNTUgMzgzLjA2NiAxOTY2LjY5IDM2MC40MDcgMTk5NS45NSAzNDMuOTI2QzIwMjUuNDYgMzI3LjQ0NyAyMDU4LjEgMzE5LjIwNyAyMDkzLjg2IDMxOS4yMDdaTTIwOTMuODYgNDA2Ljc1NkgyMDkzLjExQzIwNzAuMzUgNDA2Ljc1NiAyMDUyLjcyIDQxNS4yMjQgMjA0MC4yMiA0MzIuMTYxQzIwMjcuOTYgNDQ4Ljg3IDIwMjEuODMgNDcyLjMzMiAyMDIxLjgzIDUwMi41NDVDMjAyMS44MyA1NDAuMDgxIDIwMjkuMzQgNTY3LjMxOSAyMDQ0LjM0IDU4NC4yNTZDMjA1Ni42IDU5Ny43NTkgMjA3My43MyA2MDQuNTEyIDIwOTUuNzQgNjA0LjUxMkMyMTIwLjUgNjA0LjUxMiAyMTM4LjYzIDU5NS43IDIxNTAuMTMgNTc4LjA3NkMyMTYwLjM5IDU2Mi4yODIgMjE2NS41MSA1MzkuNzM5IDIxNjUuNTEgNTEwLjQ0QzIxNjUuNTEgNDc2Ljc5NCAyMTU5LjM5IDQ1MS4xNTkgMjE0Ny4xNCA0MzMuNTM3QzIxMzQuODggNDE1LjY4MSAyMTE3LjEyIDQwNi43NTYgMjA5My44NiA0MDYuNzU2WiIgZmlsbD0iI0ZGRkZGRiIvPjwvc3ZnPg==" alt="ProcureDesk" style="height:24px;width:auto;display:block;margin:0 auto 10px;" />
+    </div>
+    <div class="footer-tagline">
+      Spend visibility and procurement control for mid-market finance teams.<br/>
+      No fluff. No vendor bias. Just what CFOs need to know.
+    </div>
+    <div class="footer-links">
+      <a href="https://www.procuredesk.com/request-a-demo/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=footer-demo">Request Demo</a>
+      <a href="https://www.procuredesk.com/features/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=footer-features">Features</a>
+      <a href="https://www.procuredesk.com/?utm_source=newsletter&utm_medium=email&utm_campaign=issue-1&utm_content=footer-website">Website</a>
+    </div>
+    <hr class="footer-divider"/>
+    <div class="footer-unsub">
+      You're receiving this because you opted in at procuredesk.com.<br/>
+      <a href="#">Unsubscribe</a> · <a href="#">Update preferences</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
