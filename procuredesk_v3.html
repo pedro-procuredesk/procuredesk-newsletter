@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ProcureDesk · Marketing Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0e14;--bg2:#111520;--bg3:#161b26;--bg4:#1c2333;--bg5:#202840;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--b3:rgba(255,255,255,.18);
+  --t1:#e8eaf0;--t2:#8b909e;--t3:#555b6a;
+  --amber:#f59e0b;--amber2:#fde68a;
+  --teal:#0d9488;--teal2:#99f6e4;
+  --blue:#3b82f6;--blue2:#bfdbfe;
+  --green:#22c55e;--green2:#bbf7d0;
+  --red:#ef4444;--red2:#fecaca;
+  --purple:#a855f7;--purple2:#e9d5ff;
+  --pink:#ec4899;
+  --sb:220px;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:13px;line-height:1.5}
+a{color:var(--amber);text-decoration:underline;text-underline-offset:2px}
+a:hover{color:var(--amber2)}
+input[type=text],input[type=number]{background:var(--bg4);border:1px solid var(--b2);border-radius:6px;color:var(--t1);padding:5px 9px;font-size:12px;font-family:'DM Mono',monospace;width:100%}
+input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--amber)}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sb);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:20;overflow-y:auto}
+.main{margin-left:var(--sb);flex:1;min-width:0}
+
+/* SIDEBAR */
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--b1)}
+.sb-logo-mark{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--amber)}
+.sb-logo-sub{font-size:9px;color:var(--t3);margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
+.sb-sec{padding:16px 10px 4px}
+.sb-lbl{font-size:9px;font-weight:600;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;padding:0 8px;margin-bottom:4px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;font-size:12px;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .12s;margin-bottom:1px}
+.ni:hover{background:var(--b1);color:var(--t1)}
+.ni.active{background:rgba(245,158,11,.1);color:var(--amber)}
+.ni svg{width:14px;height:14px;flex-shrink:0;opacity:.55}
+.ni.active svg{opacity:1}
+.nb{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;background:rgba(245,158,11,.15);color:var(--amber)}
+.sb-foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--b1);font-size:10px;color:var(--t3);line-height:1.8}
+.sb-foot strong{color:var(--t2)}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--b1);padding:13px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.tb-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600}
+.tb-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:var(--teal);background:rgba(13,148,136,.1);border:1px solid rgba(13,148,136,.18);padding:4px 10px;border-radius:20px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* PAGES */
+.page{display:none;padding:22px 26px 40px}
+.page.active{display:block}
+
+/* SECTION */
+.sec{margin-bottom:22px}
+.sec-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.g6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+
+/* KPI */
+.kpi{background:var(--bg3);border:1px solid var(--b1);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.ka::after{background:var(--amber)}.kpi.kt::after{background:var(--teal)}.kpi.kb::after{background:var(--blue)}.kpi.kg::after{background:var(--green)}.kpi.kr::after{background:var(--red)}.kpi.kp::after{background:var(--purple)}
+.kpi-lbl{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.kpi-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--t1);line-height:1}
+.kpi-sub{font-size:9px;color:var(--t3);margin-top:5px;line-height:1.4}
+.kpi-delta{display:inline-flex;align-items:center;gap:2px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:5px}
+.kd-up{background:rgba(34,197,94,.12);color:var(--green2)}
+.kd-dn{background:rgba(239,68,68,.12);color:var(--red2)}
+.kd-fl{background:var(--b1);color:var(--t3)}
+.kd-warn{background:rgba(245,158,11,.12);color:var(--amber2)}
+
+/* GOAL CARD */
+.goal-card{background:var(--bg3);border:1px solid var(--b1);border-radius:11px;padding:13px 15px;display:flex;flex-direction:column;gap:8px}
+.goal-title{font-size:10px;font-weight:600;color:var(--t2)}
+.goal-target{font-size:9px;color:var(--t3)}
+.goal-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.goal-curr{font-family:'DM Mono',monospace;font-size:16px;font-weight:500}
+.goal-track{height:4px;background:var(--b2);border-radius:2px;overflow:hidden;flex:1}
+.goal-fill{height:100%;border-radius:2px;transition:width .6s}
+.goal-status{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+.gs-green{background:rgba(34,197,94,.12);color:var(--green2)}.gs-amber{background:rgba(245,158,11,.12);color:var(--amber2)}.gs-red{background:rgba(239,68,68,.12);color:var(--red2)}
+
+/* CARD */
+.card{background:var(--bg3);border:1px solid var(--b1);border-radius:11px;padding:16px 18px}
+.card-title{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.card-sub{font-size:10px;color:var(--t3);margin-bottom:13px;line-height:1.5}
+
+/* WARNING BANNER */
+.warn-banner{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:10px 13px;display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
+.warn-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.warn-body{font-size:11px;color:var(--amber2);line-height:1.5}
+.warn-body strong{color:var(--amber)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:600px}
+.tbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);padding:0 10px 9px 0;border-bottom:1px solid var(--b1);text-align:left;white-space:nowrap}
+.tbl td{padding:9px 10px 9px 0;border-bottom:1px solid rgba(255,255,255,.04);color:var(--t2);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.015)}
+.tbl .mono{font-family:'DM Mono',monospace;font-size:10px}
+.td-name{min-width:140px}
+.td-name a{font-size:11px;font-weight:600}
+.td-title{font-size:9px;color:var(--t3);margin-top:2px}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.03em;white-space:nowrap}
+.b-mql{background:rgba(168,85,247,.15);color:var(--purple2)}
+.b-lead{background:var(--b1);color:var(--t2)}
+.b-deal{background:rgba(34,197,94,.12);color:var(--green2)}
+.b-cust{background:rgba(245,158,11,.12);color:var(--amber2)}
+.b-meet{background:rgba(13,148,136,.12);color:var(--teal2)}
+.b-form{background:rgba(59,130,246,.12);color:var(--blue2)}
+.b-paid{background:rgba(168,85,247,.12);color:var(--purple2)}
+.b-org{background:rgba(34,197,94,.12);color:var(--green2)}
+.b-dir{background:rgba(59,130,246,.12);color:var(--blue2)}
+.b-ai{background:rgba(245,158,11,.12);color:var(--amber2)}
+.b-yt{background:rgba(239,68,68,.12);color:var(--red2)}
+.b-shift{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+/* status badges */
+.s-fu{background:rgba(239,68,68,.12);color:var(--red2)}
+.s-do{background:rgba(34,197,94,.12);color:var(--green2)}
+.s-dw{background:rgba(245,158,11,.12);color:var(--amber2)}
+.s-na{background:var(--b1);color:var(--t3)}
+.s-on{background:rgba(13,148,136,.12);color:var(--teal2)}
+
+/* INSIGHT */
+.ins{padding:12px 14px;border-radius:9px;background:var(--bg3);border:1px solid var(--b1);border-left:3px solid}
+.ins.iw{border-left-color:var(--teal)}.ins.ia{border-left-color:var(--amber)}.ins.ir{border-left-color:var(--red)}.ins.ii{border-left-color:var(--blue)}.ins.ihot{border-left-color:var(--red);background:rgba(239,68,68,.04)}
+.ins-tag{font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.ins.iw .ins-tag{color:var(--teal2)}.ins.ia .ins-tag{color:var(--amber)}.ins.ir .ins-tag,.ins.ihot .ins-tag{color:var(--red)}.ins.ii .ins-tag{color:var(--blue2)}
+.ins-title{font-size:11px;font-weight:600;color:var(--t1);margin-bottom:3px;line-height:1.3}
+.ins-body{font-size:10px;color:var(--t2);line-height:1.6}
+
+/* BAR */
+.bar-item{margin-bottom:9px}
+.bar-hd{display:flex;justify-content:space-between;margin-bottom:3px}
+.bar-lbl{font-size:11px;color:var(--t2)}
+.bar-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--t3)}
+.bar-track{height:5px;background:var(--b2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .7s}
+
+/* PROGRESS BAR FOR GOALS */
+.prog-bar{height:8px;background:var(--b2);border-radius:4px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;border-radius:4px;transition:width .7s}
+
+/* ACT NOW */
+.act-card{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.18);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.act-title{font-size:11px;font-weight:700;color:var(--red2);margin-bottom:3px}
+.act-rule{font-size:10px;color:rgba(239,68,68,.6);margin-bottom:10px;font-style:italic}
+
+/* SPOTLIGHT */
+.spotlight{background:var(--bg3);border:1px solid var(--b2);border-radius:11px;padding:16px 20px;position:relative;overflow:hidden}
+.spotlight::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(245,158,11,.07),transparent 70%)}
+.sp-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.sp-item{padding:0 16px}
+.sp-item:not(:last-child){border-right:1px solid var(--b1)}
+.sp-item:first-child{padding-left:0}
+.sp-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:3px}
+.sp-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}
+.sp-sub{font-size:9px;color:var(--t3);margin-top:2px}
+
+/* STAGE GROUP */
+.stage-group{margin-bottom:16px}
+.stage-header{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:6px 0;border-bottom:1px solid var(--b1);margin-bottom:6px}
+
+/* SACHIN MODEL */
+.model-block{background:var(--bg5);border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:14px 16px}
+.model-title{font-size:11px;font-weight:700;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.model-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b1);font-size:11px}
+.model-row:last-child{border-bottom:none}
+.model-lbl{color:var(--t2)}
+.model-val{font-family:'DM Mono',monospace;color:var(--amber2);font-weight:500}
+
+/* EDITABLE BLOCK */
+.edit-block{background:var(--bg3);border:1px solid var(--b2);border-radius:10px;padding:14px 16px}
+.edit-title{font-size:11px;font-weight:600;color:var(--t1);margin-bottom:10px}
+.edit-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.edit-lbl{font-size:10px;color:var(--t2);min-width:160px}
+
+/* Q2 TRACKER */
+.q2-tracker{background:var(--bg4);border:1px solid var(--b2);border-radius:10px;padding:14px 16px;margin-top:14px}
+.q2t-title{font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.q2t-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--b1)}
+.q2t-row:last-child{border-bottom:none}
+.q2t-label{font-size:11px;color:var(--t2);min-width:160px}
+.q2t-curr{font-family:'DM Mono',monospace;font-size:11px;font-weight:500}
+.q2t-vs{font-size:9px;color:var(--t3);flex:1}
+.q2t-status{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+
+/* TALKPOINT */
+.tp-item{padding:9px 12px;border-radius:7px;border-left:3px solid;margin-bottom:7px;background:rgba(255,255,255,.02)}
+.tp-item.tp-g{border-left-color:var(--green)}.tp-item.tp-a{border-left-color:var(--amber)}.tp-item.tp-r{border-left-color:var(--red)}.tp-item.tp-b{border-left-color:var(--blue)}
+.tp-metric{font-size:10px;font-weight:700;color:var(--t2);margin-bottom:2px}
+.tp-result{font-size:11px;font-weight:600;color:var(--t1)}
+.tp-sowhat{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* SCENARIO */
+.scenario{background:var(--bg4);border:1px solid var(--b1);border-radius:8px;padding:11px 13px;margin-bottom:8px}
+.scenario-title{font-size:10px;font-weight:600;color:var(--t2);margin-bottom:4px}
+.scenario-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--amber)}
+.scenario-sub{font-size:9px;color:var(--t3);margin-top:2px}
+
+hr.d{border:none;border-top:1px solid var(--b1);margin:16px 0}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">ProcureDesk</div>
+    <div class="sb-logo-sub">Marketing Intelligence</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Overview</div>
+    <button class="ni active" onclick="go('dashboard')"><svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg>Dashboard</button>
+    <button class="ni" onclick="go('q2goals')"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Marketing → Q2 Goals</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Channels</div>
+    <button class="ni" onclick="go('paid')"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4.5v1M7 8.5v1M5.5 6.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>Paid Media<span class="nb">6</span></button>
+    <button class="ni" onclick="go('ai')"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1.5l1.2 2.5 2.8.4-2 2 .5 2.8L7 8l-2.5 1.2.5-2.8-2-2L5.8 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>AI Referrals<span class="nb">18</span></button>
+    <button class="ni" onclick="go('yt')"><svg viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M6 5.5l3 1.5-3 1.5V5.5z" fill="currentColor"/></svg>YouTube / Content</button>
+    <button class="ni" onclick="go('organic')"><svg viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Organic Search</button>
+    <button class="ni" onclick="go('direct')"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M9 4.5l3 2.5-3 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Direct Traffic</button>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Time</div>
+    <button class="ni" onclick="go('week')"><svg viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 1v3M9.5 1v3M1.5 6h11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>This Week<span class="nb">Apr 4–10</span></button>
+    <button class="ni" onclick="go('month')"><svg viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 1v3M9.5 1v3M1.5 6h11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>This Month<span class="nb">Apr MTD</span></button>
+    <button class="ni" onclick="go('q2')"><svg viewBox="0 0 14 14" fill="none"><path d="M1.5 11l3.5-4.5 2.5 2.5 4.5-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Q2 2026</button>
+    <button class="ni" onclick="go('q1')"><svg viewBox="0 0 14 14" fill="none"><path d="M1.5 11l3.5-4.5 2.5 2.5 4.5-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Q1 2026</button>
+  </div>
+  <div class="sb-foot">
+    <strong>Source:</strong> HubSpot + Ahrefs<br>
+    <strong>Attribution:</strong> First-touch<br>
+    <strong>Default period:</strong> MTD<br>
+    <strong>CEO meeting:</strong> Tuesdays
+  </div>
+</nav>
+
+<main class="main">
+<div class="topbar">
+  <div><div class="tb-title" id="tb-t">Marketing Dashboard · April 2026 MTD</div><div class="tb-sub" id="tb-s">All channels · HubSpot CRM · First-touch attribution · Apr 1–10</div></div>
+  <div class="live-pill"><span class="live-dot"></span> Live · Updated Apr 10</div>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="sec">
+    <div class="sec-lbl">Marketing KPIs · April 2026 MTD (Apr 1–10)</div>
+    <div class="g4">
+      <div class="kpi kt"><div class="kpi-lbl">Demo conversions (MTD)</div><div class="kpi-val">15</div><div class="kpi-sub">Form fills + meetings · Apr 1–10</div><div class="kpi-delta kd-warn">30% of 50/mo target</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Paid media MQLs (MTD)</div><div class="kpi-val">4</div><div class="kpi-sub">100% meeting-to-MQL rate</div><div class="kpi-delta kd-up">↑ Strong conversion</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Active pipeline (all sources)</div><div class="kpi-val">$35K+</div><div class="kpi-sub">Paid-sourced deals · MTD</div><div class="kpi-delta kd-dn">↓ Below $120K Q2 target</div></div>
+      <div class="kpi kr"><div class="kpi-lbl">Needs follow-up NOW</div><div class="kpi-val">4</div><div class="kpi-sub">Demo form · no meeting scheduled</div><div class="kpi-delta kd-dn">Act within 24h</div></div>
+    </div>
+  </div>
+
+  <!-- Q2 GOALS SCOREBOARD -->
+  <div class="sec">
+    <div class="sec-lbl">Company Goals · Q2 Targets (Sachin) · April MTD progress</div>
+    <div class="g3" style="margin-bottom:10px">
+      <div class="goal-card">
+        <div class="goal-title">Q2 New ARR Goal</div>
+        <div class="goal-target">Target: $1,000,000</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--red)">$35,124</span><div class="goal-track"><div class="goal-fill" style="width:3.5%;background:var(--red)"></div></div><span class="goal-status gs-red">3.5% · Behind</span></div>
+        <div style="font-size:9px;color:var(--t3)">Paid pipeline only · 10 days in</div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-title">Demo Target · 50+/month by May</div>
+        <div class="goal-target">Target: 50 demos/month</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--amber)">15</span><div class="goal-track"><div class="goal-fill" style="width:30%;background:var(--amber)"></div></div><span class="goal-status gs-amber">30% · Pacing</span></div>
+        <div style="font-size:9px;color:var(--t3)">MTD · on pace for ~45/mo if holds</div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-title">Close Rate Target</div>
+        <div class="goal-target">Target: 30% by June · 35% stretch</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--red)">~20%</span><div class="goal-track"><div class="goal-fill" style="width:67%;background:var(--red)"></div></div><span class="goal-status gs-red">Behind · 10pp gap</span></div>
+        <div style="font-size:9px;color:var(--t3)">Estimated from pipeline stages</div>
+      </div>
+    </div>
+    <div class="g3">
+      <div class="goal-card">
+        <div class="goal-title">ACV Target · $13,000 avg</div>
+        <div class="goal-target">Target: $13,000 ACV</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--red)">$7,025</span><div class="goal-track"><div class="goal-fill" style="width:54%;background:var(--red)"></div></div><span class="goal-status gs-red">54% · Behind</span></div>
+        <div style="font-size:9px;color:var(--t3)">Avg of 5 paid deals · drag from $850 proposals</div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-title">Paid Pipeline Target · Q2</div>
+        <div class="goal-target">Target: $120,000+ by Q2 end</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--amber)">$35,124</span><div class="goal-track"><div class="goal-fill" style="width:29%;background:var(--amber)"></div></div><span class="goal-status gs-amber">29% · On pace</span></div>
+        <div style="font-size:9px;color:var(--t3)">10 days in · pace = ~$105K/month</div>
+      </div>
+      <div class="goal-card">
+        <div class="goal-title">Gap to $1M · Running Total</div>
+        <div class="goal-target">Sachin model: $598K marketing contrib.</div>
+        <div class="goal-row"><span class="goal-curr" style="color:var(--red)">$964,876</span><div class="goal-track"><div class="goal-fill" style="width:3.5%;background:var(--red)"></div></div><span class="goal-status gs-red">$964K remaining</span></div>
+        <div style="font-size:9px;color:var(--t3)">Based on closed won only · pipeline not counted</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCES + ACT NOW -->
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Traffic & conversion by source · April MTD</div>
+        <div class="card-sub">First-touch attribution · Apr 1–10 · all sources on same time window</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;border-radius:5px;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--green2)">ORG</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">Organic Search</div><div style="font-size:9px;color:var(--t3)">Google · Bing · DuckDuckGo</div></div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--green)">7 demos</div><div style="font-size:9px;color:var(--t3)">Avg deal: ~$5.9K</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;border-radius:5px;background:rgba(168,85,247,.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--purple2)">PPC</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">Paid Search</div><div style="font-size:9px;color:var(--t3)">[001] high intent · pmax</div></div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--purple)">3 demos</div><div style="font-size:9px;color:var(--t3)">100% MQL rate</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;border-radius:5px;background:rgba(59,130,246,.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--blue2)">DIR</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">Direct Traffic</div><div style="font-size:9px;color:var(--t3)">/request-a-demo · brand recall</div></div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--blue)">3 demos</div><div style="font-size:9px;color:var(--t3)">Avg deal: $9.1K</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1)"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;border-radius:5px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--amber2)">AI</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">AI Referrals</div><div style="font-size:9px;color:var(--t3)">ChatGPT · Copilot · MTD</div></div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--amber)">2 contacts</div><div style="font-size:9px;color:var(--t3)">Otty + Viktor Chang</div></div></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;border-radius:5px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--red2)">YT</div><div><div style="font-size:11px;font-weight:600;color:var(--t1)">YouTube / Content UTM</div><div style="font-size:9px;color:var(--t3)">foundervideos · approval-workflows</div></div></div><div style="text-align:right"><div style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--red)">1 contact</div><div style="font-size:9px;color:var(--t3)">Viktor Chang · MTD</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-title">Source mix · demos · April MTD</div>
+          <div class="card-sub" style="margin-bottom:10px">Organic dominates volume · Paid wins on MQL rate</div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Organic (54%)</span><span class="bar-val">7</span></div><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--green)"></div></div></div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Direct (23%)</span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--blue)"></div></div></div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Paid Search (23%)</span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--purple)"></div></div></div>
+        </div>
+        <div style="padding:11px 14px;background:var(--bg4);border:1px solid var(--b1);border-radius:10px">
+          <div style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Demo progress vs 50/mo target</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--t2)">April MTD: 15 demos</span><span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber)">30%</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:30%;background:var(--amber)"></div></div>
+          <div style="font-size:9px;color:var(--t3)">Need 35 more by Apr 30 · current daily pace: 1.5/day → ~45/month projected</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT NOW -->
+  <div class="sec">
+    <div class="sec-lbl">🔴 Act now · demo form filled · no meeting scheduled · April MTD</div>
+    <div class="act-card">
+      <div class="act-title">⚡ Sol Marfori — <a href="https://app.hubspot.com/contacts/3347161/record/0-1/214697320971" target="_blank">Open in HubSpot</a></div>
+      <div class="act-rule">Demo Registration Form filled · no meeting booked · created Apr 9 (1 day ago)</div>
+      <div style="font-size:10px;color:var(--t2)">Source: Organic · Google · Lifecycle: Lead · No deal associated</div>
+    </div>
+    <div class="act-card">
+      <div class="act-title">⚡ Gary Zhang — <a href="https://app.hubspot.com/contacts/3347161/record/0-1/208564162188" target="_blank">Open in HubSpot</a></div>
+      <div class="act-rule">Demo Registration Form filled · no meeting booked · created Apr 8 (2 days ago)</div>
+      <div style="font-size:10px;color:var(--t2)">Source: Organic · Google · Lifecycle: Lead · No deal associated</div>
+    </div>
+    <div class="act-card">
+      <div class="act-title" style="color:rgba(239,68,68,.7)">⚠ Pradeep Bohra — <a href="https://app.hubspot.com/contacts/3347161/record/0-1/214062256790" target="_blank">Open in HubSpot</a></div>
+      <div class="act-rule">Demo Registration Form filled · no meeting booked · created Apr 7 (3 days ago)</div>
+      <div style="font-size:10px;color:var(--t2)">Source: Organic · Google · Lifecycle: Lead · No deal associated</div>
+    </div>
+    <div class="act-card">
+      <div class="act-title" style="color:rgba(239,68,68,.7)">⚠ Yaseen Inamdar — <a href="https://app.hubspot.com/contacts/3347161/record/0-1/214030305384" target="_blank">Open in HubSpot</a></div>
+      <div class="act-rule">Demo Registration Form filled · no meeting booked · created Apr 7 (3 days ago)</div>
+      <div style="font-size:10px;color:var(--t2)">Source: Organic · Google · Lifecycle: Lead · No deal associated</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Strategic insights · April MTD</div>
+    <div class="g2">
+      <div class="ins iw"><div class="ins-tag">✓ Channel strength</div><div class="ins-title">Organic drives 54% of demos at lowest CAC — protect it</div><div class="ins-body">Content + SEO is the highest-volume channel. /purchase-order-software ranks #2 on Google with 2,412 visits/month. These pages should never be disrupted during redesigns.</div></div>
+      <div class="ins ihot"><div class="ins-tag">🔴 Act now</div><div class="ins-title">4 demo form fills in Apr MTD with no meeting booked</div><div class="ins-body">Sol Marfori (Apr 9), Gary Zhang (Apr 8), Pradeep Bohra (Apr 7), Yaseen Inamdar (Apr 7). All filled the demo registration form. Follow up within 24h — conversion window closes fast.</div></div>
+      <div class="ins ia"><div class="ins-tag">⚠ Gap alert</div><div class="ins-title">ACV is $7K vs $13K target — two $850 proposals dragging the average</div><div class="ins-body">Urban Sky ($850) and Priority Power ($850) are well below the $13K ACV target. Either qualify deal size earlier in the funnel or revisit pricing for small accounts.</div></div>
+      <div class="ins ii"><div class="ins-tag">→ Content opportunity</div><div class="ins-title">Template pages get 9 downloads/week but zero demo conversions</div><div class="ins-body">PO Template and AP Aging Report pages drive consistent traffic but convert to downloads only. Adding a post-download demo CTA ("See this automated in ProcureDesk") could convert 10–15% of these visits into demos.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MARKETING → Q2 GOALS ══════════════ -->
+<div class="page" id="page-q2goals">
+  <div class="sec">
+    <div class="sec-lbl">Marketing contribution to Q2 Goals · April MTD</div>
+    <div class="g5">
+      <div class="kpi kt"><div class="kpi-lbl">Marketing demos (MTD)</div><div class="kpi-val">15</div><div class="kpi-sub">All marketing sources · Apr 1–10</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Demo target (monthly)</div><div class="kpi-val">50+</div><div class="kpi-sub">Required by May to hit Q2 goal</div></div>
+      <div class="kpi kp"><div class="kpi-lbl">Paid demos (MTD)</div><div class="kpi-val">3</div><div class="kpi-sub">Target: 15/month from May</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Organic demos (MTD)</div><div class="kpi-val">7</div><div class="kpi-sub">Target: 35+/month sustained</div></div>
+      <div class="kpi kb"><div class="kpi-lbl">Marketing pipeline</div><div class="kpi-val">$35K</div><div class="kpi-sub">Open deals from mktg contacts · MTD</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Marketing-sourced deals contributing to Q2 pipeline · sorted by deal amount</div>
+    <div class="card">
+      <div class="card-title">All marketing-sourced deals · April MTD</div>
+      <div class="card-sub">Contacts identified via first-touch attribution · deal data from associated HubSpot deal records</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Contact</th><th>Company</th><th>Source</th><th>Demo date</th><th>Deal stage</th><th>Amount</th><th>Close est.</th><th>On track</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214005974101" target="_blank">Chris Campbell</a><div class="td-title">Dir. of Finance</div></td><td>Climate Lead</td><td><span class="badge b-paid">Paid · [001]</span></td><td class="mono">Apr 7</td><td><span class="badge b-meet">Discovery</span></td><td class="mono" style="color:var(--amber)">$13,224</td><td class="mono">Apr 30</td><td><span class="badge s-on">Yes</span></td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214651771714" target="_blank">Alexander Clare</a><div class="td-title">—</div></td><td>Elementum</td><td><span class="badge b-paid">Paid · pmax</span></td><td class="mono">Apr 9</td><td><span class="badge b-form">Proposal</span></td><td class="mono" style="color:var(--amber)">$10,200</td><td class="mono">May 31</td><td><span class="badge s-on">Yes</span></td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212651609385" target="_blank">Sarah Alvarado</a><div class="td-title">—</div></td><td>INF Associates</td><td><span class="badge b-paid">Paid · [001]</span></td><td class="mono">Mar 31</td><td><span class="badge b-mql">Negotiation</span></td><td class="mono" style="color:var(--amber)">$10,000</td><td class="mono">May 15</td><td><span class="badge s-on">Yes</span></td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank">Laura Shorkey</a><div class="td-title">Dir. Financial Systems</div></td><td>Priority Power</td><td><span class="badge b-paid">Paid · GCLID</span></td><td class="mono">Apr 6</td><td><span class="badge b-form">Proposal</span></td><td class="mono">$850</td><td class="mono">May 21</td><td><span class="badge s-fu">Review ACV</span></td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212067259506" target="_blank">Jessica Stefanko</a><div class="td-title">VP of Finance</div></td><td>Urban Sky</td><td><span class="badge b-paid">Paid · GCLID</span></td><td class="mono">Mar 27</td><td><span class="badge b-form">Proposal</span></td><td class="mono">$850</td><td class="mono">May 23</td><td><span class="badge s-fu">Review ACV</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Close rate impact · two scenarios</div>
+        <div class="card-sub">Current pipeline $35,124 · what closes if rate improves?</div>
+        <div class="scenario"><div class="scenario-title">Current rate (~20% close rate)</div><div class="scenario-val">$7,025 closed ARR</div><div class="scenario-sub">From current $35K paid pipeline</div></div>
+        <div class="scenario"><div class="scenario-title">Target rate (30% close rate)</div><div class="scenario-val">$10,537 closed ARR</div><div class="scenario-sub">From same $35K pipeline · +$3.5K uplift</div></div>
+        <div class="scenario"><div class="scenario-title">Full Q2 paid pipeline at $120K (target)</div><div class="scenario-val">$36,000 closed ARR</div><div class="scenario-sub">At 30% close rate · $120K × 30%</div></div>
+      </div>
+      <div class="model-block">
+        <div class="model-title">📊 Sachin's Q2 Model · Read-only reference</div>
+        <div class="model-row"><span class="model-lbl">Direct channel target</span><span class="model-val">$494K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">Formula</span><span class="model-val" style="font-size:9px">35 demos × 30% × $13K × 3mo</span></div>
+        <div class="model-row"><span class="model-lbl">New demos from paid (May+)</span><span class="model-val">$104K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">Formula</span><span class="model-val" style="font-size:9px">15 demos × 25% × $13K × 2mo</span></div>
+        <div class="model-row"><span class="model-lbl">Marketing demo target</span><span class="model-val">50+/month by May</span></div>
+        <div class="model-row"><span class="model-lbl">Total marketing contribution</span><span class="model-val">~$598K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">Gap to close</span><span class="model-val" style="color:var(--red)">$248K</span></div>
+        <div class="model-row"><span class="model-lbl">Gap closed by paid media</span><span class="model-val">~$104K modeled</span></div>
+        <div style="font-size:9px;color:var(--t3);margin-top:8px;padding-top:8px;border-top:1px solid var(--b1)">These numbers are Sachin's model targets. Actuals updated as deals close.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAID MEDIA ══════════════ -->
+<div class="page" id="page-paid">
+  <div class="sec">
+    <div class="sec-lbl">Paid media KPIs · Campaign started Mar 2026 · first-touch (GCLID-verified)</div>
+    <div class="g6">
+      <div class="kpi kp"><div class="kpi-lbl">Total PPC leads</div><div class="kpi-val">6</div><div class="kpi-sub">Verified list</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Demos booked</div><div class="kpi-val">5</div><div class="kpi-sub">83% of leads</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Total spend</div><div class="kpi-val">N/A</div><div class="kpi-sub">Connect Google Ads</div></div>
+      <div class="kpi"><div class="kpi-lbl">Cost per lead</div><div class="kpi-val">N/A</div><div class="kpi-sub">Requires spend data</div></div>
+      <div class="kpi"><div class="kpi-lbl">Cost per demo</div><div class="kpi-val">N/A</div><div class="kpi-sub">Requires spend data</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Pipeline value</div><div class="kpi-val">$35,124</div><div class="kpi-sub">5 deals · all stages</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Paid media contacts · GCLID-verified + pmax · sorted by create date ↓</div>
+    <div class="card">
+      <div class="card-title">6 verified paid contacts from source of truth list</div>
+      <div class="card-sub">Name links open HubSpot contact page. Company size and industry to be populated from company records. Campaign started March 2026 only.</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Name + Title</th><th>Company</th><th>Co. Size</th><th>Industry</th><th>Biggest Challenge</th><th>Campaign</th><th>Keyword</th><th>Has Deal</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214651771714" target="_blank">Alexander Clare</a><div class="td-title">—</div></td><td>Elementum</td><td class="mono">—</td><td>—</td><td>—</td><td><span class="badge b-paid">pmax</span></td><td class="mono" style="color:var(--t3)">Unknown (pmax auto)</td><td><span class="badge b-deal">Yes · $10,200</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 9</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214613214022" target="_blank">Heather Kolpaczyk</a><div class="td-title">AP · Accelevator</div></td><td>Accelevator</td><td class="mono">—</td><td>—</td><td>—</td><td><span class="badge b-paid">[001] high intent</span></td><td class="mono" style="color:var(--amber)">"purchase req. sw."</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 9</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214005974101" target="_blank">Chris Campbell</a><div class="td-title">Dir. of Finance</div></td><td>Climate Lead</td><td class="mono">—</td><td>Sustainability</td><td>—</td><td><span class="badge b-paid">[001] high intent</span></td><td class="mono" style="color:var(--amber)">"procurement software"</td><td><span class="badge b-deal">Yes · $13,224</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 7</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank">Laura Shorkey</a><div class="td-title">Dir. Financial Systems</div></td><td>Priority Power</td><td class="mono">—</td><td>Energy</td><td>—</td><td><span class="badge b-shift">GCLID (classified direct)</span></td><td class="mono" style="color:var(--t3)">Unknown (SSL)</td><td><span class="badge b-deal">Yes · $850</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 6</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212651609385" target="_blank">Sarah Alvarado</a><div class="td-title">—</div></td><td>INF Associates</td><td class="mono">—</td><td>—</td><td>—</td><td><span class="badge b-paid">[001] high intent</span></td><td class="mono" style="color:var(--amber)">"purchase req. sw."</td><td><span class="badge b-deal">Yes · $10,000</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Mar 31</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212067259506" target="_blank">Jessica Stefanko</a><div class="td-title">VP of Finance</div></td><td>Urban Sky</td><td class="mono">—</td><td>Aerospace</td><td>—</td><td><span class="badge b-shift">GCLID (classified organic)</span></td><td class="mono" style="color:var(--t3)">Unknown (SSL)</td><td><span class="badge b-deal">Yes · $850</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Mar 27</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:10px;padding:8px 10px;background:var(--bg4);border-radius:7px;font-size:9px;color:var(--t3)">⚡ Company Size, Industry, and Biggest Challenge fields not yet populated in HubSpot contact/company records. Populate via <a href="https://app.hubspot.com/contacts/3347161" target="_blank">HubSpot CRM</a> for full analysis.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Deal pipeline · by stage</div>
+    <div class="card">
+      <div class="stage-group">
+        <div class="stage-header">Discovery (1 deal)</div>
+        <table class="tbl"><thead><tr><th>Contact</th><th>Company</th><th>Amount</th><th>Expected close</th></tr></thead><tbody>
+          <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214005974101" target="_blank">Chris Campbell</a></td><td>Climate Lead</td><td class="mono" style="color:var(--amber)">$13,224</td><td class="mono">Apr 30</td></tr>
+        </tbody></table>
+      </div>
+      <div class="stage-group">
+        <div class="stage-header">Proposal (3 deals)</div>
+        <table class="tbl"><thead><tr><th>Contact</th><th>Company</th><th>Amount</th><th>Expected close</th></tr></thead><tbody>
+          <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214651771714" target="_blank">Alexander Clare</a></td><td>Elementum</td><td class="mono" style="color:var(--amber)">$10,200</td><td class="mono">May 31</td></tr>
+          <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank">Laura Shorkey</a></td><td>Priority Power</td><td class="mono">$850</td><td class="mono">May 21</td></tr>
+          <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212067259506" target="_blank">Jessica Stefanko</a></td><td>Urban Sky</td><td class="mono">$850</td><td class="mono">May 23</td></tr>
+        </tbody></table>
+      </div>
+      <div class="stage-group">
+        <div class="stage-header">Negotiation (1 deal)</div>
+        <table class="tbl"><thead><tr><th>Contact</th><th>Company</th><th>Amount</th><th>Expected close</th></tr></thead><tbody>
+          <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212651609385" target="_blank">Sarah Alvarado</a></td><td>INF Associates</td><td class="mono" style="color:var(--green)">$10,000</td><td class="mono">May 15</td></tr>
+        </tbody></table>
+      </div>
+      <div style="padding:10px 0 0;border-top:1px solid var(--b2);display:flex;justify-content:space-between"><span style="font-size:10px;font-weight:700;color:var(--t2)">Total · 5 deals</span><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--amber)">$35,124</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="ins ii"><div class="ins-tag">→ Fix attribution</div><div class="ins-title">Connect Google Ads to HubSpot to unlock spend data and fix GCLID classification</div><div class="ins-body">Jessica Stefanko and Laura Shorkey have GCLIDs but are classified as organic/direct in HubSpot. The native Google Ads integration + GCLID cookie setup (30 min) fixes this permanently and unlocks actual CPC, impression share, and true CAC per keyword. Without this, Cost per Lead and Cost per Demo remain unavailable.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ AI REFERRALS ══════════════ -->
+<div class="page" id="page-ai">
+  <div class="sec">
+    <div class="sec-lbl">AI referral channel · ChatGPT · Copilot · all time</div>
+    <div class="g5">
+      <div class="kpi ka"><div class="kpi-lbl">Total AI contacts</div><div class="kpi-val">18</div><div class="kpi-sub">All time · chatgpt + copilot</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Contact-to-deal rate</div><div class="kpi-val">56%</div><div class="kpi-sub">10 of 18 have deals</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Paying customers</div><div class="kpi-val">1</div><div class="kpi-sub">Chanelle Hedges · since Jan 2025</div></div>
+      <div class="kpi kb"><div class="kpi-lbl">Est. AI-sourced revenue</div><div class="kpi-val">$?</div><div class="kpi-sub">Connect closed deals for value</div></div>
+      <div class="kpi"><div class="kpi-lbl">Ad spend</div><div class="kpi-val">$0</div><div class="kpi-sub">100% organic channel</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="card">
+      <div class="card-title">AI-sourced contacts · sorted by create date ↓</div>
+      <div class="card-sub">HubSpot classifies these as OTHER_CAMPAIGNS with source_data_1 = chatgpt.com or copilot.microsoft.com. "Known AI Query" column for manual logging.</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Name + Title</th><th>AI Source</th><th>Company</th><th>Co. Size</th><th>Industry</th><th>Biggest Challenge</th><th>Known AI Query</th><th>Has Deal</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213009771186" target="_blank">Viktor Chang</a><div class="td-title">—</div></td><td><span class="badge b-ai">AI Referral</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-on">MQL</span></td><td class="mono">Apr 1</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/144196113744" target="_blank">Colin Smith</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Aug 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/135622079019" target="_blank">Aris Spagnuolo</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jul 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/134814851906" target="_blank">Adam Walton</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jul 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/120951549336" target="_blank">Steve Reeves</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jul 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/134015999157" target="_blank">Zachary Anderson</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jul 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/132186307427" target="_blank">Brian Davis</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jun 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/109876079888" target="_blank">Jane Ai</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Mar 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/96534613584" target="_blank">Anthony Taiwo</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Feb 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/89760643905" target="_blank">Mark Iberri</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-deal">Yes · 1</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Jan 2025</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/93082588988" target="_blank">Chanelle Hedges</a><div class="td-title">—</div></td><td><span class="badge b-ai">ChatGPT</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td style="font-size:9px;color:var(--t3)">—</td><td><span class="badge b-cust">Customer</span></td><td><span class="badge s-dw">Deal Won</span></td><td class="mono">Jan 2025</td></tr>
+          <tr><td class="td-name" colspan="10" style="color:var(--t3);font-size:10px;font-style:italic">+ 7 more contacts without deal associations (leads/unqualified)</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="ins iw"><div class="ins-tag">✓ Best deal rate of any channel</div><div class="ins-title">56% contact-to-deal rate — higher than paid search at scale</div><div class="ins-body">AI referrals convert to deals at 56% vs paid search's 83% (but from a tiny sample). Across 18 contacts over 14 months, 10 deals is statistically meaningful. These prospects arrive pre-researched and don't need heavy nurturing.</div></div>
+      <div class="ins ii"><div class="ins-tag">→ Scale with AEO content</div><div class="ins-title">Publish structured comparison content to dominate AI answers</div><div class="ins-body">ChatGPT and Copilot pull from indexed web content. Articles like "ProcureDesk vs Coupa for mid-market", "Best procurement software for manufacturing companies" with structured headings get cited in LLM responses. This directly scales the AI referral channel at zero marginal cost.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ YOUTUBE / CONTENT ══════════════ -->
+<div class="page" id="page-yt">
+  <div class="sec">
+    <div class="sec-lbl">YouTube / Content UTM · all time</div>
+    <div class="g4">
+      <div class="kpi kr"><div class="kpi-lbl">Total contacts</div><div class="kpi-val">3</div><div class="kpi-sub">YouTube + content UTM</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Meetings booked</div><div class="kpi-val">2</div><div class="kpi-sub">Navneet + Viktor</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Deals created</div><div class="kpi-val">2</div><div class="kpi-sub">Both from Navneet (YT)</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Pipeline value</div><div class="kpi-val">$?</div><div class="kpi-sub">Navneet deal amounts not pulled</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="card">
+      <div class="card-title">YouTube / Content UTM contacts · all time · newest first</div>
+      <div class="card-sub">Identified via hs_analytics_source_data_1 containing "youtube" or "foundervideos" or utm_campaign content-related terms</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Name + Title</th><th>Company</th><th>Video / UTM Source</th><th>Campaign</th><th>Lifecycle</th><th>Deal amount</th><th>Deal stage</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213009771186" target="_blank">Viktor Chang</a><div class="td-title">—</div></td><td>—</td><td><span class="badge b-ai">approval-workflows</span></td><td>Content UTM</td><td><span class="badge b-mql">MQL</span></td><td class="mono">—</td><td>—</td><td><span class="badge s-on">Meeting booked</span></td><td class="mono">Apr 1, 2026</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/209940343945" target="_blank">GASOVO</a><div class="td-title">—</div></td><td>—</td><td><span class="badge b-yt">expense-management</span></td><td>Content UTM</td><td><span class="badge b-lead">Lead</span></td><td class="mono">—</td><td>—</td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Mar 18, 2026</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/207525198720" target="_blank">Navneet Janda</a><div class="td-title">—</div></td><td>—</td><td><span class="badge b-yt">foundervideos/youtubechannel</span></td><td>YouTube · Founder videos</td><td><span class="badge" style="background:rgba(245,158,11,.12);color:var(--amber2)">Evangelist</span></td><td class="mono" style="color:var(--amber)">2 deals</td><td><span class="badge b-meet">Active</span></td><td><span class="badge s-do">2 Deals Open</span></td><td class="mono">Mar 6, 2026</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="ins iw"><div class="ins-tag">✓ Highest Q1 deal-per-contact ratio</div><div class="ins-title">YouTube founder videos: 2 deals from 1 contact — scale this</div><div class="ins-body">Navneet Janda arrived via the foundervideos/youtubechannel campaign and generated 2 deal associations — the best deal-per-contact ratio in Q1. Founder-led video content builds trust at scale and attracts buyers already in evaluation mode. Investing in consistent YouTube content is one of the highest-ROI moves available.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ ORGANIC SEARCH ══════════════ -->
+<div class="page" id="page-organic">
+  <div class="warn-banner">
+    <span class="warn-icon">⚠</span>
+    <div class="warn-body"><strong>90%+ of organic keywords are hidden (SSL masking).</strong> Google doesn't pass keyword data in referrer headers — most contacts show "Unknown keywords (SSL)". To unlock keyword-level attribution, connect Google Search Console to HubSpot via <em>Marketing → Ads → Integrations</em>.</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Organic search KPIs · April MTD</div>
+    <div class="g4">
+      <div class="kpi kg"><div class="kpi-lbl">Organic demos (MTD)</div><div class="kpi-val">7</div><div class="kpi-sub">54% of all demos · Apr 1–10</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Avg deal value (organic)</div><div class="kpi-val">$5,944</div><div class="kpi-sub">Lower than direct/paid</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Top traffic page (Ahrefs)</div><div class="kpi-val">2,412</div><div class="kpi-sub">/purchase-order-software/ · Apr 2026</div></div>
+      <div class="kpi kb"><div class="kpi-lbl">Bing organic contacts</div><div class="kpi-val">1</div><div class="kpi-sub">Kim Parsons · Contact Us · underexplored</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Top pages by organic traffic · Ahrefs · April 2026</div>
+    <div class="card">
+      <div class="card-title">Traffic vs demo conversion opportunity</div>
+      <div class="card-sub">Ranked by Ahrefs estimated monthly visits. Demo CVR estimated from HubSpot referrer data. Pages with high traffic and low demo CVR are your biggest conversion opportunities.</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Page</th><th>Top keyword</th><th>Monthly traffic</th><th>Keywords</th><th>Best position</th><th>Demo CVR</th><th>Opportunity</th></tr></thead>
+        <tbody>
+          <tr><td style="max-width:200px;word-break:break-all"><a href="https://www.procuredesk.com/purchase-order-software/" target="_blank">/purchase-order-software/</a></td><td class="mono">purchase order software</td><td class="mono">2,412</td><td class="mono">81</td><td class="mono">#2</td><td class="mono" style="color:var(--green)">Med</td><td><span class="badge b-org">High traffic · add demo CTA</span></td></tr>
+          <tr><td><a href="https://www.procuredesk.com/" target="_blank">Homepage</a></td><td class="mono">procuredesk</td><td class="mono">682</td><td class="mono">11</td><td class="mono">#1</td><td class="mono" style="color:var(--green)">High</td><td><span class="badge b-meet">Brand traffic · converting well</span></td></tr>
+          <tr><td><a href="https://www.procuredesk.com/glossary/purchase-order-example/" target="_blank">/glossary/purchase-order-example/</a></td><td class="mono">purchase order example</td><td class="mono">369</td><td class="mono">28</td><td class="mono">#2</td><td class="mono" style="color:var(--red)">~0%</td><td><span class="badge b-ai">Informational · add demo CTA</span></td></tr>
+          <tr><td><a href="https://www.procuredesk.com/purchase-order-approval-software/" target="_blank">/purchase-order-approval-software/</a></td><td class="mono">purchase order approval sw.</td><td class="mono">173</td><td class="mono">24</td><td class="mono">#1</td><td class="mono" style="color:var(--amber)">Low</td><td><span class="badge b-ai">🔥 #1 ranking · low conversion — fix CTA</span></td></tr>
+          <tr><td><a href="https://www.procuredesk.com/accounts-payable/invoice-approval-workflow-software/" target="_blank">/invoice-approval-workflow-sw/</a></td><td class="mono">accounts payable approval sw.</td><td class="mono">155</td><td class="mono">13</td><td class="mono">#5</td><td class="mono" style="color:var(--red)">~0%</td><td><span class="badge b-ai">High intent page · missing demo form</span></td></tr>
+          <tr><td><a href="https://www.procuredesk.com/procure-to-pay-system/" target="_blank">/procure-to-pay-system/</a></td><td class="mono">procure to pay software</td><td class="mono">142</td><td class="mono">24</td><td class="mono">#8</td><td class="mono" style="color:var(--red)">~0%</td><td><span class="badge b-ai">Buying keyword · add inline demo CTA</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-lbl">Organic contacts · April MTD · newest first</div>
+    <div class="card">
+      <div class="card-title">Contacts from organic search · first-touch = ORGANIC_SEARCH</div>
+      <div class="card-sub">Keyword shown as SSL for most Google traffic. Entry page from hs_analytics_source_data_1 where available.</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Name + Title</th><th>Company</th><th>Entry page</th><th>Keyword</th><th>Has Deal</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214871810426" target="_blank">Claire Edwards</a><div class="td-title">—</div></td><td>—</td><td class="mono">/contact</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-na">No Action</span></td><td class="mono">Apr 10</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214697320971" target="_blank">Sol Marfori</a><div class="td-title">—</div></td><td>—</td><td class="mono">/request-a-demo</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu" style="font-size:10px">⚡ Follow Up NOW</span></td><td class="mono">Apr 9</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/208564162188" target="_blank">Gary Zhang</a><div class="td-title">—</div></td><td>—</td><td class="mono">/request-a-demo</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu" style="font-size:10px">⚡ Follow Up NOW</span></td><td class="mono">Apr 8</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214062256790" target="_blank">Pradeep Bohra</a><div class="td-title">—</div></td><td>—</td><td class="mono">/request-a-demo</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 7</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214030305384" target="_blank">Yaseen Inamdar</a><div class="td-title">—</div></td><td>—</td><td class="mono">/request-a-demo</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 7</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213194909336" target="_blank">Caroline Rooney</a><div class="td-title">—</div></td><td>—</td><td class="mono">Google · meeting</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-on">MQL</span></td><td class="mono">Apr 2</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212871356326" target="_blank">Roscoe Cummins</a><div class="td-title">—</div></td><td>—</td><td class="mono">DuckDuckGo</td><td class="mono" style="color:var(--t3)">SSL hidden</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-on">MQL</span></td><td class="mono">Apr 2</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DIRECT TRAFFIC ══════════════ -->
+<div class="page" id="page-direct">
+  <div class="sec">
+    <div class="sec-lbl">Direct traffic KPIs · April MTD · GCLID contacts auto-excluded</div>
+    <div class="g4">
+      <div class="kpi kb"><div class="kpi-lbl">Direct demo conversions (MTD)</div><div class="kpi-val">3</div><div class="kpi-sub">GCLID contacts excluded</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Avg deal value (direct)</div><div class="kpi-val">$9,087</div><div class="kpi-sub">Highest avg of all channels</div><div class="kpi-delta kd-up">↑ 53% above organic</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Meeting conversion rate</div><div class="kpi-val">33%</div><div class="kpi-sub">1 of 3 direct contacts booked</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Top entry page</div><div class="kpi-val">/request-a-demo</div><div class="kpi-sub">Most direct conversions start here</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="card">
+      <div class="card-title">Direct traffic contacts · April MTD · GCLID contacts auto-excluded · newest first</div>
+      <div class="card-sub">Laura Shorkey has a GCLID and appears in Paid Media only. These are genuinely direct (no GCLID, no referrer).</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Name + Title</th><th>Company</th><th>Co. Size</th><th>Industry</th><th>Entry page</th><th>Has Deal</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214678627435" target="_blank">Oliver Hill</a><div class="td-title">—</div></td><td>—</td><td>—</td><td>—</td><td class="mono">procuredesk.com/</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 9</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank" style="color:var(--t3);pointer-events:none;text-decoration:none">Laura Shorkey</a><div class="td-title" style="color:var(--t3)">[GCLID → moved to Paid Media]</div></td><td colspan="7" style="font-size:9px;color:var(--t3);font-style:italic">Auto-excluded: GCLID detected. View in Paid Media section.</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213357683811" target="_blank">Devin Nielsen</a><div class="td-title">—</div></td><td>—</td><td>—</td><td>—</td><td class="mono">/request-a-demo</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-on">MQL · Meeting</span></td><td class="mono">Apr 3</td></tr>
+          <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213551228472" target="_blank">Sean Bosun</a><div class="td-title">—</div></td><td>—</td><td>—</td><td>—</td><td class="mono">/request-a-demo</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 9</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="ins iw"><div class="ins-tag">✓ Brand strength signal</div><div class="ins-title">Direct visitors are the warmest leads — $9,087 avg deal value</div><div class="ins-body">Direct traffic contacts know ProcureDesk before they arrive. Their deal value is 53% above organic average. Retargeting campaigns to site visitors who haven't booked a demo yet would compound this channel significantly.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ THIS WEEK ══════════════ -->
+<div class="page" id="page-week">
+  <div class="sec">
+    <div class="sec-lbl">CEO weekly brief · Apr 4–10, 2026 · all channels</div>
+    <div class="g4">
+      <div class="kpi kt"><div class="kpi-lbl">New contacts (week)</div><div class="kpi-val">50+</div><div class="kpi-sub">Organic · paid · direct · AI</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">Demo conversions (week)</div><div class="kpi-val">13</div><div class="kpi-sub">All sources · form + meetings</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Meetings booked (week)</div><div class="kpi-val">7</div><div class="kpi-sub">54% of demo converters</div></div>
+      <div class="kpi kr"><div class="kpi-lbl">Needs follow-up NOW</div><div class="kpi-val">4</div><div class="kpi-sub">Demo form · no meeting booked</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">CEO talking points · Apr 4–10 · Metric · Result · So what</div>
+        <div class="card-sub">Facts + implication only. No marketing copy.</div>
+        <div class="tp-item tp-g"><div class="tp-metric">Demo conversions · week</div><div class="tp-result">13 demos · 7 meetings + 4 form-only</div><div class="tp-sowhat">On pace for ~52/month. 2pts above 50/mo target if pace holds through April.</div></div>
+        <div class="tp-item tp-a"><div class="tp-metric">Paid search · week</div><div class="tp-result">3 MQLs · $23K+ pipeline created</div><div class="tp-sowhat">Campaign in week 2. First-touch rate is 100% MQL — every paid contact booked a meeting. Too early to project, but trajectory is strong.</div></div>
+        <div class="tp-item tp-r"><div class="tp-metric">Form fills without meeting · week</div><div class="tp-result">4 contacts · Sol Marfori, Gary Zhang, Pradeep Bohra, Yaseen Inamdar</div><div class="tp-sowhat">Demo intent confirmed. No follow-up yet recorded in HubSpot. 24h window to convert. Assign to sales now.</div></div>
+        <div class="tp-item tp-b"><div class="tp-metric">Template page conversions · week</div><div class="tp-result">9 template downloads · 0 demo conversions</div><div class="tp-sowhat">These pages get consistent traffic (Ahrefs: 2,412 visits/mo for /purchase-order-software/) but have no demo path. One inline CTA could add 5–10 demos/month.</div></div>
+        <div class="tp-item tp-b"><div class="tp-metric">AI referrals · MTD</div><div class="tp-result">2 contacts (Otty via Copilot, Viktor via AI referral)</div><div class="tp-sowhat">Zero spend channel growing. Viktor Chang already an MQL with meeting booked. Not visible in standard HubSpot reports.</div></div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-title">Conversions by source · week</div>
+          <div class="card-sub">All on same time window: Apr 4–10</div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Organic (54%)</span><span class="bar-val">7</span></div><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--green)"></div></div></div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Paid Search (23%)</span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--purple)"></div></div></div>
+          <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Direct (23%)</span><span class="bar-val">3</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--blue)"></div></div></div>
+        </div>
+        <div class="q2-tracker">
+          <div class="q2t-title">Q2 Goal Tracker · Apr 10</div>
+          <div class="q2t-row"><span class="q2t-label">Demos MTD</span><span class="q2t-curr" style="color:var(--amber)">15</span><span class="q2t-vs">of 50/mo target</span><span class="q2t-status" style="background:rgba(245,158,11,.12);color:var(--amber2)">30% · Pacing</span></div>
+          <div class="q2t-row"><span class="q2t-label">Close rate current</span><span class="q2t-curr" style="color:var(--red)">~20%</span><span class="q2t-vs">target: 30% by June</span><span class="q2t-status" style="background:rgba(239,68,68,.12);color:var(--red2)">10pp below target</span></div>
+          <div class="q2t-row"><span class="q2t-label">Paid pipeline MTD</span><span class="q2t-curr" style="color:var(--amber)">$35,124</span><span class="q2t-vs">of $120K Q2 target</span><span class="q2t-status" style="background:rgba(245,158,11,.12);color:var(--amber2)">29% · On pace</span></div>
+          <div class="q2t-row"><span class="q2t-label">Gap to $1M Q2 ARR</span><span class="q2t-curr" style="color:var(--red)">$964,876</span><span class="q2t-vs">remaining · $35K in paid pipeline</span><span class="q2t-status" style="background:rgba(239,68,68,.12);color:var(--red2)">Early stage</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ THIS MONTH ══════════════ -->
+<div class="page" id="page-month">
+  <div class="sec">
+    <div class="sec-lbl">April 2026 · Month to date · Apr 1–10 · all data on same time window</div>
+    <div class="g4">
+      <div class="kpi kt"><div class="kpi-lbl">Demo conversions (MTD)</div><div class="kpi-val">15</div><div class="kpi-sub">All sources · Apr 1–10</div><div class="kpi-delta kd-warn">30% of 50/mo target</div></div>
+      <div class="kpi kp"><div class="kpi-lbl">Paid MQLs (MTD)</div><div class="kpi-val">4</div><div class="kpi-sub">3 PPC + 1 content UTM · Apr 1–10</div><div class="kpi-delta kd-up">100% meeting rate</div></div>
+      <div class="kpi kg"><div class="kpi-lbl">New contacts (MTD)</div><div class="kpi-val">200+</div><div class="kpi-sub">All sources · Apr 1–10 sample</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Paid pipeline (MTD)</div><div class="kpi-val">$35,124</div><div class="kpi-sub">5 deals · Apr 1–10</div><div class="kpi-delta kd-warn">29% of $120K Q2 target</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">All paid + campaign contacts · April MTD</div>
+        <div class="card-sub">Date filter: Apr 1–10 only. Sorted newest first.</div>
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Channel</th><th>Conversion</th><th>Stage</th><th>Deal</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214651771714" target="_blank">Alexander Clare</a></td><td><span class="badge b-paid">pmax</span></td><td>Meeting</td><td><span class="badge b-mql">MQL</span></td><td class="mono">$10,200</td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 9</td></tr>
+            <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214613214022" target="_blank">Heather Kolpaczyk</a></td><td><span class="badge b-paid">[001] high intent</span></td><td>Meeting</td><td><span class="badge b-lead">Lead</span></td><td class="mono">—</td><td><span class="badge s-fu">Follow Up</span></td><td class="mono">Apr 9</td></tr>
+            <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214005974101" target="_blank">Chris Campbell</a></td><td><span class="badge b-paid">[001] high intent</span></td><td>Meeting</td><td><span class="badge b-mql">MQL</span></td><td class="mono">$13,224</td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 7</td></tr>
+            <tr><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank">Laura Shorkey</a></td><td><span class="badge b-shift">GCLID (direct)</span></td><td>Meeting</td><td><span class="badge b-mql">MQL</span></td><td class="mono">$850</td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Apr 6</td></tr>
+            <tr><td>Viktor Chang</td><td><span class="badge b-ai">Content UTM</span></td><td>Meeting</td><td><span class="badge b-mql">MQL</span></td><td class="mono">—</td><td><span class="badge s-on">MQL</span></td><td class="mono">Apr 1</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">MQL rate by channel · April MTD</div>
+        <div class="card-sub">Same period: Apr 1–10 for all channels</div>
+        <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Paid search (100%)</span><span class="bar-val">4/4</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--purple)"></div></div></div>
+        <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Content UTM (100%)</span><span class="bar-val">1/1</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--amber)"></div></div></div>
+        <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Direct (33%)</span><span class="bar-val">1/3</span></div><div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--blue)"></div></div></div>
+        <div class="bar-item"><div class="bar-hd"><span class="bar-lbl">Organic (22%)</span><span class="bar-val">~2/7+</span></div><div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--green)"></div></div></div>
+        <hr class="d">
+        <div style="font-size:10px;color:var(--t3);line-height:1.6;padding-top:4px">Paid search's 100% rate is from a 4-contact sample. Organic's 22% is from a larger sample and is more statistically reliable. Both are on the same Apr 1–10 window.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ Q2 2026 ══════════════ -->
+<div class="page" id="page-q2">
+  <div class="sec">
+    <div class="sec-lbl">Q2 2026 · Apr 1–10 · 10 days in · all data on same time window</div>
+    <div class="g4">
+      <div class="kpi kg"><div class="kpi-lbl">Paid contacts (Q2 to date)</div><div class="kpi-val">4</div><div class="kpi-sub">GCLID-verified · Apr 1–10</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Paid pipeline (Q2 to date)</div><div class="kpi-val">$35,124</div><div class="kpi-sub">5 deals · all from Apr 1–10</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Q2 pace vs Q1</div><div class="kpi-val">3×</div><div class="kpi-sub">Q1 had 2 paid contacts all quarter</div></div>
+      <div class="kpi kp"><div class="kpi-lbl">Top keywords (Q2)</div><div class="kpi-val">2</div><div class="kpi-sub">"procurement sw." · "purchase req. sw."</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="edit-block">
+        <div class="edit-title">Q2 Team Targets · editable · set by team</div>
+        <div class="edit-row"><span class="edit-lbl">Paid contacts target (Q2)</span><input type="number" placeholder="e.g. 20" /></div>
+        <div class="edit-row"><span class="edit-lbl">Paid pipeline target ($)</span><input type="number" placeholder="e.g. 120000" /></div>
+        <div class="edit-row"><span class="edit-lbl">Demo target / month</span><input type="number" placeholder="e.g. 50" /></div>
+        <div class="edit-row"><span class="edit-lbl">Close rate target (%)</span><input type="number" placeholder="e.g. 30" /></div>
+        <div class="edit-row"><span class="edit-lbl">ACV target ($)</span><input type="number" placeholder="e.g. 13000" /></div>
+        <div class="edit-row"><span class="edit-lbl">ARR goal ($)</span><input type="number" placeholder="e.g. 1000000" /></div>
+        <div style="font-size:9px;color:var(--t3);margin-top:8px">These fields are for manual entry — not auto-calculated. They're used as context for this view only.</div>
+      </div>
+      <div class="model-block">
+        <div class="model-title">📊 Sachin's Q2 Model · Read-only reference</div>
+        <div class="model-row"><span class="model-lbl">Direct channel target</span><span class="model-val">$494K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">New demos from paid (May+)</span><span class="model-val">$104K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">Marketing demo target</span><span class="model-val">50+/month by May</span></div>
+        <div class="model-row"><span class="model-lbl">Total marketing model</span><span class="model-val">~$598K ARR</span></div>
+        <div class="model-row"><span class="model-lbl">Gap to $1M</span><span class="model-val" style="color:var(--red)">$248K</span></div>
+        <div class="model-row"><span class="model-lbl">Gap closed by paid media</span><span class="model-val">~$104K modeled</span></div>
+        <div style="font-size:9px;color:var(--t3);margin-top:8px;border-top:1px solid var(--b1);padding-top:8px">Read-only. These are Sachin's model numbers, not auto-calculated from live data.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="card">
+      <div class="card-title">Q2 paid deals pipeline · Apr 1–10</div>
+      <div class="card-sub">All deals created from paid contacts in Q2 to date. Same date window as all other Q2 metrics.</div>
+      <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Deal</th><th>Contact</th><th>Amount</th><th>Stage</th><th>Close est.</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--t1)">Climate Lead</strong></td><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214005974101" target="_blank">Chris Campbell</a></td><td class="mono" style="color:var(--amber)">$13,224</td><td><span class="badge b-meet">Discovery</span></td><td class="mono">Apr 30</td><td><span class="badge s-on">On track</span></td></tr>
+          <tr><td><strong style="color:var(--t1)">Elementum</strong></td><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/214651771714" target="_blank">Alexander Clare</a></td><td class="mono" style="color:var(--amber)">$10,200</td><td><span class="badge b-form">Proposal</span></td><td class="mono">May 31</td><td><span class="badge s-on">On track</span></td></tr>
+          <tr><td><strong style="color:var(--t1)">INF Associates</strong></td><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212651609385" target="_blank">Sarah Alvarado</a></td><td class="mono" style="color:var(--green)">$10,000</td><td><span class="badge b-mql">Negotiation</span></td><td class="mono">May 15</td><td><span class="badge s-on">On track</span></td></tr>
+          <tr><td><strong style="color:var(--t1)">Priority Power</strong></td><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/213964035975" target="_blank">Laura Shorkey</a></td><td class="mono">$850</td><td><span class="badge b-form">Proposal</span></td><td class="mono">May 21</td><td><span class="badge s-fu">ACV low</span></td></tr>
+          <tr><td><strong style="color:var(--t1)">Urban Sky</strong></td><td><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212067259506" target="_blank">Jessica Stefanko</a></td><td class="mono">$850</td><td><span class="badge b-form">Proposal</span></td><td class="mono">May 23</td><td><span class="badge s-fu">ACV low</span></td></tr>
+          <tr style="border-top:1px solid var(--b2)"><td colspan="2" style="font-weight:700;color:var(--t1)">Total Q2 paid pipeline</td><td class="mono" style="color:var(--amber);font-weight:700">$35,124</td><td colspan="3"></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ Q1 2026 ══════════════ -->
+<div class="page" id="page-q1">
+  <div class="sec">
+    <div class="sec-lbl">Q1 2026 · Jan 1 – Mar 31 · Full quarter · all data on same window</div>
+    <div class="g4">
+      <div class="kpi kg"><div class="kpi-lbl">Paid contacts (full Q1)</div><div class="kpi-val">2</div><div class="kpi-sub">Sarah Alvarado + Gustavo Teste · both Mar 31</div></div>
+      <div class="kpi ka"><div class="kpi-lbl">Paid MQLs (Q1)</div><div class="kpi-val">1</div><div class="kpi-sub">Sarah Alvarado · 50% MQL rate</div></div>
+      <div class="kpi kt"><div class="kpi-lbl">Paid deals (Q1)</div><div class="kpi-val">1</div><div class="kpi-sub">INF Associates · $10K · Negotiation</div></div>
+      <div class="kpi kr"><div class="kpi-lbl">Q1 campaign note</div><div class="kpi-val">Mar 31</div><div class="kpi-sub">Campaign launched last day of Q1 — both contacts on day 1</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Q1 paid contacts · full detail · sorted newest first</div>
+        <div class="card-sub">Campaign started Mar 31 — entire Q1 paid activity is from a single day</div>
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Name + Title</th><th>Campaign</th><th>Keyword</th><th>Conversion</th><th>Has Deal</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody>
+            <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212651609385" target="_blank">Sarah Alvarado</a><div class="td-title">INF Associates</div></td><td><span class="badge b-paid">[001] high intent</span></td><td class="mono" style="color:var(--amber)">"purchase req. sw."</td><td>Meeting booked</td><td><span class="badge b-deal">Yes · $10K</span></td><td><span class="badge s-do">Deal Open</span></td><td class="mono">Mar 31</td></tr>
+            <tr><td class="td-name"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/212758390800" target="_blank">Gustavo Teste</a><div class="td-title">—</div></td><td><span class="badge b-paid">[001] high intent</span></td><td class="mono" style="color:var(--amber)">"procurement software"</td><td>Demo form</td><td><span class="badge b-lead">No</span></td><td><span class="badge s-na">Review · possible test</span></td><td class="mono">Mar 31</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Q1 other channels standout</div>
+        <div class="card-sub">YouTube campaign produced the best Q1 deal-per-contact ratio</div>
+        <div style="background:var(--bg5);border:1px solid rgba(245,158,11,.12);border-radius:9px;padding:13px 15px;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:6px">🏆 YouTube → 2 deals from 1 contact</div>
+          <div style="font-size:11px;color:var(--t2)"><a href="https://app.hubspot.com/contacts/3347161/record/0-1/207525198720" target="_blank">Navneet Janda</a> · foundervideos/youtubechannel · Mar 6, 2026</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:4px;line-height:1.5">2 associated deals — highest deal-per-contact of any channel in Q1. Founder-led video is working. This is the most underinvested high-ROI channel.</div>
+        </div>
+        <div style="background:var(--bg4);border:1px solid var(--b1);border-radius:8px;padding:11px 13px">
+          <div style="font-size:10px;font-weight:600;color:var(--t2);margin-bottom:5px">AI referrals contributed 1 paying customer in Q1 (all time)</div>
+          <div style="font-size:10px;color:var(--t3);line-height:1.5">Chanelle Hedges became a customer via ChatGPT referral — Jan 2025. AI channel has produced 10 deals since. 56% contact-to-deal rate, $0 spend.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const pages={
+  dashboard:['Marketing Dashboard · April 2026 MTD','All channels · HubSpot CRM · First-touch attribution · Apr 1–10'],
+  q2goals:['Marketing → Q2 Goals · April MTD','How marketing contributes to Sachin\'s $1M Q2 plan'],
+  paid:['Paid Media · 6 verified contacts','GCLID-verified · Campaign started March 2026 only'],
+  ai:['AI Referrals · ChatGPT & Copilot','18 contacts · 10 deals · 1 customer · Zero ad spend'],
+  yt:['YouTube / Content UTM','foundervideos · approval-workflows · content campaigns'],
+  organic:['Organic Search · All engines','April MTD · Ahrefs top pages · first-touch only'],
+  direct:['Direct Traffic · Brand-aware visitors · GCLID excluded','Highest avg deal value: $9,087 · Apr MTD'],
+  week:['CEO Weekly Brief · Apr 4–10, 2026','All channels · same time window · Fact + Implication format'],
+  month:['This Month · April 2026 MTD','Apr 1–10 · all metrics on same date window'],
+  q2:['Q2 2026 · Quarter to date · Apr 1–10','10 days in · editable targets + Sachin\'s model'],
+  q1:['Q1 2026 · Full quarter recap','Jan 1 – Mar 31 · Paid campaign launched Mar 31'],
+};
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>{if(n.getAttribute('onclick')==="go('"+id+"')")n.classList.add('active')});
+  if(pages[id]){document.getElementById('tb-t').textContent=pages[id][0];document.getElementById('tb-s').textContent=pages[id][1]}
+}
+</script>
+</body>
+</html>
