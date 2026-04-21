@@ -1,0 +1,3667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProcureDesk · Marketing Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1220;--surface:#141B2C;--surface-2:#1A2238;--border:rgba(255,255,255,0.07);--border-2:rgba(255,255,255,0.10);--text:#E6EAF3;--text-2:#BCC4D6;--muted:#8892A8;--subtle:#5A6178;--green:#34D399;--green-bg:rgba(52,211,153,0.12);--red:#F87171;--red-bg:rgba(248,113,113,0.12);--orange:#FBBF24;--orange-bg:rgba(251,191,36,0.12);--blue:#60A5FA;--blue-bg:rgba(96,165,250,0.12);--purple:#A78BFA;--purple-bg:rgba(167,139,250,0.12);--yellow:#FCD34D;--yellow-bg:rgba(252,211,77,0.12);--sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+main{padding:24px 32px 60px;min-width:0}
+.brand{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.brand .logo{width:32px;height:32px;background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:15px}
+.brand-name{font-weight:600;font-size:14px}
+.brand-sub{color:var(--muted);font-size:11px}
+.nav-group{padding:14px 12px 6px}
+.nav-group-title{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--subtle);padding:0 8px 8px;font-weight:500}
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:5px;font-size:13px;cursor:pointer;color:var(--text-2);margin-bottom:1px}
+.nav-item:hover{background:var(--surface-2);color:var(--text)}
+.nav-item.active{background:var(--blue-bg);color:var(--blue)}
+.nav-item .icon{display:inline-block;width:16px;text-align:center;opacity:0.8;margin-right:2px;font-size:11px}
+.nav-item .count{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--surface-2);padding:1px 7px;border-radius:10px;min-width:24px;text-align:center}
+.nav-item.active .count{color:var(--blue);background:var(--blue-bg)}
+.nav-item .date-hint{font-family:var(--mono);font-size:10px;color:var(--subtle);background:var(--surface-2);padding:1px 6px;border-radius:3px}
+.nav-item.active .date-hint{color:var(--blue);background:var(--blue-bg)}
+.sidebar-footer{margin-top:auto;padding:20px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);line-height:1.8}
+.sidebar-footer strong{color:var(--text-2);font-weight:500}
+header.top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+header.top h1{margin:0;font-size:18px;font-weight:600}
+header.top .subtitle{color:var(--muted);font-size:12.5px;margin-top:3px}
+header.top .meta{text-align:right}
+header.top .live{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);color:var(--green);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:500;letter-spacing:0.05em}
+header.top .live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,0.25);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:0.5}}
+header.top .updated{display:block;color:var(--muted);font-size:11px;margin-top:5px;font-family:var(--mono)}
+.section-title{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin:28px 0 12px;font-weight:500}
+.block-title{font-size:14px;font-weight:600;margin:0 0 2px}
+.block-sub{font-size:11.5px;color:var(--muted);margin-bottom:14px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.kpi-grid.k4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
+.kpi .label{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:500}
+.kpi .value{font-size:30px;font-weight:600;line-height:1.05;letter-spacing:-0.02em}
+.kpi .value.small{font-size:22px}
+.kpi .sub{margin-top:10px;font-size:11.5px;color:var(--muted);min-height:16px}
+.kpi .chip{margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;letter-spacing:0.01em}
+.chip.green{background:var(--green-bg);color:var(--green)}.chip.red{background:var(--red-bg);color:var(--red)}.chip.orange{background:var(--orange-bg);color:var(--orange)}.chip.blue{background:var(--blue-bg);color:var(--blue)}.chip.purple{background:var(--purple-bg);color:var(--purple)}.chip.yellow{background:var(--yellow-bg);color:var(--yellow)}.chip.muted{background:var(--surface-2);color:var(--muted)}
+.progress{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-top:10px}
+.progress>span{display:block;height:100%;border-radius:3px;background:var(--blue)}
+.progress.off>span{background:var(--red)}.progress.warn>span{background:var(--orange)}.progress.good>span{background:var(--green)}
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:20px}
+.two-col.even{grid-template-columns:1fr 1fr}.two-col.main{grid-template-columns:1.6fr 1fr}
+table.dense{width:100%;border-collapse:collapse;font-size:12.5px}
+table.dense th{text-align:left;font-weight:500;padding:10px 12px 10px 0;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)}
+table.dense td{padding:12px 12px 12px 0;border-bottom:1px solid var(--border);vertical-align:middle}
+table.dense tr:last-child td{border-bottom:none}
+table.dense td.num,table.dense th.num{text-align:right;font-family:var(--mono)}
+table.dense a{color:var(--blue)}
+table.dense a:hover{text-decoration:underline}
+.empty-row{padding:24px 0;text-align:center;color:var(--muted);font-style:italic}
+.bad-num{color:var(--red)}.good-num{color:var(--green)}.warn-num{color:var(--orange)}.muted-num{color:var(--muted)}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;padding:12px 0}
+.donut-legend{width:100%;margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.donut-legend .row{display:flex;align-items:center;gap:8px;font-size:12px}
+.donut-legend .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.donut-legend .name{flex:1;color:var(--text-2)}
+.donut-legend .pct{font-family:var(--mono);color:var(--muted);font-size:11px}
+.chart-card{padding:18px 20px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.chart-head .legend{font-size:11px;color:var(--muted)}
+.action-item{padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--border-2);border-radius:6px;margin-bottom:10px;font-size:13px}
+.action-item.urgent{border-left-color:var(--red)}.action-item.warm{border-left-color:var(--orange)}.action-item.open{border-left-color:var(--blue)}.action-item.won{border-left-color:var(--green)}
+.action-item .name{font-weight:600;font-size:13.5px;margin-bottom:3px}
+.action-item .name a{color:var(--text)}
+.action-item .name a:hover{color:var(--blue)}
+.action-item .meta{color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+.action-item .detail{margin-top:6px;font-size:12px;color:var(--text-2)}
+.pipeline-stage{padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:6px;margin-bottom:10px}
+.pipeline-stage-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pipeline-stage-head .name{font-weight:500;font-size:13px}
+.pipeline-stage-head .meta{color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+.pipeline-stage .deals{display:flex;flex-wrap:wrap;gap:6px}
+.pipeline-stage .deal-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:4px;background:var(--surface-2);font-size:12px;color:var(--text-2)}
+.pipeline-stage .deal-pill a{color:var(--text-2)}
+.pipeline-stage .deal-pill a:hover{color:var(--blue)}
+.pipeline-stage .deal-pill .amt{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.goal-card{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 24px;background:var(--surface);padding:20px 22px;border-radius:8px;border:1px solid var(--border);margin-bottom:20px}
+.goal-card .g-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:4px}
+.goal-card .g-value{font-size:16px;font-weight:600}
+.goal-card .g-actual{margin-top:4px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.target-inputs{margin-bottom:20px;padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.target-inputs h4{margin:0 0 10px;font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+.target-inputs .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.target-inputs label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.target-inputs input{width:100%;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:12.5px;outline:none}
+.target-inputs input:focus{border-color:var(--blue)}
+.note{color:var(--muted);font-size:11.5px;font-style:italic;padding:10px 14px;border-left:2px solid var(--border-2);background:rgba(255,255,255,0.01);border-radius:0 4px 4px 0;margin:10px 0}
+.funnel-row{display:grid;grid-template-columns:200px 1fr 110px;gap:16px;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)}
+.funnel-row:last-child{border-bottom:none}
+.funnel-row .flabel{font-size:12.5px;color:var(--text-2)}
+.funnel-row .flabel small{display:block;color:var(--muted);font-size:10.5px;font-style:italic;margin-top:2px}
+.funnel-row .fbar{height:24px;background:var(--blue);border-radius:3px;min-width:2px}
+.funnel-row .fbar.unavail{background:repeating-linear-gradient(45deg,var(--border-2),var(--border-2) 3px,transparent 3px,transparent 6px)}
+.funnel-row .fcount{text-align:right;font-family:var(--mono);font-weight:600;font-size:15px}
+.funnel-row .fcount small{display:block;font-family:var(--sans);font-weight:400;color:var(--muted);font-size:10.5px;letter-spacing:0.05em;text-transform:uppercase;margin-top:2px}
+.funnel-row .fcount.unavail{color:var(--muted);font-family:var(--sans);font-weight:400;font-size:12px;font-style:italic}
+@media (max-width:1200px){.kpi-grid,.kpi-grid.k4{grid-template-columns:repeat(2,1fr)}.two-col,.two-col.main,.two-col.even{grid-template-columns:1fr}.goal-card{grid-template-columns:1fr 1fr}.target-inputs .grid{grid-template-columns:1fr 1fr}}
+@media (max-width:800px){.layout{grid-template-columns:1fr}aside{position:static;height:auto}main{padding:20px}.kpi-grid,.kpi-grid.k4{grid-template-columns:1fr}.goal-card{grid-template-columns:1fr}.target-inputs .grid{grid-template-columns:1fr}.funnel-row{grid-template-columns:130px 1fr 70px;gap:10px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+<div class="brand">
+<div class="logo">P</div>
+<div><div class="brand-name">ProcureDesk</div><div class="brand-sub">Marketing Intelligence</div></div>
+</div>
+<div class="nav-group">
+<div class="nav-group-title">Overview</div>
+<a class="nav-item" data-page="q2-goals"><span><span class="icon">◎</span> Q2 Goals</span></a>
+<a class="nav-item" data-page="dashboard"><span><span class="icon">▦</span> Dashboard</span></a>
+</div>
+<div class="nav-group">
+<div class="nav-group-title">Channels</div>
+<a class="nav-item" data-page="paid"><span>Paid Media</span><span class="count" id="c-paid">0</span></a>
+<a class="nav-item" data-page="ai"><span>AI Referrals</span><span class="count" id="c-ai">0</span></a>
+<a class="nav-item" data-page="youtube"><span>YouTube</span><span class="count" id="c-yt">0</span></a>
+<a class="nav-item" data-page="organic"><span>Organic Search</span><span class="count" id="c-org">0</span></a>
+<a class="nav-item" data-page="direct"><span>Direct Traffic</span><span class="count" id="c-dir">0</span></a>
+</div>
+<div class="nav-group">
+<div class="nav-group-title">Time</div>
+<a class="nav-item time" data-period="week"><span>This Week</span><span class="date-hint" id="h-week">—</span></a>
+<a class="nav-item time" data-period="month"><span>This Month</span><span class="date-hint" id="h-month">—</span></a>
+<a class="nav-item time" data-period="q2"><span>Q2 2026</span><span class="date-hint">Apr–Jun</span></a>
+<a class="nav-item time" data-period="q1"><span>Q1 2026</span><span class="date-hint">Jan–Mar</span></a>
+</div>
+<div class="sidebar-footer">
+<div><strong>Source:</strong> HubSpot exports</div>
+<div><strong>Attribution:</strong> UTM + first-touch</div>
+<div><strong>Refresh:</strong> Re-run build_data.py</div>
+</div>
+</aside>
+<main>
+<header class="top">
+<div><h1 id="top-title">Marketing Dashboard</h1><div class="subtitle" id="top-subtitle">All channels · UTM + first-touch attribution</div></div>
+<div class="meta"><span class="live">LIVE</span><div class="updated" id="updated-at"></div></div>
+</header>
+<div id="page-body"></div>
+</main>
+</div>
+<script>
+window.DATA = {
+  "generated_at": "2026-04-20",
+  "target_per_month": 50,
+  "close_rate_target": 0.3,
+  "acv_target": 13000,
+  "paid_pipeline_target": 120000,
+  "q2_arr_goal": 1000000,
+  "deals": [
+    {
+      "deal_id": 59369523858,
+      "deal_name": "Thermionics Laboratory, Inc. ",
+      "amount": 10200.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-20",
+      "create_datetime": "2026-04-20 10:58",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59369523858",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 59271907739,
+      "deal_name": "EJ",
+      "amount": 35000.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-17",
+      "create_datetime": "2026-04-17 06:56",
+      "deal_tags": "SQL; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.052e442bdf48a532f45386979651fb29.1776277037093.1776277037093.1776277037093.1&__hssc=20629287.1.1776277037092&__hsfp=null",
+      "contact_id": 215836495939,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59271907739",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/215836495939"
+    },
+    {
+      "deal_id": 59221939501,
+      "deal_name": "First General Edmonton",
+      "amount": 25000.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-16",
+      "create_datetime": "2026-04-16 17:54",
+      "deal_tags": "SQL; Trial; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/product/ap-automation/",
+      "last_page": "https://www.procuredesk.com/accounts-payable/accounts-payable-automation-quickbooks/",
+      "contact_id": 216044248157,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59221939501",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/216044248157"
+    },
+    {
+      "deal_id": 59234012692,
+      "deal_name": "Armatus Dealer Uplift",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-16",
+      "create_datetime": "2026-04-16 12:52",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "PMAX",
+      "saw_thank_you": true,
+      "utm_source": "google",
+      "utm_campaign": "pmax",
+      "first_page": "https://www.procuredesk.com/?utm_source=google&utm_medium=cpc&utm_campaign=pmax&gad_source=1&gad_campaignid=23698099185&gbraid=0AAAABC5knBUhU4b90qDEMs6Nk3o7G5PWS&gclid=EAIaIQobChMIxsv41pPhkwMVQlpHAR0G5gTcEAAYASAAEgLdY_D_BwE",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.c04a7747fe7f60baccba65cc6a1bdb9c.1776358052309.1776358052309.1776358052309.1&__hssc=20629287.1.1776358052309&__hsfp=null",
+      "contact_id": 214666936845,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59234012692",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214666936845"
+    },
+    {
+      "deal_id": 59247340312,
+      "deal_name": "Game Seven Growth Partners",
+      "amount": 850.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2026-04-15",
+      "create_datetime": "2026-04-15 11:47",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 215813328520,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59247340312",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/215813328520"
+    },
+    {
+      "deal_id": 59165752229,
+      "deal_name": "R&M Drywall",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-14",
+      "create_datetime": "2026-04-14 08:54",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.874eb2457ac20a3a6c443dc111976233.1776170803928.1776170803928.1776170803928.1&__hssc=20629287.1.1776170803927&__hsfp=null",
+      "contact_id": 215536229015,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59165752229",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/215536229015"
+    },
+    {
+      "deal_id": 59099787440,
+      "deal_name": "n-Lorem",
+      "amount": 12270.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-10",
+      "create_datetime": "2026-04-10 14:21",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchasing-system-for-nonprofit-organizations/",
+      "last_page": "https://www.procuredesk.com/pricing/#compare_table_plan",
+      "contact_id": 208868464468,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59099787440",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208868464468"
+    },
+    {
+      "deal_id": 59086296071,
+      "deal_name": "Elementum",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-10",
+      "create_datetime": "2026-04-10 07:35",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "PMAX",
+      "saw_thank_you": false,
+      "utm_source": "google",
+      "utm_campaign": "pmax",
+      "first_page": "https://www.procuredesk.com/?utm_source=google&utm_medium=cpc&utm_campaign=pmax&gad_source=1&gad_campaignid=23698099185&gbraid=0AAAABC5knBUhU4b90qDEMs6Nk3o7G5PWS&gclid=CjwKCAjwnN3OBhA8EiwAfpTYeh1iRvYaHET1I0_p5oFUahDrClw1AhcltiSgWH94Fqbmd5SaAw3VhRoCpjMQAvD_BwE",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 214651771714,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59086296071",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214651771714"
+    },
+    {
+      "deal_id": 58986241606,
+      "deal_name": " Vasque Bio",
+      "amount": 3600.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-04-09",
+      "create_datetime": "2026-04-09 08:12",
+      "deal_tags": "SQL",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58986241606",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 59000013363,
+      "deal_name": "Urban Sky",
+      "amount": 10200.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-08",
+      "create_datetime": "2026-04-08 12:17",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.621e6c1274dbd52fc9b2cd0821534d9c.1775664755015.1775664755015.1775664755015.1&__hssc=20629287.1.1775664755015&__hsfp=null",
+      "contact_id": 212067259506,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/59000013363",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212067259506"
+    },
+    {
+      "deal_id": 58885046145,
+      "deal_name": "Climate Lead",
+      "amount": 13224.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-06",
+      "create_datetime": "2026-04-06 20:12",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Paid Search",
+      "saw_thank_you": true,
+      "utm_source": "adwords",
+      "utm_campaign": "%5B001%5D%5BPPC%5D%5BSearch%5D+High+Intent+KWs",
+      "first_page": "https://www.procuredesk.com/procurement-2/?utm_term=procurement%20software&utm_campaign=%5B001%5D%5BPPC%5D%5BSearch%5D+High+Intent+KWs&utm_source=adwords&utm_medium=ppc&hsa_acc=8635806570&hsa_cam=23699358914&hsa_grp=194328425906&hsa_ad=802531615900&hsa_src=g&hsa_tgt=kwd-10192792&hsa_kw=procurement%20software&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=23699358914&gbraid=0AAAABC5knBUGnQQEXa99Z_TMK4thgXTiR&gclid=Cj0KCQjws83OBhD4ARIsACblj18RIj3UCFz2PqC9_koLQW-HnNgnk16vJSVEZJ_dRB9w7zyWbxCqfAMaAvkoEALw_wcB",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.94fed988dac8702874bfd5d1db0c37d3.1775520456795.1775520456795.1775520456795.1&__hssc=20629287.1.1775520456795&__hsfp=null",
+      "contact_id": 214005974101,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58885046145",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214005974101"
+    },
+    {
+      "deal_id": 58881005601,
+      "deal_name": "Priority Power",
+      "amount": 14280.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-04-06",
+      "create_datetime": "2026-04-06 14:19",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.527eb07dfab9111e3537d8b0ad5bc4ac.1775499260857.1775499260857.1775499260857.1&__hssc=20629287.1.1775499260857&__hsfp=null",
+      "contact_id": 213964035975,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58881005601",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213964035975"
+    },
+    {
+      "deal_id": 58720426894,
+      "deal_name": "BioFiltro",
+      "amount": 850.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-04-02",
+      "create_datetime": "2026-04-02 23:35",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.1776f66f0e9419854625679304d73e6a.1775186987872.1775186987872.1775186987872.1&__hssc=20629287.1.1775186987871&__hsfp=null",
+      "contact_id": 213357683811,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58720426894",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213357683811"
+    },
+    {
+      "deal_id": 58704627719,
+      "deal_name": "Moffat Glass",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-02",
+      "create_datetime": "2026-04-02 14:49",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.5e49a29e42c65f6c94b63dd67ba18c69.1775155465727.1775155465727.1775155465727.1&__hssc=20629287.1.1775155465727&__hsfp=null",
+      "contact_id": 212871356326,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58704627719",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212871356326"
+    },
+    {
+      "deal_id": 58681328010,
+      "deal_name": "Bay Contracting",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-04-02",
+      "create_datetime": "2026-04-02 08:29",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/paperless-invoice-approval-system/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.473606059f985461fafb2a66b620aac9.1775132684429.1775132684429.1775132684429.1&__hssc=20629287.1.1775132684428&__hsfp=null",
+      "contact_id": 213194909336,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58681328010",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213194909336"
+    },
+    {
+      "deal_id": 58643075213,
+      "deal_name": "Killeen Plumbing",
+      "amount": 850.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2026-04-01",
+      "create_datetime": "2026-04-01 12:36",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/quickbooks-enterprise-purchase-order-app/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.357f6b4be7a219eb171da68d0d543b4e.1775061091093.1775061091093.1775061091093.1&__hssc=20629287.1.1775061091093&__hsfp=null",
+      "contact_id": 213013124914,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58643075213",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213013124914"
+    },
+    {
+      "deal_id": 58650007095,
+      "deal_name": "Solution Group",
+      "amount": 13260.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-04-01",
+      "create_datetime": "2026-04-01 12:22",
+      "deal_tags": "SQL; Demo; Trial; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.b3bee83f320c3119237a9cbfe9792db4.1775060249274.1775060249274.1775060249274.1&__hssc=20629287.1.1775060249274&__hsfp=null",
+      "contact_id": 213016118943,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58650007095",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213016118943"
+    },
+    {
+      "deal_id": 58642288057,
+      "deal_name": "MSC",
+      "amount": 850.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-04-01",
+      "create_datetime": "2026-04-01 11:06",
+      "deal_tags": "SQL; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/features/",
+      "contact_id": 212975798565,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58642288057",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212975798565"
+    },
+    {
+      "deal_id": 58637415949,
+      "deal_name": "ReturnPro",
+      "amount": 21480.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-04-01",
+      "create_datetime": "2026-04-01 10:53",
+      "deal_tags": "SQL; Demo; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Paid Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/best-procurement-software/",
+      "last_page": "https://www.procuredesk.com/pricing/?_gl=1*spim8t*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjwy_fOBhC6ARIsAHKFB78d4wrdGYf1uLQKkZwkVWx3MJxWJ5uf84RKDGyhjBceyzltVrD5VL0aAg2hEALw_wcB&gbraid=0AAAABC5knBWfXcuVPuXqfpjIZ9B_WO3PN",
+      "contact_id": 212819178048,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58637415949",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212819178048"
+    },
+    {
+      "deal_id": 58630700386,
+      "deal_name": "APT Africa",
+      "amount": 7500.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-31",
+      "create_datetime": "2026-03-31 18:23",
+      "deal_tags": "SQL; Demo",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://meetings.hubspot.com/austin-dolan1",
+      "contact_id": 208474781478,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58630700386",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208474781478"
+    },
+    {
+      "deal_id": 58610361732,
+      "deal_name": "INF Associates",
+      "amount": 10000.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-31",
+      "create_datetime": "2026-03-31 08:47",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Paid Search",
+      "saw_thank_you": false,
+      "utm_source": "adwords",
+      "utm_campaign": "%5B001%5D%5BPPC%5D%5BSearch%5D+High+Intent+KWs",
+      "first_page": "https://www.procuredesk.com/procurement/?utm_term=purchase%20requisition%20software&utm_campaign=%5B001%5D%5BPPC%5D%5BSearch%5D+High+Intent+KWs&utm_source=adwords&utm_medium=ppc&hsa_acc=8635806570&hsa_cam=23699358914&hsa_grp=194328425906&hsa_ad=802531615900&hsa_src=g&hsa_tgt=kwd-960967113&hsa_kw=purchase%20requisition%20software&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=23699358914&gclid=CjwKCAjwvqjOBhAGEiwAngeQnX-23TIItukQ_fjyHMtERJDXbjWKp9t7vNIRe4ibzMF1dvh6M8B61xoCUksQAvD_BwE",
+      "last_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "contact_id": 212651609385,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58610361732",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212651609385"
+    },
+    {
+      "deal_id": 58599389877,
+      "deal_name": "Baptist Preparatory School",
+      "amount": 11196.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-30",
+      "create_datetime": "2026-03-30 18:29",
+      "deal_tags": "SQL; Demo; Urgent; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/demo-videos/",
+      "contact_id": 211395992927,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58599389877",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/211395992927"
+    },
+    {
+      "deal_id": 58555225485,
+      "deal_name": "Studio CO2",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-30",
+      "create_datetime": "2026-03-30 09:08",
+      "deal_tags": "SQL; Demo; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.42fb9d10c59277c034a9cbc407d09e98.1774875771227.1774875771227.1774875771227.1&__hssc=20629287.1.1774875771226&__hsfp=null",
+      "contact_id": 212483459104,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58555225485",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212483459104"
+    },
+    {
+      "deal_id": 58521686336,
+      "deal_name": "Terray Therapeutics",
+      "amount": 850.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-27",
+      "create_datetime": "2026-03-27 18:38",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/quartzy-alternatives/",
+      "last_page": "https://www.procuredesk.com/procurement-process/",
+      "contact_id": 211632991013,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58521686336",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/211632991013"
+    },
+    {
+      "deal_id": 58404135981,
+      "deal_name": "Northern Architectural Systems",
+      "amount": 10000.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-27",
+      "create_datetime": "2026-03-27 08:48",
+      "deal_tags": "SQL; Demo",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/accounts-payable-automation-for-quickbooks/",
+      "last_page": "https://meetings.hubspot.com/austin-dolan1?uuid=b1baa90b-1dd6-4d5d-b53d-93e80c980bdf",
+      "contact_id": 201482378592,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58404135981",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201482378592"
+    },
+    {
+      "deal_id": 58327606529,
+      "deal_name": "Inaba Food GmbH",
+      "amount": 10200.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-25",
+      "create_datetime": "2026-03-25 05:01",
+      "deal_tags": "SQL; Demo",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 211461166226,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58327606529",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/211461166226"
+    },
+    {
+      "deal_id": 58256088618,
+      "deal_name": "Protuoso",
+      "amount": 6000.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-03-24",
+      "create_datetime": "2026-03-24 07:35",
+      "deal_tags": "SQL; Demo; Trial; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/contact/",
+      "contact_id": 210248291457,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58256088618",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210248291457"
+    },
+    {
+      "deal_id": 58166566294,
+      "deal_name": "Ace Roofing",
+      "amount": 850.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2026-03-19",
+      "create_datetime": "2026-03-19 17:53",
+      "deal_tags": "Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/stampli-vs-bill-com/",
+      "last_page": "https://www.procuredesk.com/stampli-vs-bill-com/",
+      "contact_id": 210418441617,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58166566294",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210418441617"
+    },
+    {
+      "deal_id": 58136188996,
+      "deal_name": "BC Drywall ",
+      "amount": 10200.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-19",
+      "create_datetime": "2026-03-19 16:29",
+      "deal_tags": "SQL; Demo; Urgent",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.0f12266c31965d69e826dc7090f0d365.1773880516153.1773880516153.1773880516153.1&__hssc=20629287.1.1773880516152&__hsfp=null",
+      "contact_id": 210218450578,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58136188996",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210218450578"
+    },
+    {
+      "deal_id": 58167360603,
+      "deal_name": "Atlanta Bonded Warehouse Corporation",
+      "amount": 13260.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-19",
+      "create_datetime": "2026-03-19 14:41",
+      "deal_tags": "SQL; Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.18d4530a4d31d9e0b5d91b049544f2db.1773945381893.1773945381893.1773945381893.1&__hssc=20629287.1.1773945381892&__hsfp=null",
+      "contact_id": 210106730066,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58167360603",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210106730066"
+    },
+    {
+      "deal_id": 58160951829,
+      "deal_name": "elmcroftconstruction",
+      "amount": 12240.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-19",
+      "create_datetime": "2026-03-19 11:38",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 210078591566,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58160951829",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210078591566"
+    },
+    {
+      "deal_id": 58111499075,
+      "deal_name": "ILF.com",
+      "amount": 80000.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-18",
+      "create_datetime": "2026-03-18 09:14",
+      "deal_tags": "SQL; Demo; Company (large); Urgent",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/demo-videos/",
+      "contact_id": 210076269680,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58111499075",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210076269680"
+    },
+    {
+      "deal_id": 58109603122,
+      "deal_name": "Norse Construction",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-18",
+      "create_datetime": "2026-03-18 07:10",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/glossary/payment-terms/",
+      "last_page": "https://www.procuredesk.com/select-time/?country=&company_size=21-50",
+      "contact_id": 210043280935,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58109603122",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/210043280935"
+    },
+    {
+      "deal_id": 58025437367,
+      "deal_name": "Good Holdings Co",
+      "amount": 15600.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-03-17",
+      "create_datetime": "2026-03-17 14:19",
+      "deal_tags": "SQL; Demo",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/quickbooks-enterprise/",
+      "last_page": "https://www.procuredesk.com/product/contract-management-automation/",
+      "contact_id": 209797512535,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58025437367",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209797512535"
+    },
+    {
+      "deal_id": 58055384594,
+      "deal_name": "Oguz Law",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-16",
+      "create_datetime": "2026-03-16 18:51",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.a352d49324d51e5135b0b76127e32bc7.1773701189468.1773701189468.1773701189468.1&__hssc=20629287.1.1773701189468&__hsfp=null",
+      "contact_id": 209648347402,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58055384594",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209648347402"
+    },
+    {
+      "deal_id": 58057991343,
+      "deal_name": "Renata Medical",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-16",
+      "create_datetime": "2026-03-16 14:42",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/quickbooks-enterprise-purchase-order-app/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.fe3f146e5907c0ff7209e343b7892103.1773686210614.1773686210614.1773686210614.1&__hssc=20629287.1.1773686210613&__hsfp=null",
+      "contact_id": 209608510021,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58057991343",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209608510021"
+    },
+    {
+      "deal_id": 58056436503,
+      "deal_name": "Old Dominion Group",
+      "amount": 5880.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-16",
+      "create_datetime": "2026-03-16 13:32",
+      "deal_tags": "SQL; Demo; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.36c83ef918a083079dcdbac65c0b5229.1773681962632.1773681962632.1773681962632.1&__hssc=20629287.1.1773681962631&__hsfp=null",
+      "contact_id": 209583482696,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58056436503",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209583482696"
+    },
+    {
+      "deal_id": 58024897568,
+      "deal_name": "Lightbridge Corporation",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-16",
+      "create_datetime": "2026-03-16 09:41",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 209032890543,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58024897568",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209032890543"
+    },
+    {
+      "deal_id": 58014587958,
+      "deal_name": "Our Lady of Light",
+      "amount": 10812.1,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-03-15",
+      "create_datetime": "2026-03-15 17:41",
+      "deal_tags": "SQL; Demo; Formal Contract; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/product/purchase-order-software-for-churches/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.67b1b834a2f3f3bf9f544064ecaae758.1773610589355.1773610589355.1773610589355.1&__hssc=20629287.1.1773610589355&__hsfp=null",
+      "contact_id": 209327335693,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/58014587958",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/209327335693"
+    },
+    {
+      "deal_id": 57980229553,
+      "deal_name": "National Western Center",
+      "amount": 12240.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-13",
+      "create_datetime": "2026-03-13 15:09",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/industry/biotech-life-science/",
+      "contact_id": 201803643909,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57980229553",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201803643909"
+    },
+    {
+      "deal_id": 57982514270,
+      "deal_name": "UVI RTPark -",
+      "amount": 10200.0,
+      "deal_stage": "Verbal Yes/Contracting (Inbound demos)",
+      "create_date": "2026-03-13",
+      "create_datetime": "2026-03-13 10:34",
+      "deal_tags": "SQL; Demo; Trial; Formal Contract; Urgent",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57982514270",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 57952643136,
+      "deal_name": "TSWCCUL",
+      "amount": 12240.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-12",
+      "create_datetime": "2026-03-12 16:18",
+      "deal_tags": "SQL; Demo; Urgent; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "contact_id": 208869998374,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57952643136",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208869998374"
+    },
+    {
+      "deal_id": 57943939363,
+      "deal_name": "The Northstone Group",
+      "amount": 9180.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-03-12",
+      "create_datetime": "2026-03-12 12:02",
+      "deal_tags": "SQL; Demo; Trial; Formal Contract; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/",
+      "last_page": "https://meetings.hubspot.com/anubhav-singh2?uuid=a5749c7e-088a-427b-b345-186d9b4f18ac",
+      "contact_id": 208587962423,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57943939363",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208587962423"
+    },
+    {
+      "deal_id": 57959925000,
+      "deal_name": "Cirsium Biosciences",
+      "amount": 14281.2,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-11",
+      "create_datetime": "2026-03-11 15:42",
+      "deal_tags": "SQL; Urgent; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": "mobile-capabilities",
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/best-purchasing-software-for-biotech/#4",
+      "last_page": "https://www.procuredesk.com/request-a-demo/?utm_source=mobile-capabilities",
+      "contact_id": 207085123174,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57959925000",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/207085123174"
+    },
+    {
+      "deal_id": 57949146266,
+      "deal_name": "LUK",
+      "amount": 13260.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-11",
+      "create_datetime": "2026-03-11 15:39",
+      "deal_tags": "SQL; Demo; Trial; Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 208647682960,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57949146266",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208647682960"
+    },
+    {
+      "deal_id": 57894324152,
+      "deal_name": "Medici",
+      "amount": 11221.2,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-11",
+      "create_datetime": "2026-03-11 10:35",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/procuredesk-vs-quartzy/",
+      "last_page": "https://www.procuredesk.com/terms_conditions/",
+      "contact_id": 208556122647,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57894324152",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208556122647"
+    },
+    {
+      "deal_id": 57887652107,
+      "deal_name": "Cerebral Therapeutics",
+      "amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-10",
+      "create_datetime": "2026-03-10 23:25",
+      "deal_tags": "Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.c5ca46544b22f8f0ac12c76275317e8c.1776280357136.1776280357136.1776280357136.1&__hssc=20629287.1.1776280357135&__hsfp=null",
+      "contact_id": 202603690420,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57887652107",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/202603690420"
+    },
+    {
+      "deal_id": 57838744364,
+      "deal_name": "Finley Beer",
+      "amount": 12240.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-09",
+      "create_datetime": "2026-03-09 18:51",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.06d94c9e0d1b75bda219d61db89644d1.1773096351128.1773096351128.1773096351128.1&__hssc=20629287.1.1773096351128&__hsfp=null",
+      "contact_id": 208163814959,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57838744364",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/208163814959"
+    },
+    {
+      "deal_id": 57710502673,
+      "deal_name": "Reliable Logistics",
+      "amount": 12121.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-03-06",
+      "create_datetime": "2026-03-06 11:27",
+      "deal_tags": "SQL; Formal Contract; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "YouTube",
+      "saw_thank_you": false,
+      "utm_source": "youtube",
+      "utm_campaign": "foundervideos",
+      "first_page": "https://www.procuredesk.com/request-a-demo/?utm_source=youtube&utm_medium=youtubechannel&utm_campaign=foundervideos",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 207525198720,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57710502673",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/207525198720"
+    },
+    {
+      "deal_id": 57561432660,
+      "deal_name": "ORBIS",
+      "amount": 18360.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-05",
+      "create_datetime": "2026-03-05 00:11",
+      "deal_tags": "SQL; Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/building-procurement-team/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "contact_id": 206986484505,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57561432660",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/206986484505"
+    },
+    {
+      "deal_id": 57552549749,
+      "deal_name": "Craftsman Collision",
+      "amount": 17952.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "create_date": "2026-03-04",
+      "create_datetime": "2026-03-04 19:37",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/",
+      "last_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "contact_id": 207125631650,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57552549749",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/207125631650"
+    },
+    {
+      "deal_id": 57447756072,
+      "deal_name": "Jakamo Remote Services ",
+      "amount": 7140.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-03-04",
+      "create_datetime": "2026-03-04 11:04",
+      "deal_tags": "SQL; Demo; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57447756072",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 57509395578,
+      "deal_name": "HousingPlus",
+      "amount": 9537.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-03",
+      "create_datetime": "2026-03-03 22:52",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchasing-system-for-nonprofit-organizations/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.a34dbb71a225db90a7eaf802b703aab7.1772596012020.1772596012020.1772596012020.1&__hssc=20629287.1.1772596012020&__hsfp=null",
+      "contact_id": 206906414982,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57509395578",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/206906414982"
+    },
+    {
+      "deal_id": 57397639821,
+      "deal_name": "Vampire Studio",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-03-03",
+      "create_datetime": "2026-03-03 07:32",
+      "deal_tags": "No Show; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.0f8f9bb4428cfb16fe719c91f55c630f.1772538820110.1772538820110.1772538820110.1&__hssc=20629287.1.1772538820110&__hsfp=null",
+      "contact_id": 206420035187,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57397639821",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/206420035187"
+    },
+    {
+      "deal_id": 57386875545,
+      "deal_name": "West Rock Energy",
+      "amount": 10200.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-03-02",
+      "create_datetime": "2026-03-02 18:22",
+      "deal_tags": "SQL; Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 205666502304,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57386875545",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/205666502304"
+    },
+    {
+      "deal_id": 57200808106,
+      "deal_name": "iServices",
+      "amount": 10200.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-03-01",
+      "create_datetime": "2026-03-01 18:49",
+      "deal_tags": "SQL; Urgent; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/purchasing/online-purchase-order-system/",
+      "contact_id": 205957452855,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57200808106",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/205957452855"
+    },
+    {
+      "deal_id": 57148755256,
+      "deal_name": "BioChroma Analytical Labs",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-26",
+      "create_datetime": "2026-02-26 21:43",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchase-order-software/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.815e3bdd69aa695c60945f0f4672ff07.1772159879175.1772159879175.1772159879175.1&__hssc=20629287.1.1772159879175&__hsfp=null",
+      "contact_id": 205747322925,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/57148755256",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/205747322925"
+    },
+    {
+      "deal_id": 56896724237,
+      "deal_name": "Canopy USA",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-24",
+      "create_datetime": "2026-02-24 17:36",
+      "deal_tags": "Company (large); Company (Medium)",
+      "company_size": "Large",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/orderco-alternatives/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.d99021d2199e3005726109e36d781683.1771969206144.1771969206144.1771969206144.1&__hssc=20629287.1.1771969206141&__hsfp=null",
+      "contact_id": 205135022432,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56896724237",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/205135022432"
+    },
+    {
+      "deal_id": 56928590904,
+      "deal_name": "Signature Concepts",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-23",
+      "create_datetime": "2026-02-23 18:15",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/contact/",
+      "contact_id": 204902319269,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56928590904",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/204902319269"
+    },
+    {
+      "deal_id": 56896437541,
+      "deal_name": "Visionary Tech Services",
+      "amount": 16560.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-23",
+      "create_datetime": "2026-02-23 15:18",
+      "deal_tags": "SQL; Formal Contract; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/demo-videos/",
+      "contact_id": 204417055321,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56896437541",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/204417055321"
+    },
+    {
+      "deal_id": 56706974485,
+      "deal_name": "Parallel Flight Technologies ",
+      "amount": 10200.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-20",
+      "create_datetime": "2026-02-20 13:55",
+      "deal_tags": "SQL; Demo; Trial; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://meetings.hubspot.com/anubhav-singh2",
+      "contact_id": 199853137297,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56706974485",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199853137297"
+    },
+    {
+      "deal_id": 56689272484,
+      "deal_name": "Wednesday Solutions",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-20",
+      "create_datetime": "2026-02-20 05:08",
+      "deal_tags": "Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "AI Referrals",
+      "saw_thank_you": true,
+      "utm_source": "chatgpt.com",
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/procure-to-pay-system/?utm_source=chatgpt.com",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.a7da6ff58cd104f962c45759cea12bba.1771599493823.1771599493823.1771599493823.1&__hssc=20629287.1.1771599493822&__hsfp=null",
+      "contact_id": 204070694810,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56689272484",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/204070694810"
+    },
+    {
+      "deal_id": 56625019561,
+      "deal_name": "V8 Tech",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-19",
+      "create_datetime": "2026-02-19 16:11",
+      "deal_tags": "Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.dd5c44cc5ae3c3d7a598c8ea2face164.1771535143044.1771535143044.1771535143044.1&__hssc=20629287.1.1771535143043&__hsfp=null",
+      "contact_id": 203969167460,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56625019561",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203969167460"
+    },
+    {
+      "deal_id": 56611947914,
+      "deal_name": "Canvas Offices",
+      "amount": 35353.44,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-19",
+      "create_datetime": "2026-02-19 09:15",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.3fb337b1e71af20f43c793430c9211e6.1771343525437.1771343525437.1771343525437.1&__hssc=20629287.1.1771343525437&__hsfp=null",
+      "contact_id": 196704568448,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56611947914",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196704568448"
+    },
+    {
+      "deal_id": 56625303632,
+      "deal_name": "Klozer",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-19",
+      "create_datetime": "2026-02-19 08:51",
+      "deal_tags": "Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.cef6cea5df0e3550df8eee37732a96b4.1771508791350.1771508791350.1771508791350.1&__hssc=20629287.1.1771508791349&__hsfp=null",
+      "contact_id": 203856350118,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56625303632",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203856350118"
+    },
+    {
+      "deal_id": 56621096366,
+      "deal_name": "Fraser",
+      "amount": 6000.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-02-19",
+      "create_datetime": "2026-02-19 07:11",
+      "deal_tags": "SQL; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "AI Referrals",
+      "saw_thank_you": true,
+      "utm_source": "chatgpt.com",
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/xero/?utm_source=chatgpt.com",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.45408d2feccefb784f63fede674c38dc.1771502785163.1771502785163.1771502785163.1&__hssc=20629287.1.1771502785163&__hsfp=null",
+      "contact_id": 203844313354,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56621096366",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203844313354"
+    },
+    {
+      "deal_id": 56611198495,
+      "deal_name": "Westchester Eyes",
+      "amount": 15000.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-18",
+      "create_datetime": "2026-02-18 16:53",
+      "deal_tags": "SQL; Formal Contract; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56611198495",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 56606501892,
+      "deal_name": "Oliveri Millworks",
+      "amount": 10000.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-02-18",
+      "create_datetime": "2026-02-18 14:46",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 203682364435,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56606501892",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203682364435"
+    },
+    {
+      "deal_id": 56457054575,
+      "deal_name": "Pacific Northern Environmental",
+      "amount": 18360.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-02-17",
+      "create_datetime": "2026-02-17 17:49",
+      "deal_tags": "SQL; Demo; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=demo-videos",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.aaba95923cff617fe491fe401c2355e1.1771368261932.1771368261932.1771368261932.1&__hssc=20629287.1.1771368261931&__hsfp=null",
+      "contact_id": 203401163312,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56457054575",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203401163312"
+    },
+    {
+      "deal_id": 56549452170,
+      "deal_name": "The Kingdom Church ",
+      "amount": 8500.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-17",
+      "create_datetime": "2026-02-17 14:51",
+      "deal_tags": "SQL; Demo; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://meetings.hubspot.com/anubhav-singh2?uuid=a5749c7e-088a-427b-b345-186d9b4f18ac",
+      "contact_id": 199184898724,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56549452170",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199184898724"
+    },
+    {
+      "deal_id": 56544513718,
+      "deal_name": "NcodiN",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-17",
+      "create_datetime": "2026-02-17 10:43",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 203311765881,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56544513718",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/203311765881"
+    },
+    {
+      "deal_id": 56249135902,
+      "deal_name": "Singh Mehandi",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-14",
+      "create_datetime": "2026-02-14 09:56",
+      "deal_tags": "No Show; Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/procurement-spend-management-software/",
+      "contact_id": 202312228469,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56249135902",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/202312228469"
+    },
+    {
+      "deal_id": 56003755105,
+      "deal_name": "Canopy South",
+      "amount": 8670.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-02-11",
+      "create_datetime": "2026-02-11 16:21",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/industry/nonprofit/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.725ec4972ef228f2e8b9b7e596982162.1770844549476.1770844549476.1770844549476.1&__hssc=20629287.1.1770844549476&__hsfp=null",
+      "contact_id": 201592748060,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/56003755105",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201592748060"
+    },
+    {
+      "deal_id": 55932958587,
+      "deal_name": "DEV Hotel & Conference Centre",
+      "amount": 5976.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 15:51",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.9f61cebe2b2b9914f33d9ec30429a3b3.1770756457448.1770756457448.1770756457448.1&__hssc=20629287.1.1770756457448&__hsfp=null",
+      "contact_id": 201094011506,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55932958587",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201094011506"
+    },
+    {
+      "deal_id": 55932182064,
+      "deal_name": "Graanul Invest",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 15:18",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 201089414823,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55932182064",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201089414823"
+    },
+    {
+      "deal_id": 55946358627,
+      "deal_name": "Lat Aerospace",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 12:53",
+      "deal_tags": "No Show",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 201112238481,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55946358627",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/201112238481"
+    },
+    {
+      "deal_id": 55873762175,
+      "deal_name": "PSI CRO",
+      "amount": 10200.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 09:39",
+      "deal_tags": "SQL; Company (large); Company (Medium)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.24f7a804d3748f39840fc0673e853eb8.1770733995067.1770733995067.1770733995067.1&__hssc=20629287.1.1770733995066&__hsfp=null",
+      "contact_id": 197415267330,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55873762175",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/197415267330"
+    },
+    {
+      "deal_id": 55827957117,
+      "deal_name": "Great Hearts Texas",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 08:31",
+      "deal_tags": "Company (large); Company (Medium)",
+      "company_size": "Large",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55827957117",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55900848152,
+      "deal_name": "RMBEL",
+      "amount": 8064.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 08:29",
+      "deal_tags": "SQL; Urgent; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/#compare_table_plan",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 195370914067,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55900848152",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/195370914067"
+    },
+    {
+      "deal_id": 55827656785,
+      "deal_name": "GT3 Group",
+      "amount": 9180.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-02-10",
+      "create_datetime": "2026-02-10 08:28",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/demo-videos/",
+      "last_page": "https://www.procuredesk.com/demo-videos/",
+      "contact_id": 196865648422,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55827656785",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196865648422"
+    },
+    {
+      "deal_id": 55691807613,
+      "deal_name": "Global IT",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-07",
+      "create_datetime": "2026-02-07 10:34",
+      "deal_tags": "Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.cbd8e126d97236dd91ef6455d20a88b7.1770478180163.1770478180163.1770478180163.1&__hssc=20629287.1.1770478180163&__hsfp=null",
+      "contact_id": 200197458870,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55691807613",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/200197458870"
+    },
+    {
+      "deal_id": 55678743585,
+      "deal_name": "Reliance Family Care Services",
+      "amount": 12240.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-06",
+      "create_datetime": "2026-02-06 17:10",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.6882f01fb1ed82c2eb75fcc234c05c50.1770415513386.1770415513386.1770415513386.1&__hssc=20629287.1.1770415513385&__hsfp=null",
+      "contact_id": 199298345848,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55678743585",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199298345848"
+    },
+    {
+      "deal_id": 55649276813,
+      "deal_name": "Rolite Manufacturing - New Deal",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-06",
+      "create_datetime": "2026-02-06 09:28",
+      "deal_tags": "Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55649276813",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55662831435,
+      "deal_name": "Absci ",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-06",
+      "create_datetime": "2026-02-06 09:13",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55662831435",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55649646199,
+      "deal_name": "State of the Heart Recovery ",
+      "amount": 14820.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-06",
+      "create_datetime": "2026-02-06 09:00",
+      "deal_tags": "SQL; Formal Contract; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/ap-automation-software/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.002c1ad55d571b07b9af3499d3e51c4d.1768855616210.1768855616210.1768855616210.1&__hssc=20629287.1.1768855616210&__hsfp=null",
+      "contact_id": 194471803983,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55649646199",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/194471803983"
+    },
+    {
+      "deal_id": 55632974201,
+      "deal_name": "Orange County Head Start, Inc.",
+      "amount": 30906.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-05",
+      "create_datetime": "2026-02-05 21:38",
+      "deal_tags": "SQL; Company (large); Company (Small)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.090549574a44f971ef9f99d9f3993a99.1770345205415.1770345205415.1770345205415.1&__hssc=20629287.1.1770345205415&__hsfp=null",
+      "contact_id": 1423601,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55632974201",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/1423601"
+    },
+    {
+      "deal_id": 55628520562,
+      "deal_name": "Monod Bio",
+      "amount": 10200.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-02-05",
+      "create_datetime": "2026-02-05 14:51",
+      "deal_tags": "SQL; Urgent",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 192714956197,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55628520562",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/192714956197"
+    },
+    {
+      "deal_id": 55571655764,
+      "deal_name": "Bactobio",
+      "amount": 15300.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-05",
+      "create_datetime": "2026-02-05 10:54",
+      "deal_tags": "SQL; Trial; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/industry/biotech-life-science/",
+      "last_page": "https://www.procuredesk.com/features/purchase-order/",
+      "contact_id": 199754653970,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55571655764",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199754653970"
+    },
+    {
+      "deal_id": 55568583199,
+      "deal_name": "Top Brand",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-04",
+      "create_datetime": "2026-02-04 22:05",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "contact_id": 199555186091,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55568583199",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199555186091"
+    },
+    {
+      "deal_id": 55475386929,
+      "deal_name": "South Pacific Seeds",
+      "amount": 16320.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-02-04",
+      "create_datetime": "2026-02-04 16:19",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/pricing/",
+      "contact_id": 192078629455,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55475386929",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/192078629455"
+    },
+    {
+      "deal_id": 55478580099,
+      "deal_name": "Deme Construction",
+      "amount": 14280.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-04",
+      "create_datetime": "2026-02-04 10:55",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.50f1dec84c9a6cdaf7c771a14d28371b.1769526542641.1769526542641.1769526542641.1&__hssc=20629287.1.1769526542641&__hsfp=null",
+      "contact_id": 196681921568,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55478580099",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196681921568"
+    },
+    {
+      "deal_id": 55397074557,
+      "deal_name": "Airna",
+      "amount": 20160.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-03",
+      "create_datetime": "2026-02-03 10:25",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 199099313549,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55397074557",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199099313549"
+    },
+    {
+      "deal_id": 55307873343,
+      "deal_name": "Prolium Bio",
+      "amount": 12000.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-02-03",
+      "create_datetime": "2026-02-03 06:39",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55307873343",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55406249605,
+      "deal_name": "Valley Vital Care",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-02",
+      "create_datetime": "2026-02-02 15:04",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.3191b3d927ccf395587d5f334540bb97.1770062367362.1770062367362.1770062367362.1&__hssc=20629287.1.1770062367362&__hsfp=null",
+      "contact_id": 198829360771,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55406249605",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/198829360771"
+    },
+    {
+      "deal_id": 55398424183,
+      "deal_name": "Capital Controls",
+      "amount": 13260.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-02-02",
+      "create_datetime": "2026-02-02 11:41",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/features/",
+      "last_page": "https://www.procuredesk.com/features/purchase-order/",
+      "contact_id": 198789451685,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55398424183",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/198789451685"
+    },
+    {
+      "deal_id": 55113339228,
+      "deal_name": "Martin And Associates - New Deal",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-30",
+      "create_datetime": "2026-01-30 10:47",
+      "deal_tags": "SQL; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55113339228",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55035112825,
+      "deal_name": "MW Mielke Holdings ",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-29",
+      "create_datetime": "2026-01-29 18:32",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55035112825",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 55031241239,
+      "deal_name": "Tapbuilds ",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-29",
+      "create_datetime": "2026-01-29 18:29",
+      "deal_tags": "",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 196060050491,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55031241239",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196060050491"
+    },
+    {
+      "deal_id": 55069055818,
+      "deal_name": "Mount Moriah",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-29",
+      "create_datetime": "2026-01-29 15:21",
+      "deal_tags": "SQL",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "contact_id": 197595556745,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55069055818",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/197595556745"
+    },
+    {
+      "deal_id": 55068125819,
+      "deal_name": "DC Public Charter School Board",
+      "amount": 11934.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-29",
+      "create_datetime": "2026-01-29 14:17",
+      "deal_tags": "SQL; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "last_page": "https://www.procuredesk.com/features/purchase-order/",
+      "contact_id": 197593290549,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55068125819",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/197593290549"
+    },
+    {
+      "deal_id": 54964288622,
+      "deal_name": "SJM Rail Signalling ",
+      "amount": 10050.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-28",
+      "create_datetime": "2026-01-28 17:09",
+      "deal_tags": "SQL; Demo; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54964288622",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 54794607722,
+      "deal_name": "UNSW College",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-28",
+      "create_datetime": "2026-01-28 00:51",
+      "deal_tags": "No Show",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 196435891053,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54794607722",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196435891053"
+    },
+    {
+      "deal_id": 54652403267,
+      "deal_name": "Gelinas HVAC",
+      "amount": 14280.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-27",
+      "create_datetime": "2026-01-27 09:52",
+      "deal_tags": "SQL; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "last_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "contact_id": 194213808798,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54652403267",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/194213808798"
+    },
+    {
+      "deal_id": 54616134542,
+      "deal_name": "UCEL Inc. - New Deal",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-27",
+      "create_datetime": "2026-01-27 08:00",
+      "deal_tags": "SQL; Demo; Trial",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/quickbooks-integration-procuredesk/",
+      "last_page": "https://www.procuredesk.com/role/lab-operations-manager/",
+      "contact_id": 185213155588,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54616134542",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/185213155588"
+    },
+    {
+      "deal_id": 54616134426,
+      "deal_name": "Five Star Energy Services, LLC - New Deal",
+      "amount": 30020.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-01-27",
+      "create_datetime": "2026-01-27 07:56",
+      "deal_tags": "SQL; Formal Contract; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/",
+      "last_page": "https://meetings.hubspot.com/anubhav-singh2?uuid=a5749c7e-088a-427b-b345-186d9b4f18ac",
+      "contact_id": 195252758408,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54616134426",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/195252758408"
+    },
+    {
+      "deal_id": 54619463457,
+      "deal_name": "C & C Marine And Repair",
+      "amount": 13260.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-01-26",
+      "create_datetime": "2026-01-26 15:20",
+      "deal_tags": "SQL; Demo; Urgent",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/features/",
+      "last_page": "https://www.procuredesk.com/pricing/#compare_table_plan",
+      "contact_id": 196340561958,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54619463457",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196340561958"
+    },
+    {
+      "deal_id": 54596967304,
+      "deal_name": "John Cabot University",
+      "amount": 15300.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-26",
+      "create_datetime": "2026-01-26 07:03",
+      "deal_tags": "SQL; Company (large); Company (Medium)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.09f05793282ca717a61c6904b6ca241f.1769428662189.1769428662189.1769428662189.1&__hssc=20629287.1.1769428662188&__hsfp=null",
+      "contact_id": 196189780332,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54596967304",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/196189780332"
+    },
+    {
+      "deal_id": 55649214052,
+      "deal_name": "Auratus ",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-20",
+      "create_datetime": "2026-01-20 16:18",
+      "deal_tags": "Stale",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/55649214052",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 54223484705,
+      "deal_name": "OrsoBio ",
+      "amount": 10000.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-19",
+      "create_datetime": "2026-01-19 18:47",
+      "deal_tags": "SQL; Demo; Stale; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/pricing/",
+      "last_page": "https://www.procuredesk.com/request-a-demo/",
+      "contact_id": 190528476688,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54223484705",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/190528476688"
+    },
+    {
+      "deal_id": 54128057637,
+      "deal_name": "YCIS Silicon Valley Yew Chung International School of Silicon Valley",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-19",
+      "create_datetime": "2026-01-19 14:43",
+      "deal_tags": "Stale; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54128057637",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 54078713445,
+      "deal_name": "Intermountain Electric",
+      "amount": 19380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-19",
+      "create_datetime": "2026-01-19 09:42",
+      "deal_tags": "SQL; Stale; Company (large); Company (Medium)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/product/purchase-order-software-for-commercial-electrical-contractor/",
+      "last_page": "https://www.procuredesk.com/case-studies/coast-flight/",
+      "contact_id": 189437445280,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54078713445",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/189437445280"
+    },
+    {
+      "deal_id": 54105488805,
+      "deal_name": "H&H Iron",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-19",
+      "create_datetime": "2026-01-19 08:40",
+      "deal_tags": "SQL; Stale; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.d03be7331e151d4c26a0b20d6db6735c.1768596166238.1768596166238.1768596166238.1&__hssc=20629287.1.1768596166238&__hsfp=null",
+      "contact_id": 193824251706,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54105488805",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/193824251706"
+    },
+    {
+      "deal_id": 54105453624,
+      "deal_name": "MNG Brands",
+      "amount": 21900.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-16",
+      "create_datetime": "2026-01-16 14:24",
+      "deal_tags": "SQL; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/orderco-alternatives/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.88fb4debb76bd2fe856161e0480bd359.1768581864037.1768581864037.1768581864037.1&__hssc=20629287.1.1768581864037&__hsfp=null",
+      "contact_id": 193046883482,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54105453624",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/193046883482"
+    },
+    {
+      "deal_id": 53875001006,
+      "deal_name": "HBK CPAs&Consultants",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-16",
+      "create_datetime": "2026-01-16 11:17",
+      "deal_tags": "SQL; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.269afc47655e484262c325fa84978589.1768579933515.1768579933515.1768579933515.1&__hssc=20629287.1.1768579933515&__hsfp=null",
+      "contact_id": 193797677241,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53875001006",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/193797677241"
+    },
+    {
+      "deal_id": 54077905479,
+      "deal_name": "Life Pro Nutrition",
+      "amount": 10200.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-01-16",
+      "create_datetime": "2026-01-16 08:04",
+      "deal_tags": "SQL; Stale; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.a30cda861f23db035349e33177a94278.1768568323742.1768568323742.1768568323742.1&__hssc=20629287.1.1768568323742&__hsfp=null",
+      "contact_id": 193720582460,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/54077905479",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/193720582460"
+    },
+    {
+      "deal_id": 53886908953,
+      "deal_name": "ISurTec",
+      "amount": 8000.02,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-01-14",
+      "create_datetime": "2026-01-14 15:25",
+      "deal_tags": "SQL; Demo; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.92e9a6700041132a854c4a1a02ad0d80.1750967563450.1750967563450.1750967563450.1&__hssc=20629287.1.1750967563450&__hsfp=1168079337",
+      "contact_id": 132687649122,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53886908953",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/132687649122"
+    },
+    {
+      "deal_id": 53843652465,
+      "deal_name": "PostEra",
+      "amount": 12240.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-01-14",
+      "create_datetime": "2026-01-14 11:19",
+      "deal_tags": "SQL; Stale; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/blanket-purchase-order/",
+      "last_page": "https://www.procuredesk.com/role/school-business-manager/",
+      "contact_id": 165681075229,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53843652465",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/165681075229"
+    },
+    {
+      "deal_id": 53808520538,
+      "deal_name": "NSPharma",
+      "amount": 32640.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-14",
+      "create_datetime": "2026-01-14 10:18",
+      "deal_tags": "SQL; Demo; Stale; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/purchasing-software-biotech/",
+      "contact_id": 193017214265,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53808520538",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/193017214265"
+    },
+    {
+      "deal_id": 53790231312,
+      "deal_name": "San Francisco SafeHouse",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-13",
+      "create_datetime": "2026-01-13 23:53",
+      "deal_tags": "Stale; Company (Small)",
+      "company_size": "Small",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.233c7b2dc94e4e9d4d0a5accb01e9489.1768366077847.1768366077847.1768366077847.1&__hssc=20629287.1.1768366077846&__hsfp=null",
+      "contact_id": 192878001969,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53790231312",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/192878001969"
+    },
+    {
+      "deal_id": 53696876720,
+      "deal_name": "America West",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-13",
+      "create_datetime": "2026-01-13 13:38",
+      "deal_tags": "SQL; Stale; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "contact_id": 192722781442,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53696876720",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/192722781442"
+    },
+    {
+      "deal_id": 53697222734,
+      "deal_name": "Ulster Society for the Prevention Cruelty to Animals",
+      "amount": 7480.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "create_date": "2026-01-13",
+      "create_datetime": "2026-01-13 06:53",
+      "deal_tags": "SQL; Demo; Stale; Trial; Past Close Date; Company (Medium); Company (Small)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/accounts-payable-automation-for-quickbooks/",
+      "last_page": "https://meetings.hubspot.com/pdesk/strategy-call?__hstc=255194903.7fc249a12acc99e955245667be98b6c9.1765555878412.1765555878412.1765555878412.1&__hssc=255194903.1.1765555878412&__hsfp=3505557861&uuid=be5b4d9e-f6f6-4930-abf0-8f1fb7eb22f7",
+      "contact_id": 184457234240,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53697222734",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/184457234240"
+    },
+    {
+      "deal_id": 53696561434,
+      "deal_name": "BMG Labs",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-13",
+      "create_datetime": "2026-01-13 06:42",
+      "deal_tags": "SQL; Demo; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53696561434",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 53696125847,
+      "deal_name": "Noetik",
+      "amount": 14400.0,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-01-13",
+      "create_datetime": "2026-01-13 06:21",
+      "deal_tags": "SQL; Demo; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53696125847",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 53700632405,
+      "deal_name": "Keiki O Ka 'Aina ",
+      "amount": 8976.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-12",
+      "create_datetime": "2026-01-12 16:39",
+      "deal_tags": "SQL; Demo; Stale; Formal Contract; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/best-purchasing-system-quickbooks/",
+      "last_page": "https://www.procuredesk.com/features/",
+      "contact_id": 158252629644,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53700632405",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/158252629644"
+    },
+    {
+      "deal_id": 53700632215,
+      "deal_name": "The Hotchkiss School ",
+      "amount": 32522.88,
+      "deal_stage": "Won (Inbound demos)",
+      "create_date": "2026-01-12",
+      "create_datetime": "2026-01-12 16:35",
+      "deal_tags": "SQL; Stale; Formal Contract",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Won",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/sso/",
+      "contact_id": 191092209427,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53700632215",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/191092209427"
+    },
+    {
+      "deal_id": 53551718183,
+      "deal_name": "Modula",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-11",
+      "create_datetime": "2026-01-11 05:35",
+      "deal_tags": "No Show; Stale",
+      "company_size": null,
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/request-a-demo/?ref=home",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.bc16c9a654ae9ebb85ef6b3c90b7f2c0.1768127517622.1768127517622.1768127517622.1&__hssc=20629287.1.1768127517622&__hsfp=592571282",
+      "contact_id": 192006289282,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53551718183",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/192006289282"
+    },
+    {
+      "deal_id": 53500232542,
+      "deal_name": "Vision Quest",
+      "amount": 16128.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2026-01-09",
+      "create_datetime": "2026-01-09 13:19",
+      "deal_tags": "Stale; Past Close Date",
+      "company_size": null,
+      "is_sql": false,
+      "status": "Deal Open",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53500232542",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 53419074704,
+      "deal_name": "VDA",
+      "amount": 13260.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-08",
+      "create_datetime": "2026-01-08 15:28",
+      "deal_tags": "SQL; Demo; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "contact_id": 199444195867,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53419074704",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/199444195867"
+    },
+    {
+      "deal_id": 53394292399,
+      "deal_name": "Lucas Financial",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-07",
+      "create_datetime": "2026-01-07 18:24",
+      "deal_tags": "SQL; Stale; Company (Small)",
+      "company_size": "Small",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Organic Search",
+      "saw_thank_you": true,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/features/",
+      "last_page": "https://www.procuredesk.com/thank-you/?__hstc=20629287.b6a54047a941816f5b675593d3331b80.1767818053235.1767818053235.1767818053235.1&__hssc=20629287.1.1767818053235&__hsfp=854618605",
+      "contact_id": 191209970487,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53394292399",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/191209970487"
+    },
+    {
+      "deal_id": 53384571907,
+      "deal_name": "Sundt Construction",
+      "amount": 26460.0,
+      "deal_stage": "Verbal Yes/Contracting (Inbound demos)",
+      "create_date": "2026-01-07",
+      "create_datetime": "2026-01-07 10:02",
+      "deal_tags": "SQL; Demo; Stale; Formal Contract; Urgent",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/requisition-management-software/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 191120237587,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53384571907",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/191120237587"
+    },
+    {
+      "deal_id": 53351940355,
+      "deal_name": "TEX, C.A.",
+      "amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-07",
+      "create_datetime": "2026-01-07 08:33",
+      "deal_tags": "SQL; No Show; Stale",
+      "company_size": null,
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Direct",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/",
+      "last_page": "https://www.procuredesk.com/how-procuredesk-works/",
+      "contact_id": 191095936033,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53351940355",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/191095936033"
+    },
+    {
+      "deal_id": 52994215814,
+      "deal_name": "Right Traffic",
+      "amount": null,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2026-01-05",
+      "create_datetime": "2026-01-05 14:06",
+      "deal_tags": "No Show; Stale; Company (Medium)",
+      "company_size": "Medium",
+      "is_sql": false,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/52994215814",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 53270970772,
+      "deal_name": "Carter's",
+      "amount": 50000.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "create_date": "2026-01-05",
+      "create_datetime": "2026-01-05 13:42",
+      "deal_tags": "SQL; Stale; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Organic Search",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": "https://www.procuredesk.com/purchase-order-software/",
+      "last_page": "https://www.procuredesk.com/",
+      "contact_id": 190551227561,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/53270970772",
+      "contact_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/190551227561"
+    },
+    {
+      "deal_id": 51631983976,
+      "deal_name": "OLV Human Services",
+      "amount": 380.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2025-12-10",
+      "create_datetime": "2025-12-10 11:01",
+      "deal_tags": "SQL; Demo; Stale; Trial; Past Close Date",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/51631983976",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 43574450992,
+      "deal_name": "Convoy of Hope",
+      "amount": 380.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "create_date": "2025-09-10",
+      "create_datetime": "2025-09-10 11:30",
+      "deal_tags": "SQL; Stale; Company (large)",
+      "company_size": "Large",
+      "is_sql": true,
+      "status": "No Action Needed",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/43574450992",
+      "contact_hs_link": null
+    },
+    {
+      "deal_id": 38792725924,
+      "deal_name": "Peach Tree Health",
+      "amount": 380.0,
+      "deal_stage": "Discovery Scheduled (Inbound demos)",
+      "create_date": "2025-06-11",
+      "create_datetime": "2025-06-11 17:34",
+      "deal_tags": "SQL; Demo; Stale; Past Close Date",
+      "company_size": null,
+      "is_sql": true,
+      "status": "Deal Open",
+      "source": "Unknown",
+      "saw_thank_you": false,
+      "utm_source": null,
+      "utm_campaign": null,
+      "first_page": null,
+      "last_page": null,
+      "contact_id": null,
+      "deal_hs_link": "https://app.hubspot.com/contacts/20629287/record/0-3/38792725924",
+      "contact_hs_link": null
+    }
+  ],
+  "ppc_contacts": [
+    {
+      "contact_id": 214221835931,
+      "name": "Tori DiGirolamo",
+      "email": "tori@rockstarpools.com",
+      "phone": "",
+      "contact_owner": "",
+      "lead_status": "New",
+      "marketing_status": "Marketing contact",
+      "company": "Rock Star Pools",
+      "industry": "Construction",
+      "city": "Naples",
+      "country": "United States",
+      "create_date": "2026-04-18",
+      "create_datetime": "2026-04-18 20:21",
+      "last_activity": null,
+      "has_deal": false,
+      "deal_amount": null,
+      "deal_stage": null,
+      "deal_id": null,
+      "status": "Follow Up",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214221835931"
+    },
+    {
+      "contact_id": 216334463558,
+      "name": "Matthew Glass",
+      "email": "controller@dunnheat.com",
+      "phone": "",
+      "contact_owner": "",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Dunn Heat Exchangers",
+      "industry": "Oil & Energy",
+      "city": "Texas City",
+      "country": "United States",
+      "create_date": "2026-04-17",
+      "create_datetime": "2026-04-17 17:51",
+      "last_activity": null,
+      "has_deal": false,
+      "deal_amount": null,
+      "deal_stage": null,
+      "deal_id": null,
+      "status": "Follow Up",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/216334463558"
+    },
+    {
+      "contact_id": 216021839540,
+      "name": "Sam Hagan",
+      "email": "sam.hagan@foundcom.org",
+      "phone": "",
+      "contact_owner": "Joao Ferreira",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Foundation Communities",
+      "industry": "Consumer Services",
+      "city": "Austin",
+      "country": "United States",
+      "create_date": "2026-04-16",
+      "create_datetime": "2026-04-16 14:24",
+      "last_activity": null,
+      "has_deal": false,
+      "deal_amount": null,
+      "deal_stage": null,
+      "deal_id": null,
+      "status": "Follow Up",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/216021839540"
+    },
+    {
+      "contact_id": 214666936845,
+      "name": "Morgan Booz",
+      "email": "morganb@dealeruplift.com",
+      "phone": "",
+      "contact_owner": "Austin Dolan",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Armatus Dealer Uplift",
+      "industry": "Management Consulting",
+      "city": "Hunt Valley",
+      "country": "United States",
+      "create_date": "2026-04-16",
+      "create_datetime": "2026-04-16 12:47",
+      "last_activity": "2026-04-17",
+      "has_deal": true,
+      "deal_amount": 850.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "deal_id": 59234012692,
+      "status": "No Action Needed",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214666936845"
+    },
+    {
+      "contact_id": 214613214022,
+      "name": "Heather Kolpaczyk",
+      "email": "payables@accelevator.com",
+      "phone": "",
+      "contact_owner": "Austin Dolan",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Accredited Home Elevator",
+      "industry": "Construction",
+      "city": "Barnegat",
+      "country": "United States",
+      "create_date": "2026-04-09",
+      "create_datetime": "2026-04-09 09:39",
+      "last_activity": null,
+      "has_deal": false,
+      "deal_amount": null,
+      "deal_stage": null,
+      "deal_id": null,
+      "status": "Follow Up",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214613214022"
+    },
+    {
+      "contact_id": 214651771714,
+      "name": "Alexander Clare",
+      "email": "aclare@elementum.com",
+      "phone": "16462403817.0",
+      "contact_owner": "Joao Ferreira",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Elementum",
+      "industry": "",
+      "city": "Mountain View",
+      "country": "United States",
+      "create_date": "2026-04-09",
+      "create_datetime": "2026-04-09 15:07",
+      "last_activity": "2026-04-10",
+      "has_deal": true,
+      "deal_amount": 10200.0,
+      "deal_stage": "Lost (Inbound demos)",
+      "deal_id": 59086296071,
+      "status": "No Action Needed",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214651771714"
+    },
+    {
+      "contact_id": 214005974101,
+      "name": "Chris Campbell",
+      "email": "chris.campbell@climatelead.org",
+      "phone": "14155708352.0",
+      "contact_owner": "Joao Ferreira",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Climate Lead",
+      "industry": "Consumer Services",
+      "city": "San Francisco",
+      "country": "United States",
+      "create_date": "2026-04-06",
+      "create_datetime": "2026-04-06 20:07",
+      "last_activity": "2026-04-16",
+      "has_deal": true,
+      "deal_amount": 13224.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "deal_id": 58885046145,
+      "status": "Deal Open",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/214005974101"
+    },
+    {
+      "contact_id": 213964035975,
+      "name": "Laura Shorkey",
+      "email": "lshorkey@prioritypower.com",
+      "phone": "",
+      "contact_owner": "Austin Dolan",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Priority Power",
+      "industry": "Renewables & Environment",
+      "city": "The Woodlands",
+      "country": "United States",
+      "create_date": "2026-04-06",
+      "create_datetime": "2026-04-06 14:14",
+      "last_activity": "2026-04-14",
+      "has_deal": true,
+      "deal_amount": 14280.0,
+      "deal_stage": "Demo Held/Evaluation (Inbound demos)",
+      "deal_id": 58881005601,
+      "status": "Deal Open",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/213964035975"
+    },
+    {
+      "contact_id": 212651609385,
+      "name": "Sarah Alvarado",
+      "email": "salvarado@infassociates.com",
+      "phone": "18458575221.0",
+      "contact_owner": "Austin Dolan",
+      "lead_status": "New",
+      "marketing_status": "Marketing contact",
+      "company": "INF Associates",
+      "industry": "Oil & Energy",
+      "city": "New York",
+      "country": "United States",
+      "create_date": "2026-03-31",
+      "create_datetime": "2026-03-31 02:26",
+      "last_activity": "2026-04-17",
+      "has_deal": true,
+      "deal_amount": 10000.0,
+      "deal_stage": "Proposal Delivered (Inbound demos)",
+      "deal_id": 58610361732,
+      "status": "Deal Open",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212651609385"
+    },
+    {
+      "contact_id": 212067259506,
+      "name": "Jessica Stefanko",
+      "email": "jstefanko@urbansky.com",
+      "phone": "",
+      "contact_owner": "Joao Ferreira",
+      "lead_status": "New",
+      "marketing_status": "Non-marketing contact",
+      "company": "Urban Sky",
+      "industry": "Aviation & Aerospace",
+      "city": "Denver",
+      "country": "United States",
+      "create_date": "2026-03-27",
+      "create_datetime": "2026-03-27 18:28",
+      "last_activity": "2026-04-15",
+      "has_deal": true,
+      "deal_amount": 10200.0,
+      "deal_stage": "Discovery Completed/Demo Scheduled (Inbound demos)",
+      "deal_id": 59000013363,
+      "status": "Deal Open",
+      "hs_link": "https://app.hubspot.com/contacts/20629287/record/0-1/212067259506"
+    }
+  ],
+  "data_notes": {
+    "ppc_missing_fields": [
+      "Job Title",
+      "Company Size",
+      "Biggest Challenge",
+      "Campaign",
+      "Keyword"
+    ],
+    "ppc_spend_not_provided": true,
+    "lifecycle_stage_not_in_export": true,
+    "pages_date_range": [
+      "2026-01-05",
+      "2026-04-17"
+    ],
+    "demos_date_range": [
+      "2025-06-11",
+      "2026-04-20"
+    ]
+  }
+};
+</script>
+<script>
+const TODAY_STR="2026-04-20",TODAY=new Date(TODAY_STR+"T00:00:00"),DATA=window.DATA;
+let state={page:'dashboard',period:'month'};
+function pad(n){return String(n).padStart(2,'0')}
+function fmtDate(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function fmtShort(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+function fmtLong(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function getWeekRange(d){const day=d.getDay();const off=day===0?-6:1-day;const s=new Date(d);s.setDate(d.getDate()+off);const e=new Date(s);e.setDate(s.getDate()+6);return{start:s,end:e}}
+function getPeriod(n){
+  if(n==='week'){const{start,end}=getWeekRange(TODAY);return{name:n,start:fmtDate(start),end:fmtDate(end),label:`${fmtShort(start)} – ${fmtShort(end)}`,full:'This Week',granularity:'day'}}
+  if(n==='month')return{name:n,start:'2026-04-01',end:'2026-04-30',label:'Apr 1 – Apr 20 (MTD)',full:'This Month',granularity:'week'}
+  if(n==='q2')return{name:n,start:'2026-04-01',end:'2026-06-30',label:'Apr 1 – Jun 30 2026',full:'Q2 2026',granularity:'month'}
+  if(n==='q1')return{name:n,start:'2026-01-01',end:'2026-03-31',label:'Jan 1 – Mar 31 2026',full:'Q1 2026',granularity:'month'}
+}
+function inPeriod(d,p){if(!d.create_date)return false;return d.create_date>=p.start&&d.create_date<=p.end}
+function filterDeals(p){return DATA.deals.filter(d=>inPeriod(d,p))}
+function filterContacts(p){return DATA.ppc_contacts.filter(c=>inPeriod(c,p))}
+function fmtN(n){return n==null||isNaN(n)?'—':Number(n).toLocaleString('en-US')}
+function fmtM(n){return n==null||isNaN(n)?'—':'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:0})}
+function fmtPct(n,d){d=d==null?1:d;return n==null||isNaN(n)?'—':(n*100).toFixed(d)+'%'}
+function esc(s){if(s==null)return '';return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]))}
+const SOURCE_COLOR={'Organic Search':'green','Direct':'blue','Paid Search':'purple','PMAX':'purple','AI Referrals':'orange','YouTube':'red','Unknown':'muted','Other':'yellow'};
+function sourceChip(s){return `<span class="chip ${SOURCE_COLOR[s]||'muted'}">${esc(s)}</span>`}
+function statusChip(s){
+  if(s==='Deal Won')return '<span class="chip green">Deal Won</span>';
+  if(s==='Deal Open')return '<span class="chip blue">Deal Open</span>';
+  if(s==='Follow Up')return '<span class="chip orange">Follow Up</span>';
+  return '<span class="chip muted">No Action</span>';
+}
+function updateSidebarCounts(){
+  const p=getPeriod(state.period),deals=filterDeals(p),contacts=filterContacts(p);
+  document.getElementById('c-paid').textContent=contacts.length;
+  document.getElementById('c-ai').textContent=deals.filter(d=>d.source==='AI Referrals').length;
+  document.getElementById('c-yt').textContent=deals.filter(d=>d.source==='YouTube').length;
+  document.getElementById('c-org').textContent=deals.filter(d=>d.source==='Organic Search').length;
+  document.getElementById('c-dir').textContent=deals.filter(d=>d.source==='Direct').length;
+  const{start:ws,end:we}=getWeekRange(TODAY);
+  document.getElementById('h-week').textContent=`${fmtShort(ws)}–${fmtShort(we).replace(/^\w+\s/,'')}`;
+  document.getElementById('h-month').textContent='Apr 1–20';
+}
+function setTopTitle(t,s){document.getElementById('top-title').textContent=t;document.getElementById('top-subtitle').textContent=s;document.getElementById('updated-at').textContent='Updated '+fmtLong(TODAY)+' · Target '+DATA.target_per_month+'/mo'}
+
+function renderDashboard(){
+  const p=getPeriod(state.period);
+  setTopTitle('Marketing Dashboard',`All channels · ${p.full} · ${p.label}`);
+  const deals=filterDeals(p);
+  const wonDealsAll=deals.filter(d=>d.deal_stage.toLowerCase().includes('won'));
+  const won=wonDealsAll.length;
+  const lost=deals.filter(d=>d.deal_stage.toLowerCase().includes('lost')).length;
+  const active=deals.length-won-lost;
+  const pipeline=deals.reduce((s,d)=>s+(d.amount||0),0);
+  const activePipe=deals.filter(d=>!d.deal_stage.toLowerCase().includes('lost')&&!d.deal_stage.toLowerCase().includes('won')).reduce((s,d)=>s+(d.amount||0),0);
+  const wonPipe=wonDealsAll.reduce((s,d)=>s+(d.amount||0),0);
+  const closeRateBooked=deals.length>0?won/deals.length:0;
+  const closeRateResolved=(won+lost)>0?won/(won+lost):0;
+  let tProg=null,tLabel='',paceTxt='';
+  if(p.name==='month'){tProg=deals.length/DATA.target_per_month;const de=20,dt=30,dl=dt-de,proj=Math.round(deals.length*dt/de);paceTxt=`Projected ${proj}/${DATA.target_per_month} · Need ${((DATA.target_per_month-deals.length)/dl).toFixed(1)}/day`;tLabel=`${deals.length}/${DATA.target_per_month} MTD · ${dl} days left`}
+  else if(p.name==='q2'){const t=DATA.target_per_month*3;tProg=deals.length/t;paceTxt=`Q2 target ${t} · ${t-deals.length} to go`;tLabel=`${deals.length}/${t} Q2 booked`}
+  else if(p.name==='q1'){const t=DATA.target_per_month*3;tProg=deals.length/t;tLabel=`Q1 historical · ${deals.length}/${t}`;paceTxt=`Closed at ${(tProg*100).toFixed(0)}% of target`}
+  else{tLabel=`Week of ${fmtShort(new Date(p.start+'T00:00:00'))}`;paceTxt='Weekly pace'}
+  const sources=['Organic Search','Direct','Paid Search','PMAX','AI Referrals','YouTube','Unknown'];
+  const sRows=sources.map(src=>{const d=deals.filter(x=>x.source===src);return{src,booked:d.length,won:d.filter(x=>x.deal_stage.toLowerCase().includes('won')).length,lost:d.filter(x=>x.deal_stage.toLowerCase().includes('lost')).length,active:d.length-d.filter(x=>x.deal_stage.toLowerCase().includes('won')).length-d.filter(x=>x.deal_stage.toLowerCase().includes('lost')).length,pipeline:d.reduce((s,x)=>s+(x.amount||0),0)}}).filter(r=>r.booked>0).sort((a,b)=>b.booked-a.booked);
+  const actDeals=deals.filter(d=>!d.deal_stage.toLowerCase().includes('won')&&!d.deal_stage.toLowerCase().includes('lost')).sort((a,b)=>(b.amount||0)-(a.amount||0)).slice(0,8);
+  const wonDeals=deals.filter(d=>d.deal_stage.toLowerCase().includes('won')).slice(0,5);
+
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">Demos booked</div><div class="value">${deals.length}</div><div class="sub">${p.full} · ${p.label}</div></div>
+      <div class="card kpi"><div class="label">Won deals</div><div class="value">${won}</div><div class="sub"><strong style="color:var(--green)">${fmtM(wonPipe)}</strong> won pipeline</div></div>
+      <div class="card kpi"><div class="label">Close rate</div><div class="value small">${fmtPct(closeRateBooked,1)} <span style="color:var(--muted);font-weight:400;font-size:13px">booked</span></div><div class="sub"><span style="color:var(--text)">${fmtPct(closeRateResolved,1)}</span> of resolved <span style="color:var(--subtle)">(${won}/${won+lost})</span></div></div>
+      <div class="card kpi"><div class="label">Active pipeline</div><div class="value">${active}</div><div class="sub"><strong style="color:var(--blue)">${fmtM(activePipe)}</strong> open</div></div>
+      <div class="card kpi"><div class="label">Monthly target</div><div class="value small">${tLabel}</div>${tProg!==null?`<div class="progress ${tProg>=1?'good':tProg>=0.75?'warn':'off'}"><span style="width:${Math.min(100,tProg*100).toFixed(1)}%"></span></div><div class="sub">${esc(paceTxt)}</div>`:`<div class="sub">${esc(paceTxt)}</div>`}</div>
+    </div>
+
+    <div class="section-title">Conversions by source · ${p.label}</div>
+    <div class="two-col main">
+      <div class="card">
+        <div class="block-title">Source breakdown</div>
+        <div class="block-sub">UTM-based first-touch classification · same date window across all rows</div>
+        ${sRows.length===0?'<div class="empty-row">No deals in this period.</div>':`
+        <table class="dense">
+          <thead><tr><th>Source</th><th class="num">Booked</th><th class="num">Won</th><th class="num">Lost</th><th class="num">Active</th><th class="num">Close rate</th><th class="num">Pipeline</th></tr></thead>
+          <tbody>
+            ${sRows.map(r=>`<tr><td>${sourceChip(r.src)}</td><td class="num">${r.booked}</td><td class="num ${r.won>0?'good-num':'muted-num'}">${r.won}</td><td class="num ${r.lost>0?'bad-num':'muted-num'}">${r.lost}</td><td class="num">${r.active}</td><td class="num">${r.booked>0?fmtPct(r.won/r.booked,1):'—'}</td><td class="num">${fmtM(r.pipeline)}</td></tr>`).join('')}
+            <tr style="border-top:1px solid var(--border-2)"><td style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em">Total</td><td class="num">${deals.length}</td><td class="num good-num">${won}</td><td class="num bad-num">${lost}</td><td class="num">${active}</td><td class="num">${fmtPct(closeRateBooked,1)}</td><td class="num">${fmtM(pipeline)}</td></tr>
+          </tbody>
+        </table>`}
+      </div>
+      <div class="card">
+        <div class="block-title">Demo source mix</div>
+        <div class="block-sub">${deals.length} deals · ${p.label}</div>
+        <div class="donut-wrap"><div id="donut-chart"></div><div class="donut-legend" id="donut-legend"></div></div>
+      </div>
+    </div>
+
+    <div class="two-col main">
+      <div>
+        <div class="section-title">Trend · ${p.full}</div>
+        <div class="card chart-card">
+          <div class="chart-head"><div class="block-title" id="trend-title-inner">Demos booked</div><div class="legend" id="trend-legend"></div></div>
+          <div id="trend-chart"></div>
+        </div>
+        <div class="section-title">Conversion funnel · ${p.label}</div>
+        <div class="card" style="padding:18px 20px">
+          <div id="funnel-wrap"></div>
+          <div class="note">Demo-form submissions that didn't become a booked meeting are not in the three source exports. "Saw thank-you page" uses Last Page Seen — true step-2 count is likely higher than shown.</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title">Active deals · top ${actDeals.length}</div>
+        ${actDeals.length===0?`<div class="card"><div class="note">No active deals in ${esc(p.label)}.</div></div>`:actDeals.map(d=>{const short=d.deal_stage.replace(' (Inbound demos)','');const cls=short.includes('Proposal')||short.includes('Verbal')?'open':short.includes('Demo Held')?'warm':'open';return `<div class="action-item ${cls}"><div class="name"><a href="${esc(d.deal_hs_link)}" target="_blank" rel="noopener">${esc(d.deal_name)}</a></div><div class="meta">${esc(d.create_date)} · ${fmtM(d.amount)} · ${sourceChip(d.source)}${d.company_size?` · ${esc(d.company_size)}`:''}</div><div class="detail">${esc(short)}${d.is_sql?' · SQL':''}</div></div>`}).join('')}
+        ${wonDeals.length>0?`<div class="section-title" style="margin-top:24px">Won in ${p.full}</div>${wonDeals.map(d=>`<div class="action-item won"><div class="name"><a href="${esc(d.deal_hs_link)}" target="_blank" rel="noopener">${esc(d.deal_name)}</a></div><div class="meta">${esc(d.create_date)} · ${fmtM(d.amount)} · ${sourceChip(d.source)}</div></div>`).join('')}`:''}
+      </div>
+    </div>`;
+  renderDonut(sRows,'donut-chart','donut-legend');
+  renderTrend(p,'trend-chart','trend-title-inner','trend-legend');
+  renderFunnel(deals,'funnel-wrap');
+}
+
+function renderDonut(rows,cid,lid){
+  const c=document.getElementById(cid),lg=document.getElementById(lid);
+  const sz=220,r=80,ir=50,cx=sz/2,cy=sz/2,total=rows.reduce((s,r)=>s+r.booked,0)||1;
+  const CL={green:'#34D399',blue:'#60A5FA',purple:'#A78BFA',orange:'#FBBF24',red:'#F87171',yellow:'#FCD34D',muted:'#5A6178'};
+  let start=-Math.PI/2,paths='',lh='';
+  rows.forEach(row=>{
+    const frac=row.booked/total,end=start+frac*Math.PI*2,color=CL[SOURCE_COLOR[row.src]||'muted'];
+    const x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+    const xi1=cx+ir*Math.cos(end),yi1=cy+ir*Math.sin(end),xi2=cx+ir*Math.cos(start),yi2=cy+ir*Math.sin(start);
+    const lg2=(end-start)>Math.PI?1:0;
+    if(frac>0.999)paths+=`<circle cx="${cx}" cy="${cy}" r="${(r+ir)/2}" fill="none" stroke="${color}" stroke-width="${r-ir}"/>`;
+    else paths+=`<path d="M ${x1} ${y1} A ${r} ${r} 0 ${lg2} 1 ${x2} ${y2} L ${xi1} ${yi1} A ${ir} ${ir} 0 ${lg2} 0 ${xi2} ${yi2} Z" fill="${color}"/>`;
+    lh+=`<div class="row"><div class="dot" style="background:${color}"></div><div class="name">${esc(row.src)}</div><div class="pct">${(frac*100).toFixed(0)}%</div></div>`;
+    start=end;
+  });
+  const ct=total>0?`<text x="${cx}" y="${cy-3}" text-anchor="middle" fill="#E6EAF3" font-family="IBM Plex Sans" font-weight="600" font-size="24">${total}</text><text x="${cx}" y="${cy+14}" text-anchor="middle" fill="#8892A8" font-family="IBM Plex Sans" font-size="10" letter-spacing="0.1em">DEMOS</text>`:'';
+  c.innerHTML=`<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}">${paths}${ct}</svg>`;
+  lg.innerHTML=lh||'<div style="color:var(--muted);font-size:12px">No data</div>';
+}
+
+function renderTrend(period,cid,tid,lid){
+  const title=document.getElementById(tid),legend=document.getElementById(lid),container=document.getElementById(cid);
+  let bars=[];
+  if(period.granularity==='day'){
+    title.textContent='Demos booked by day';legend.textContent='Today highlighted';
+    const{start}=getWeekRange(TODAY);
+    for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const ds=fmtDate(d);bars.push({label:d.toLocaleDateString('en-US',{weekday:'short'}),sub:`${d.getMonth()+1}/${d.getDate()}`,value:DATA.deals.filter(x=>x.create_date===ds).length,highlight:ds===TODAY_STR})}
+  }else if(period.granularity==='week'){
+    title.textContent='Demos booked by week';legend.textContent='Week-starting Monday · current week highlighted';
+    let cursor=new Date('2026-03-30T00:00:00');
+    for(let i=0;i<5;i++){const wEnd=new Date(cursor);wEnd.setDate(cursor.getDate()+6);const count=DATA.deals.filter(d=>{if(!d.create_date)return false;return d.create_date>=fmtDate(cursor)&&d.create_date<=fmtDate(wEnd)&&d.create_date>='2026-04-01'&&d.create_date<='2026-04-30'}).length;bars.push({label:'Wk '+(i+1),sub:`${cursor.getMonth()+1}/${cursor.getDate()}`,value:count,highlight:TODAY>=cursor&&TODAY<=wEnd});cursor=new Date(cursor);cursor.setDate(cursor.getDate()+7)}
+  }else{
+    title.textContent=period.name==='q2'?'Demos booked by month — Q2 2026':'Demos booked by month — Q1 2026';
+    legend.textContent=`Dashed = ${DATA.target_per_month}/mo target`;
+    const months=period.name==='q2'?[['2026-04-01','2026-04-30','Apr'],['2026-05-01','2026-05-31','May'],['2026-06-01','2026-06-30','Jun']]:[['2026-01-01','2026-01-31','Jan'],['2026-02-01','2026-02-28','Feb'],['2026-03-01','2026-03-31','Mar']];
+    bars=months.map(([s,e,l])=>{const count=DATA.deals.filter(d=>d.create_date>=s&&d.create_date<=e).length;const future=period.name==='q2'&&s>TODAY_STR;return{label:l,sub:future?'future':'',value:count,highlight:!future&&s<=TODAY_STR&&TODAY_STR<=e,target:period.name==='q2'?DATA.target_per_month:0}});
+  }
+  const w=800,h=230,pd={l:40,r:20,t:14,b:40},iw=w-pd.l-pd.r,ih=h-pd.t-pd.b,bw=iw/bars.length*0.62,gap=iw/bars.length;
+  const maxV=Math.max(1,...bars.map(b=>Math.max(b.value,b.target||0)));
+  let svg=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">`;
+  for(let i=0;i<=4;i++){const y=pd.t+(i/4)*ih,v=Math.round(maxV*(1-i/4));svg+=`<line x1="${pd.l}" y1="${y}" x2="${w-pd.r}" y2="${y}" stroke="#222B44" stroke-width="1"/><text x="${pd.l-8}" y="${y+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="#5A6178">${v}</text>`}
+  bars.forEach((b,i)=>{const cx=pd.l+gap*i+gap/2,x=cx-bw/2,y=pd.t+ih-(b.value/maxV)*ih,barH=(b.value/maxV)*ih;const fill=b.highlight?'#34D399':(b.value===0?'#222B44':'#60A5FA');svg+=`<rect x="${x}" y="${y}" width="${bw}" height="${barH}" fill="${fill}" rx="2"/>`;if(b.value>0)svg+=`<text x="${cx}" y="${y-6}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" font-weight="500" fill="#E6EAF3">${b.value}</text>`;if(b.target){const ty=pd.t+ih-(b.target/maxV)*ih;svg+=`<line x1="${x-4}" y1="${ty}" x2="${x+bw+4}" y2="${ty}" stroke="#F87171" stroke-width="1.5" stroke-dasharray="3,3"/>`}svg+=`<text x="${cx}" y="${h-pd.b+18}" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#8892A8">${esc(b.label)}</text>`;if(b.sub)svg+=`<text x="${cx}" y="${h-pd.b+32}" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#5A6178">${esc(b.sub)}</text>`});
+  svg+='</svg>';container.innerHTML=svg;
+}
+
+function renderFunnel(deals,cid){
+  const booked=deals.length,sawTY=deals.filter(d=>d.saw_thank_you).length;
+  const demoHeld=deals.filter(d=>{const s=d.deal_stage.toLowerCase();return s.includes('demo held')||s.includes('proposal')||s.includes('verbal')||s.includes('won')}).length;
+  const won=deals.filter(d=>d.deal_stage.toLowerCase().includes('won')).length;
+  const max=Math.max(1,booked);
+  const rows=[{label:'Demo form filled',note:'not separately exported',value:booked,unavail:true},{label:'Saw thank-you / booking page',note:'Last Page Seen contains /thank-you/',value:sawTY},{label:'Actually booked a meeting',note:'deal created in HubSpot',value:booked},{label:'Demo held or later',note:'progressed past initial schedule',value:demoHeld},{label:'Won',note:'closed-won',value:won}];
+  document.getElementById(cid).innerHTML=rows.map(r=>{const pct=(r.value/max)*100;return `<div class="funnel-row"><div class="flabel">${esc(r.label)}<small>${esc(r.note)}</small></div><div class="fbar${r.unavail?' unavail':''}" style="width:${pct.toFixed(1)}%"></div><div class="fcount${r.unavail?' unavail':''}">${r.unavail?'n/a':r.value}${!r.unavail?`<small>${booked>0?((r.value/booked)*100).toFixed(0):0}% of booked</small>`:''}</div></div>`}).join('');
+}
+
+function renderChannelPage(id){
+  const p=getPeriod(state.period);
+  const tl={paid:['Paid Media','Google Ads, PMAX, and PPC-tagged contacts'],ai:['AI Referrals','chatgpt.com, perplexity, gemini, claude'],youtube:['YouTube','UTM-verified YouTube only'],organic:['Organic Search','Content/feature pages, no UTM'],direct:['Direct Traffic','First page = homepage, no UTM']};
+  setTopTitle(tl[id][0],`${tl[id][1]} · ${p.full} · ${p.label}`);
+  if(id==='paid')return renderPaidPage(p);
+  if(id==='ai')return renderAIPage(p);
+  if(id==='youtube')return renderYouTubePage(p);
+  if(id==='organic')return renderOrganicPage(p);
+  if(id==='direct')return renderDirectPage(p);
+}
+
+function renderPaidPage(p){
+  const contacts=filterContacts(p),withDeal=contacts.filter(c=>c.has_deal),noDeal=contacts.filter(c=>!c.has_deal);
+  const ppcPipe=withDeal.reduce((s,c)=>s+(c.deal_amount||0),0);
+  const paidDeals=filterDeals(p).filter(d=>d.source==='Paid Search'||d.source==='PMAX');
+  const paidWonDeals=paidDeals.filter(d=>d.deal_stage.toLowerCase().includes('won'));
+  const paidWon=paidWonDeals.length;
+  const paidLost=paidDeals.filter(d=>d.deal_stage.toLowerCase().includes('lost')).length;
+  const paidWonPipe=paidWonDeals.reduce((s,d)=>s+(d.amount||0),0);
+  const paidCrBooked=paidDeals.length>0?paidWon/paidDeals.length:0;
+  const paidCrResolved=(paidWon+paidLost)>0?paidWon/(paidWon+paidLost):0;
+  const stages={};
+  withDeal.forEach(c=>{const k=c.deal_stage?c.deal_stage.replace(' (Inbound demos)',''):'Unknown';(stages[k]=stages[k]||[]).push(c)});
+  const order=['Discovery Scheduled','Discovery Completed/Demo Scheduled','Demo Held/Evaluation','Proposal Delivered','Verbal Yes/Contracting','Won','Lost'];
+  const ord=Object.keys(stages).sort((a,b)=>{const ai=order.findIndex(s=>a.toLowerCase().includes(s.toLowerCase()));const bi=order.findIndex(s=>b.toLowerCase().includes(s.toLowerCase()));return(ai===-1?99:ai)-(bi===-1?99:bi)});
+
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">PPC form fills</div><div class="value">${contacts.length}</div><div class="sub">${contacts.length>0?`${noDeal.length} didn't book a meeting`:'—'}</div></div>
+      <div class="card kpi"><div class="label">Meetings booked</div><div class="value">${withDeal.length}</div><div class="chip ${contacts.length>0&&withDeal.length/contacts.length>=0.5?'green':'orange'}">${contacts.length>0?fmtPct(withDeal.length/contacts.length,0):'—'} form→meeting</div></div>
+      <div class="card kpi"><div class="label">Won deals</div><div class="value">${paidWon}</div><div class="sub"><strong style="color:var(--green)">${fmtM(paidWonPipe)}</strong> won pipeline</div></div>
+      <div class="card kpi"><div class="label">Close rate</div><div class="value small">${fmtPct(paidCrBooked,1)} <span style="color:var(--muted);font-weight:400;font-size:13px">booked</span></div><div class="sub"><span style="color:var(--text)">${fmtPct(paidCrResolved,1)}</span> of resolved <span style="color:var(--subtle)">(${paidWon}/${paidWon+paidLost})</span></div></div>
+      <div class="card kpi"><div class="label">PPC pipeline</div><div class="value small">${fmtM(ppcPipe)}</div><div class="sub">from ${withDeal.length} matched deals</div></div>
+    </div>
+    <div class="note" style="margin-bottom:20px">PPC spend, campaign name, keyword, job title, company size, and "biggest challenge" are not in the HubSpot export. When those columns are added, this page will populate them automatically.</div>
+    <div class="section-title">Contacts · ${p.label}</div>
+    <div class="card" style="padding:0 18px">
+      ${contacts.length===0?`<div class="empty-row" style="padding:24px">No PPC contacts in ${esc(p.label)}.</div>`:`
+      <table class="dense">
+        <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Industry</th><th>Owner</th><th>Has deal</th><th class="num">Amount</th><th>Create date</th><th>Status</th></tr></thead>
+        <tbody>${contacts.map(c=>`<tr><td><a href="${esc(c.hs_link)}" target="_blank" rel="noopener">${esc(c.name)||'—'}</a></td><td style="color:var(--muted);font-size:12px">${esc(c.email)}</td><td>${esc(c.company)||'—'}</td><td>${esc(c.industry)||'—'}</td><td style="color:var(--muted);font-size:12px">${esc(c.contact_owner)||'—'}</td><td>${c.has_deal?'<span class="chip green">✓ deal</span>':'<span class="chip muted">no deal</span>'}</td><td class="num">${c.deal_amount?fmtM(c.deal_amount):'—'}</td><td style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">${c.create_date||'—'}</td><td>${statusChip(c.status)}</td></tr>`).join('')}</tbody>
+      </table>`}
+    </div>
+    ${withDeal.length>0?`<div class="section-title">Deal pipeline · ${withDeal.length} PPC contacts</div>${ord.map(stage=>{const list=stages[stage];const sum=list.reduce((s,c)=>s+(c.deal_amount||0),0);return `<div class="pipeline-stage"><div class="pipeline-stage-head"><span class="name">${esc(stage)}</span><span class="meta">${list.length} · ${fmtM(sum)}</span></div><div class="deals">${list.map(c=>`<span class="deal-pill"><a href="${esc(c.hs_link)}" target="_blank" rel="noopener">${esc(c.company||c.name)}</a><span class="amt">${c.deal_amount?fmtM(c.deal_amount):''}</span></span>`).join('')}</div></div>`}).join('')}`:''}
+    ${noDeal.length>0?`<div class="section-title">PPC contacts without a meeting booked</div>${noDeal.map(c=>`<div class="action-item warm"><div class="name"><a href="${esc(c.hs_link)}" target="_blank" rel="noopener">${esc(c.name)}</a> · ${esc(c.company)}</div><div class="meta">${esc(c.industry)||'—'} · ${esc(c.city)||'—'}, ${esc(c.country)||'—'} · created ${esc(c.create_date)}</div></div>`).join('')}`:''}`;
+}
+
+function renderAIPage(p){
+  const deals=filterDeals(p).filter(d=>d.source==='AI Referrals');
+  const wonDealsAll=deals.filter(d=>d.deal_stage.toLowerCase().includes('won'));
+  const won=wonDealsAll.length;
+  const lost=deals.filter(d=>d.deal_stage.toLowerCase().includes('lost')).length;
+  const active=deals.length-won-lost;
+  const pipeline=deals.reduce((s,d)=>s+(d.amount||0),0);
+  const wonPipe=wonDealsAll.reduce((s,d)=>s+(d.amount||0),0);
+  const activePipe=deals.filter(d=>!d.deal_stage.toLowerCase().includes('lost')&&!d.deal_stage.toLowerCase().includes('won')).reduce((s,d)=>s+(d.amount||0),0);
+  const crBooked=deals.length>0?won/deals.length:0;
+  const crResolved=(won+lost)>0?won/(won+lost):0;
+  const sources=[...new Set(deals.map(d=>d.utm_source).filter(Boolean))];
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">AI leads</div><div class="value">${deals.length}</div><div class="sub">${sources.join(', ')||'no source'}</div></div>
+      <div class="card kpi"><div class="label">Won deals</div><div class="value">${won}</div><div class="sub"><strong style="color:var(--green)">${fmtM(wonPipe)}</strong> won pipeline</div></div>
+      <div class="card kpi"><div class="label">Close rate</div><div class="value small">${fmtPct(crBooked,1)} <span style="color:var(--muted);font-weight:400;font-size:13px">booked</span></div><div class="sub"><span style="color:var(--text)">${fmtPct(crResolved,1)}</span> of resolved <span style="color:var(--subtle)">(${won}/${won+lost})</span></div></div>
+      <div class="card kpi"><div class="label">Active</div><div class="value">${active}</div><div class="sub"><strong style="color:var(--blue)">${fmtM(activePipe)}</strong> open · ${lost} lost</div></div>
+      <div class="card kpi"><div class="label">Total pipeline</div><div class="value small">${fmtM(pipeline)}</div></div>
+    </div>
+    <div class="note" style="margin-bottom:20px">AI Referrals identified via utm_source in landing-page URLs (chatgpt.com, perplexity, claude, gemini, openai).</div>
+    <div class="section-title">AI-referred deals · ${p.label}</div>
+    <div class="card" style="padding:0 18px">
+      ${deals.length===0?`<div class="empty-row" style="padding:24px">No AI-referred deals in ${esc(p.label)}.</div>`:`
+      <table class="dense">
+        <thead><tr><th>Company</th><th>AI Source</th><th>First page</th><th>Size</th><th>Stage</th><th class="num">Amount</th><th>Created</th><th>Status</th></tr></thead>
+        <tbody>${deals.map(d=>`<tr><td><a href="${esc(d.deal_hs_link)}" target="_blank" rel="noopener">${esc(d.deal_name)}</a></td><td><span class="chip orange">${esc(d.utm_source||'—')}</span></td><td style="color:var(--muted);font-size:11.5px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((d.first_page||'').replace('https://www.procuredesk.com',''))}</td><td>${esc(d.company_size)||'—'}</td><td style="font-size:12px">${esc(d.deal_stage.replace(' (Inbound demos)',''))}</td><td class="num">${fmtM(d.amount)}</td><td style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">${d.create_date||'—'}</td><td>${statusChip(d.status)}</td></tr>`).join('')}</tbody>
+      </table>`}
+    </div>`;
+}
+
+function renderYouTubePage(p){
+  const deals=filterDeals(p).filter(d=>d.source==='YouTube'||(d.utm_source&&d.utm_source.toLowerCase().includes('youtube')));
+  const wonDealsAll=deals.filter(d=>d.deal_stage.toLowerCase().includes('won'));
+  const won=wonDealsAll.length;
+  const lost=deals.filter(d=>d.deal_stage.toLowerCase().includes('lost')).length;
+  const active=deals.length-won-lost;
+  const pipeline=deals.reduce((s,d)=>s+(d.amount||0),0);
+  const wonPipe=wonDealsAll.reduce((s,d)=>s+(d.amount||0),0);
+  const activePipe=deals.filter(d=>!d.deal_stage.toLowerCase().includes('lost')&&!d.deal_stage.toLowerCase().includes('won')).reduce((s,d)=>s+(d.amount||0),0);
+  const crBooked=deals.length>0?won/deals.length:0;
+  const crResolved=(won+lost)>0?won/(won+lost):0;
+  const utmV=deals.filter(d=>d.utm_source&&d.utm_source.toLowerCase().includes('youtube')).length;
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">YouTube deals</div><div class="value">${deals.length}</div><div class="sub">${utmV} UTM-verified · ${deals.length-utmV} inferred</div></div>
+      <div class="card kpi"><div class="label">Won deals</div><div class="value">${won}</div><div class="sub"><strong style="color:var(--green)">${fmtM(wonPipe)}</strong> won pipeline</div></div>
+      <div class="card kpi"><div class="label">Close rate</div><div class="value small">${fmtPct(crBooked,1)} <span style="color:var(--muted);font-weight:400;font-size:13px">booked</span></div><div class="sub"><span style="color:var(--text)">${fmtPct(crResolved,1)}</span> of resolved <span style="color:var(--subtle)">(${won}/${won+lost})</span></div></div>
+      <div class="card kpi"><div class="label">Active</div><div class="value">${active}</div><div class="sub"><strong style="color:var(--blue)">${fmtM(activePipe)}</strong> open · ${lost} lost</div></div>
+      <div class="card kpi"><div class="label">Total pipeline</div><div class="value small">${fmtM(pipeline)}</div></div>
+    </div>
+    <div class="note" style="margin-bottom:20px">YouTube contacts verified via utm_source=youtube only.</div>
+    <div class="section-title">YouTube-attributed deals · ${p.label}</div>
+    <div class="card" style="padding:0 18px">
+      ${deals.length===0?`<div class="empty-row" style="padding:24px">No UTM-verified YouTube deals in ${esc(p.label)}.</div>`:`
+      <table class="dense">
+        <thead><tr><th>Company</th><th>Campaign</th><th>UTM</th><th>Stage</th><th class="num">Amount</th><th>Created</th><th>Status</th></tr></thead>
+        <tbody>${deals.map(d=>`<tr><td><a href="${esc(d.deal_hs_link)}" target="_blank" rel="noopener">${esc(d.deal_name)}</a></td><td>${esc(d.utm_campaign)||'—'}</td><td><span class="chip ${d.utm_source&&d.utm_source.toLowerCase().includes('youtube')?'red':'muted'}">${esc(d.utm_source||'UTM not set')}</span></td><td style="font-size:12px">${esc(d.deal_stage.replace(' (Inbound demos)',''))}</td><td class="num">${fmtM(d.amount)}</td><td style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">${d.create_date||'—'}</td><td>${statusChip(d.status)}</td></tr>`).join('')}</tbody>
+      </table>`}
+    </div>`;
+}
+
+function renderOrganicPage(p){renderChannelTable(p,filterDeals(p).filter(d=>d.source==='Organic Search'),'Organic Search')}
+function renderDirectPage(p){renderChannelTable(p,filterDeals(p).filter(d=>d.source==='Direct'),'Direct')}
+
+function renderChannelTable(p,deals,label){
+  const wonDealsAll=deals.filter(d=>d.deal_stage.toLowerCase().includes('won'));
+  const won=wonDealsAll.length;
+  const lost=deals.filter(d=>d.deal_stage.toLowerCase().includes('lost')).length;
+  const active=deals.length-won-lost;
+  const pipeline=deals.reduce((s,d)=>s+(d.amount||0),0);
+  const wonPipe=wonDealsAll.reduce((s,d)=>s+(d.amount||0),0);
+  const activePipe=deals.filter(d=>!d.deal_stage.toLowerCase().includes('lost')&&!d.deal_stage.toLowerCase().includes('won')).reduce((s,d)=>s+(d.amount||0),0);
+  const crBooked=deals.length>0?won/deals.length:0;
+  const crResolved=(won+lost)>0?won/(won+lost):0;
+  const landing={};
+  deals.forEach(d=>{const pg=(d.first_page||'').replace('https://www.procuredesk.com','').replace(/\?.*$/,'')||'(unknown)';landing[pg]=(landing[pg]||0)+1});
+  const top=Object.entries(landing).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">Demos booked</div><div class="value">${deals.length}</div><div class="sub">${esc(label)} · ${p.label}</div></div>
+      <div class="card kpi"><div class="label">Won deals</div><div class="value">${won}</div><div class="sub"><strong style="color:var(--green)">${fmtM(wonPipe)}</strong> won pipeline</div></div>
+      <div class="card kpi"><div class="label">Close rate</div><div class="value small">${fmtPct(crBooked,1)} <span style="color:var(--muted);font-weight:400;font-size:13px">booked</span></div><div class="sub"><span style="color:var(--text)">${fmtPct(crResolved,1)}</span> of resolved <span style="color:var(--subtle)">(${won}/${won+lost})</span></div></div>
+      <div class="card kpi"><div class="label">Active</div><div class="value">${active}</div><div class="sub"><strong style="color:var(--blue)">${fmtM(activePipe)}</strong> open · ${lost} lost</div></div>
+      <div class="card kpi"><div class="label">Total pipeline</div><div class="value small">${fmtM(pipeline)}</div><div class="sub">Avg ${fmtM(deals.length>0?pipeline/deals.length:0)}</div></div>
+    </div>
+    ${top.length>0?`<div class="section-title">Top landing pages · ${p.label}</div><div class="card" style="padding:0 18px"><table class="dense"><thead><tr><th>First page seen</th><th class="num">Deals</th></tr></thead><tbody>${top.map(([pg,n])=>`<tr><td style="font-family:var(--mono);font-size:12px;color:var(--text-2)">${esc(pg)}</td><td class="num">${n}</td></tr>`).join('')}</tbody></table></div>`:''}
+    <div class="section-title">${esc(label)} deals · ${p.label}</div>
+    <div class="card" style="padding:0 18px">
+      ${deals.length===0?`<div class="empty-row" style="padding:24px">No ${esc(label)} deals in ${esc(p.label)}.</div>`:`
+      <table class="dense">
+        <thead><tr><th>Company</th><th>First page</th><th>Size</th><th>Stage</th><th>Saw TY</th><th class="num">Amount</th><th>Created</th><th>Status</th></tr></thead>
+        <tbody>${deals.map(d=>`<tr><td><a href="${esc(d.deal_hs_link)}" target="_blank" rel="noopener">${esc(d.deal_name)}</a></td><td style="color:var(--muted);font-size:11.5px;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc((d.first_page||'').replace('https://www.procuredesk.com',''))}</td><td>${esc(d.company_size)||'—'}</td><td style="font-size:12px">${esc(d.deal_stage.replace(' (Inbound demos)',''))}</td><td>${d.saw_thank_you?'✓':'—'}</td><td class="num">${fmtM(d.amount)}</td><td style="font-family:var(--mono);font-size:11.5px;color:var(--muted)">${d.create_date||'—'}</td><td>${statusChip(d.status)}</td></tr>`).join('')}</tbody>
+      </table>`}
+    </div>`;
+}
+
+function renderQ2Goals(){
+  const p=getPeriod('q2');
+  setTopTitle('Q2 2026 Goals',`Target tracking · ${p.label}`);
+  const q2=DATA.deals.filter(d=>d.create_date>='2026-04-01'&&d.create_date<='2026-06-30');
+  const q1=DATA.deals.filter(d=>d.create_date>='2026-01-01'&&d.create_date<='2026-03-31');
+  const q2Won=q2.filter(d=>d.deal_stage.toLowerCase().includes('won')).length;
+  const q2Pipe=q2.reduce((s,d)=>s+(d.amount||0),0);
+  const q2Close=q2.length>0?q2Won/q2.length:0;
+  const avg=q2.length>0?q2Pipe/q2.length:0;
+  const months=[{m:'Apr',start:'2026-04-01',end:'2026-04-30'},{m:'May',start:'2026-05-01',end:'2026-05-31'},{m:'Jun',start:'2026-06-01',end:'2026-06-30'}];
+  const mCounts=months.map(x=>DATA.deals.filter(d=>d.create_date>=x.start&&d.create_date<=x.end).length);
+  const vals={demos_may:50,demos_jun:50,pipeline_target:120000,close_rate:30};
+
+  document.getElementById('page-body').innerHTML=`
+    <div class="kpi-grid">
+      <div class="card kpi"><div class="label">Q2 demos booked</div><div class="value">${q2.length}</div><div class="progress ${q2.length/150>=0.5?'warn':'off'}"><span style="width:${Math.min(100,q2.length/150*100)}%"></span></div><div class="sub">${q2.length}/150 (50/mo × 3)</div></div>
+      <div class="card kpi"><div class="label">Q2 close rate</div><div class="value">${fmtPct(q2Close,1)}</div><div class="chip ${q2Close>=0.30?'green':q2Close>=0.20?'orange':'red'}">Target 30%</div></div>
+      <div class="card kpi"><div class="label">Q2 pipeline</div><div class="value small">${fmtM(q2Pipe)}</div><div class="sub">Paid target ${fmtM(vals.pipeline_target)}+</div></div>
+      <div class="card kpi"><div class="label">Avg deal size</div><div class="value small">${fmtM(avg)}</div><div class="chip ${avg>=13000?'green':'orange'}">ACV target $13K</div></div>
+      <div class="card kpi"><div class="label">Q1 baseline</div><div class="value">${q1.length}</div><div class="sub">vs Q2 ${q2.length} (${q2.length>q1.length?'+':''}${q2.length-q1.length})</div></div>
+    </div>
+    <div class="section-title">Monthly pacing · Q2</div>
+    <div class="two-col even">
+      <div class="card" style="padding:18px 20px">
+        <div class="block-title">Actual vs target by month</div><div class="block-sub">Target ${DATA.target_per_month}/month</div>
+        <table class="dense">
+          <thead><tr><th>Month</th><th class="num">Booked</th><th class="num">Target</th><th class="num">Gap</th><th class="num">Status</th></tr></thead>
+          <tbody>${months.map((x,i)=>{const b=mCounts[i];const t=i===0?DATA.target_per_month:(i===1?vals.demos_may:vals.demos_jun);const fut=x.start>TODAY_STR;const gap=t-b;return `<tr><td>${x.m}${fut?' <span class="chip muted">future</span>':''}</td><td class="num">${b}</td><td class="num muted-num">${t}</td><td class="num ${gap>0?'bad-num':'good-num'}">${gap>0?'-'+gap:'+'+Math.abs(gap)}</td><td class="num"><span class="chip ${b>=t?'green':fut?'muted':'red'}">${b>=t?'met':fut?'pending':'short'}</span></td></tr>`}).join('')}</tbody>
+        </table>
+      </div>
+      <div class="card" style="padding:18px 20px">
+        <div class="block-title">Cumulative progress</div><div class="block-sub">Q2 actual vs ${DATA.target_per_month*3} target</div>
+        <div id="cum-chart"></div>
+      </div>
+    </div>
+    <div class="section-title">Q2 goal reference · read-only</div>
+    <div class="goal-card">
+      <div><div class="g-label">Demo target</div><div class="g-value">50+ / month by May</div><div class="g-actual">April ${mCounts[0]} booked</div></div>
+      <div><div class="g-label">Close rate target</div><div class="g-value">30%</div><div class="g-actual">Q2 actual ${fmtPct(q2Close,1)}</div></div>
+      <div><div class="g-label">ACV</div><div class="g-value">$13,000</div><div class="g-actual">Avg ${fmtM(avg)}</div></div>
+      <div><div class="g-label">Paid pipeline target</div><div class="g-value">$120,000+</div><div class="g-actual">Paid deals ${filterDeals(p).filter(d=>d.source==='Paid Search'||d.source==='PMAX').length}</div></div>
+      <div><div class="g-label">Q2 ARR goal</div><div class="g-value">$1,000,000</div><div class="g-actual">new ARR</div></div>
+    </div>`;
+  const cum=[{label:'Apr',value:mCounts[0],target:DATA.target_per_month},{label:'May',value:mCounts[0]+mCounts[1],target:DATA.target_per_month*2},{label:'Jun',value:mCounts[0]+mCounts[1]+mCounts[2],target:DATA.target_per_month*3}];
+  renderCumulative('cum-chart',cum);
+
+}
+
+function renderCumulative(cid,data){
+  const w=480,h=200,pd={l:40,r:20,t:14,b:40},iw=w-pd.l-pd.r,ih=h-pd.t-pd.b;
+  const maxV=Math.max(1,...data.map(d=>Math.max(d.value,d.target)));
+  let svg=`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">`;
+  for(let i=0;i<=4;i++){const y=pd.t+(i/4)*ih,v=Math.round(maxV*(1-i/4));svg+=`<line x1="${pd.l}" y1="${y}" x2="${w-pd.r}" y2="${y}" stroke="#222B44"/><text x="${pd.l-8}" y="${y+4}" text-anchor="end" font-family="IBM Plex Mono" font-size="10" fill="#5A6178">${v}</text>`}
+  const tp=data.map((d,i)=>[pd.l+(i+0.5)*(iw/data.length),pd.t+ih-(d.target/maxV)*ih]);
+  svg+=`<polyline points="${tp.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#F87171" stroke-width="1.5" stroke-dasharray="4,4"/>`;
+  tp.forEach(p=>svg+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#F87171"/>`);
+  const ap=data.map((d,i)=>[pd.l+(i+0.5)*(iw/data.length),pd.t+ih-(d.value/maxV)*ih]);
+  svg+=`<polyline points="${ap.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#34D399" stroke-width="2"/>`;
+  ap.forEach((p,i)=>{svg+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#34D399"/><text x="${p[0]}" y="${p[1]-10}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#E6EAF3">${data[i].value}</text>`});
+  data.forEach((d,i)=>{const x=pd.l+(i+0.5)*(iw/data.length);svg+=`<text x="${x}" y="${h-pd.b+18}" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#8892A8">${esc(d.label)}</text>`});
+  svg+=`<g font-family="IBM Plex Sans" font-size="10"><circle cx="${pd.l+6}" cy="${h-8}" r="3" fill="#34D399"/><text x="${pd.l+14}" y="${h-5}" fill="#8892A8">Actual</text><circle cx="${pd.l+70}" cy="${h-8}" r="3" fill="#F87171"/><text x="${pd.l+78}" y="${h-5}" fill="#8892A8">Target</text></g>`;
+  svg+='</svg>';document.getElementById(cid).innerHTML=svg;
+}
+
+function render(){
+  updateSidebarCounts();
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll(`.nav-item[data-page="${state.page}"]`).forEach(n=>n.classList.add('active'));
+  document.querySelectorAll(`.nav-item[data-period="${state.period}"]`).forEach(n=>n.classList.add('active'));
+  if(state.page==='dashboard')renderDashboard();
+  else if(state.page==='q2-goals')renderQ2Goals();
+  else renderChannelPage(state.page);
+}
+
+function init(){
+  document.querySelectorAll('.nav-item[data-page]').forEach(n=>n.addEventListener('click',e=>{e.preventDefault();state.page=n.dataset.page;render();window.scrollTo({top:0})}));
+  document.querySelectorAll('.nav-item[data-period]').forEach(n=>n.addEventListener('click',e=>{e.preventDefault();state.period=n.dataset.period;render();window.scrollTo({top:0})}));
+  render();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+</script>
+</body>
+</html>
