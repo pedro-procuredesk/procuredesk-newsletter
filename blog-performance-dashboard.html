@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Blog Performance Dashboard",
+  "schemaVersion": 1,
+  "description": "Live blog performance dashboard. New-content tab auto-loads recent posts from the site CMS with GSC clicks/impressions/CTR/position and Ahrefs Web Analytics visitors/bounce/avg-time/search+LLM visits (per-post LLM engine split on hover) plus a scrollable search-performance trend. All-time tab shows every page except the tracked new posts. AI Visibility tab shows AI referral traffic by month (with year-over-year), by engine, and the top pages AI assistants send visitors to. Refreshes from live data on every reload.",
+  "mcpTools": [
+    "mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__gsc-pages",
+    "mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__web-analytics-top-pages",
+    "mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__gsc-performance-history",
+    "mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__web-analytics-source-channels-chart",
+    "mcp__9f822b86-39a8-4d7d-b7fd-b7eec368a511__data_query",
+    "mcp__9f822b86-39a8-4d7d-b7fd-b7eec368a511__get_async_query_results"
+  ],
+  "mcpServerNames": [ "Ahrefs", "Ahrefs", "Ahrefs", "Ahrefs", "Supermetrics", "Supermetrics" ]
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog Performance Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: light; --indigo:#4F46E5; --light:#EEF0FF; --green:#0E9F6E; --greenbg:#E6F7F0; --red:#C0392B; --amber:#A16207; --amberbg:#FDF3E1; --border:#E3E8F2; --text:#1F2937; --muted:#6B7280; --grey:#F7F7F9; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Segoe UI',Arial,sans-serif;background:#fff;color:var(--text);padding:24px;font-size:13.5px;line-height:1.5}
+  h1{font-size:19px;margin-bottom:2px}
+  .sub{color:var(--muted);font-size:11.5px;margin-bottom:10px}
+  .stamp{display:inline-block;font-size:11px;background:var(--greenbg);color:var(--green);border-radius:999px;padding:4px 12px;margin-bottom:14px;font-weight:600}
+  .stamp.warn{background:var(--amberbg);color:var(--amber)}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:2px solid var(--border)}
+  .tabbtn{padding:8px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit}
+  .tabbtn.active{color:var(--indigo);border-bottom-color:var(--indigo)}
+  .view{display:none}.view.active{display:block}
+  .totals{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .kpi{background:var(--grey);border:1px solid var(--border);border-radius:10px;padding:10px 16px;min-width:108px}
+  .kpi b{display:block;font-size:18px;color:var(--indigo)}
+  .kpi span{font-size:10.5px;color:var(--muted)}
+  .card{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+  .card h2{font-size:14px;color:var(--indigo);margin-bottom:10px}
+  .callout{background:var(--amberbg);border:1px solid #F3D9A8;border-radius:8px;padding:10px 12px;font-size:11.5px;color:#7a5300;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{background:var(--light);color:var(--indigo);text-align:left;padding:6px 8px;font-size:10.5px;position:sticky;top:0;cursor:pointer;white-space:nowrap;z-index:2}
+  td{padding:4px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td.page{max-width:360px;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
+  td.page a{color:var(--indigo);text-decoration:none}
+  .zero{color:#bbb}
+  .hot{color:var(--green);font-weight:700}
+  .llmcell{cursor:help}
+  .tablewrap{max-height:520px;overflow:auto;border:1px solid var(--border);border-radius:8px}
+  .legend{font-size:11px;color:var(--muted);margin:2px 0 8px}
+  .legend b{color:var(--text)}
+  .addrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .addrow input{flex:1;min-width:260px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit}
+  .addrow button{background:var(--indigo);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer;font-family:inherit}
+  .chip{display:inline-block;background:var(--light);color:var(--indigo);border-radius:999px;padding:2px 10px;font-size:11px;margin:2px 4px 2px 0}
+  .chip i{cursor:pointer;font-style:normal;margin-left:6px;color:var(--red)}
+  .note{font-size:11px;color:var(--muted);margin-top:8px}
+  canvas.spark{vertical-align:middle;cursor:crosshair}
+  #tip{position:fixed;z-index:99;background:#1F2937;color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;pointer-events:none;display:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  #tip b{color:#C7CDF8}
+  .toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+  .tgbtn{padding:6px 14px;border:none;background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
+  .tgbtn.active{background:var(--indigo);color:#fff}
+  .chartscroll{overflow-x:auto;border:1px solid var(--border);border-radius:8px;padding:6px}
+  .chartinner{height:240px;position:relative;min-width:100%}
+  .scrollhint{font-size:10.5px;color:var(--muted);margin-top:4px}
+  .eng{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12px}
+  .eng .lbl{width:118px;font-weight:600}
+  .eng .barwrap{flex:1;background:#F0F1F6;border-radius:6px;height:22px;overflow:hidden;min-width:140px}
+  .eng .bar{height:100%;background:var(--indigo);border-radius:6px;min-width:32px;display:flex;align-items:center;justify-content:flex-end;color:#fff;font-size:11px;font-weight:700;padding-right:7px;box-sizing:border-box;white-space:nowrap}
+  .eng .val{width:46px;text-align:right;color:var(--muted);font-size:11px}
+  .insight{border:1px solid var(--border);border-left:4px solid var(--indigo);border-radius:10px;padding:11px 14px;margin-bottom:10px;background:#fff}
+  .insight .tag{display:inline-block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:999px;margin-bottom:5px;color:#fff}
+  .insight h3{font-size:13.5px;margin:3px 0 3px;color:var(--text)}
+  .insight p{font-size:12px;color:var(--text);margin:1px 0;line-height:1.45}
+  .insight .act{font-size:12px;margin-top:5px}
+  .insight .act b{color:var(--indigo)}
+  .idate{font-size:11px;color:var(--muted);font-weight:500}
+</style>
+</head>
+<body>
+<h1>Blog Performance Dashboard</h1>
+<div class="sub">Search data from Google Search Console. Visitor, bounce, time-on-page and traffic-source data from <b>Ahrefs Web Analytics</b> (Google Analytics is not connected). Press <b>Reload</b> for fresh data.</div>
+<div class="stamp" id="stamp">Loading live data…</div>
+<div id="tip"></div>
+
+<div class="tabs">
+  <button class="tabbtn active" onclick="switchTab(0,this)">New content</button>
+  <button class="tabbtn" onclick="switchTab(1,this)">All-time content (excl. new posts)</button>
+  <button class="tabbtn" onclick="switchTab(2,this)">AI visibility</button>
+  <button class="tabbtn" onclick="switchTab(3,this)">Conversions (GA4)</button>
+  <button class="tabbtn" onclick="switchTab(4,this)">Insights &amp; opportunities</button>
+</div>
+
+<!-- ===== TAB 1: NEW CONTENT ===== -->
+<div class="view active" id="view0">
+  <div class="totals" id="kpis0"></div>
+  <div class="card">
+    <h2>Search performance by month — impressions &amp; clicks</h2>
+    <div class="toggle">
+      <button id="tgNew" class="tgbtn active" onclick="setTrend('new',this)">New content</button>
+      <button id="tgSite" class="tgbtn" onclick="setTrend('site',this)">Site-wide (all pages)</button>
+    </div>
+    <div class="chartscroll"><div class="chartinner" id="chartinner"><canvas id="trendChart"></canvas></div></div>
+    <div class="scrollhint">↔ Scroll horizontally to move forward/back through months. Bars = impressions, line = clicks. Current month is partial.</div>
+    <div class="note" id="trendNote"></div>
+  </div>
+  <div class="card">
+    <h2>Per-post data — click any header to sort</h2>
+    <div class="legend"><b>Impr. / Clicks / CTR / Pos</b> = Google Search (impressions, clicks, click-through rate, avg position). &nbsp; <b>Visitors</b> = everyone who reached the page (all sources). &nbsp; <b>Search visits</b> = arrived from a search engine. &nbsp; <b>LLM visits</b> = arrived from an AI assistant. &nbsp; <b>Avg time</b> = average session length (seconds).</div>
+    <div class="tablewrap"><table id="tbl0">
+      <thead><tr><th data-k="path">URL</th><th data-k="spark">Curve (monthly clicks/impr.)</th><th data-k="impressions">Impr.</th><th data-k="clicks">Clicks</th><th data-k="ctr">CTR %</th><th data-k="position">Pos</th><th data-k="visitors">Visitors</th><th data-k="pageviews">Views</th><th data-k="bounce">Bounce %</th><th data-k="dur">Avg time (s)</th><th data-k="llm">LLM visits</th><th data-k="search">Search visits</th></tr></thead>
+      <tbody id="tbody0"><tr><td colspan="12">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h2>Track an extra post</h2>
+    <div class="note" style="margin-bottom:4px">The list above loads automatically from the site. Use this only to pin a page that isn't picked up.</div>
+    <div class="addrow">
+      <input id="newUrl" placeholder="https://www.procuredesk.com/my-post/  or  my-post">
+      <button onclick="addUrl()">Add &amp; Refresh</button>
+    </div>
+    <div id="extraChips" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: ALL-TIME ===== -->
+<div class="view" id="view1">
+  <div class="totals" id="kpis1"></div>
+  <div class="card">
+    <h2>All-time top content — every page on the site except the tracked new posts</h2>
+    <div class="note" style="margin-bottom:8px">Top pages by search activity over the last 13 months, <b>excluding the new posts shown on the first tab</b>. Curve shows monthly clicks (indigo line) against impressions (light bars).</div>
+    <div class="tablewrap"><table id="tbl1">
+      <thead><tr><th data-k="path">URL</th><th data-k="spark">Curve (13 months)</th><th data-k="impressions">Impr. (13mo)</th><th data-k="clicks">Clicks (13mo)</th><th data-k="ctr">CTR %</th><th data-k="lastPos">Latest Pos</th><th data-k="trend">Click trend</th></tr></thead>
+      <tbody id="tbody1"><tr><td colspan="7">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: AI VISIBILITY ===== -->
+<div class="view" id="view2">
+  <div class="callout"><b>What this measures:</b> visitors that AI assistants <i>send to the site</i> (referral clicks). It does <b>not</b> measure how often ProcureDesk is mentioned or cited inside AI answers — that needs the Ahrefs <b>Brand Radar</b> add-on, which isn't on the current plan. So treat these as a floor on AI impact, not the full picture.</div>
+  <div class="totals" id="kpis2"></div>
+  <div class="card">
+    <h2>AI traffic by month — which months send the most AI visitors?</h2>
+    <div class="toggle">
+      <button id="lmMonthly" class="tgbtn active" onclick="setLlmTrend('monthly',this)">Monthly trend</button>
+      <button id="lmYoy" class="tgbtn" onclick="setLlmTrend('yoy',this)">Year over year</button>
+    </div>
+    <div class="chartscroll"><div class="chartinner" id="llmChartInner"><canvas id="llmTrendChart"></canvas></div></div>
+    <div class="note" id="llmTrendNote"></div>
+  </div>
+  <div class="card">
+    <h2>AI traffic by engine <span class="idate" id="engDates">(site-wide, last 12 months)</span></h2>
+    <div id="llmEngines"><span class="note">Loading…</span></div>
+  </div>
+  <div class="card">
+    <h2>Top pages AI assistants send visitors to (site-wide, last 12 months)</h2>
+    <div class="note" style="margin-bottom:6px">These are the pages AI engines most often link people to — your strongest AI-cited content. Click a header to sort.</div>
+    <div class="tablewrap"><table id="tbl2">
+      <thead><tr><th data-k="path">URL</th><th data-k="total">AI visits</th><th data-k="chatgpt">ChatGPT</th><th data-k="perplexity">Perplexity</th><th data-k="claude">Claude</th><th data-k="gemini">Gemini</th><th data-k="copilot">Copilot</th></tr></thead>
+      <tbody id="tbody2"><tr><td colspan="7">Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: CONVERSIONS (GA4) ===== -->
+<div class="view" id="view3">
+  <div class="callout"><b>Demo conversions from GA4</b> (via Supermetrics). Demos are attributed to the <i>landing page of the converting session</i> and to that session's channel. New blog posts rarely appear here — they assist discovery, but visitors usually convert later on the homepage, /pricing or /request-a-demo. So read content's role as <i>assist</i>, not last-touch.</div>
+  <div class="totals" id="kpis3"></div>
+  <div class="card">
+    <h2>Demos booked by month <span class="idate" id="moDates"></span></h2>
+    <div class="chartscroll"><div class="chartinner" id="demoTrendInner"><canvas id="demoTrendChart"></canvas></div></div>
+    <div class="note">Demos booked per month (GA4 <code>demo_booked</code> event). The current month is partial. Breakdowns below are also month-on-month (stacked); demo volume is low (~30–40/mo) so individual segments can be small.</div>
+  </div>
+  <div id="demoWrap">
+    <div class="card">
+      <h2>Demos by channel — month on month</h2>
+      <div class="chartscroll"><div class="chartinner" id="chInner"><canvas id="chChart"></canvas></div></div>
+      <div class="note">Stacked demos booked per month by channel. Hover a segment for its value.</div>
+    </div>
+    <div class="card">
+      <h2>Demos by new vs returning visitor — month on month</h2>
+      <div class="chartscroll"><div class="chartinner" id="nvrInner"><canvas id="nvrChart"></canvas></div></div>
+    </div>
+    <div class="card">
+      <h2>Demos by source / medium — month on month (top sources)</h2>
+      <div class="chartscroll"><div class="chartinner" id="srcInner"><canvas id="srcChart"></canvas></div></div>
+    </div>
+    <div class="card">
+      <h2>Top pages where demos land (since Sep 2025)</h2>
+      <div class="note" style="margin-bottom:6px">Landing page of the session in which the demo was booked. Money pages dominate; content pages appearing here are genuine last-touch converters.</div>
+      <div class="tablewrap"><table><thead><tr><th>Landing page</th><th>Demos booked</th></tr></thead><tbody id="demoPages"><tr><td colspan="2">Loading…</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>Traffic by channel — GA4 cross-check <span class="idate" id="ga4Dates"></span></h2>
+      <div class="note" style="margin-bottom:6px">GA4's own channel split, to sanity-check the Ahrefs traffic numbers used elsewhere in this dashboard. Note GA4 reports a native <b>AI Assistant</b> channel.</div>
+      <div class="tablewrap"><table><thead><tr><th>Channel</th><th>Sessions</th><th>Users</th></tr></thead><tbody id="ga4Channels"><tr><td colspan="3">Loading…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 5: INSIGHTS & OPPORTUNITIES ===== -->
+<div class="view" id="view4">
+  <div class="callout" style="background:var(--light);border-color:#C7CDF8;color:#312E81"><b>Auto-generated from this dashboard's live data.</b> Every figure below is pulled straight from GSC, Ahrefs and GA4 — no estimates. Reload for the latest; ordered roughly by impact.</div>
+  <div id="insights"><span class="note">Crunching the data…</span></div>
+</div>
+
+<script>
+const PROJECT = 1743903;
+const GSC_TOOL = 'mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__gsc-pages';
+const WA_TOOL  = 'mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__web-analytics-top-pages';
+const PERF_TOOL = 'mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__gsc-performance-history';
+const SC_CHART_TOOL = 'mcp__ba7e0a9a-5ee9-4882-b63b-a70e04b56e1e__web-analytics-source-channels-chart';
+const SM_QUERY = 'mcp__9f822b86-39a8-4d7d-b7fd-b7eec368a511__data_query';
+const SM_RESULT = 'mcp__9f822b86-39a8-4d7d-b7fd-b7eec368a511__get_async_query_results';
+const GA4_PROP = '358080909';
+const DOMAIN = 'https://www.procuredesk.com';
+const START = '2026-03-18';
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const LLM_ENGINES = [
+  {key:'chatgpt',   label:'ChatGPT',   referer:'https://chatgpt.com/',           color:'#10A37F'},
+  {key:'perplexity',label:'Perplexity',referer:'https://www.perplexity.ai/',     color:'#1FA2B8'},
+  {key:'claude',    label:'Claude',    referer:'https://claude.ai/',             color:'#D97757'},
+  {key:'gemini',    label:'Gemini',    referer:'https://gemini.google.com/',     color:'#4285F4'},
+  {key:'copilot',   label:'Copilot',   referer:'https://copilot.microsoft.com/', color:'#8B5CF6'}
+];
+const CAT_COLORS = ['#4F46E5','#0E9F6E','#D97757','#4285F4','#8B5CF6','#E0A82E','#EC4899','#14B8A6','#64748B','#A16207'];
+
+const BASE_SLUGS = ["best-procurement-software-for-controllers","procurement-software-for-manufacturing","tipalti-vs-stampli","zip-vs-coupa","best-procurement-software-3-way-match","purchase-order-accruals-quarter-end","cas/cas-firms-3-way-matching","best-ap-automation-manufacturing","invoices-without-pos-logistics-companies","cas/automated-gl-coding","procurement-in-manufacturing","cas/client-spend-visibility-cas-firms","cas/white-label-ap-automation","cas/procure-to-pay-for-cas-firms","procuredesk-vs-procurify-logistics-companies","procuredesk-vs-ramp","corporate-cards-vs-purchase-orders","month-end-close-too-long","cfo-real-time-spend-visibility","online-procurement-management-system","procure-to-pay-suite","procurement-software-pre-implementation-checklist","vendor-master-list","erp-implementation-procurement-questions","cas/beyond-ap-automation-cas-advisory","manufacturing-procurement-process","month-end-close-checklist","three-way-invoice-matching-manufacturing-without-erp","how-manufacturers-handle-vendor-invoice-discrepancies","how-to-stop-unauthorized-employee-spending","procuredesk-vs-bill-for-controllers","purchase-approval-workflow","controller-checklist-choosing-procurement-software","invoice-processing-automation","bill-com-alternatives","invoice-coding-automation-property-management","purchase-approval-workflow-failure-points","purchase-approval-process-multi-site-logistics","outgrown-quickbooks-procurement-warning-signs","tariff-era-procurement-gap","quickbooks-3-way-matching","procurement-software-cincinnati","ap-audit-preparation","punchout-procurement-spend-control","supplier-risk-finance","procuredesk-g2-summer-2026","mro-procurement-logistics","invoice-processing-time-benchmarks","invoice-approval-thresholds","vendor-onboarding-process"];
+
+let LIST_SOURCE='built-in';
+
+function extraSlugs(){ try{ return JSON.parse(localStorage.getItem('pd_extra_slugs')||'[]'); }catch(e){ return []; } }
+function slugToPath(s){ return '/'+s.replace(/^\/|\/$/g,'')+'/'; }
+function addUrl(){
+  const v=document.getElementById('newUrl').value.trim(); if(!v) return;
+  const slug=v.replace(/^https?:\/\/[^\/]+/,'').replace(/^\/|\/$/g,''); if(!slug) return;
+  const ex=extraSlugs();
+  if(!ex.includes(slug)){ ex.push(slug); localStorage.setItem('pd_extra_slugs',JSON.stringify(ex)); }
+  document.getElementById('newUrl').value=''; renderChips(); load();
+}
+function removeSlug(s){ localStorage.setItem('pd_extra_slugs',JSON.stringify(extraSlugs().filter(x=>x!==s))); renderChips(); load(); }
+function renderChips(){ document.getElementById('extraChips').innerHTML = extraSlugs().map(s=>'<span class="chip">'+s+'<i onclick="removeSlug(\''+s+'\')">✕</i></span>').join('')||'<span class="note">No extra posts pinned.</span>'; }
+
+async function fetchLiveSlugs(){
+  try{
+    const res=await fetch(DOMAIN+'/wp-json/wp/v2/posts?after='+START+'T00:00:00&per_page=100&_fields=slug,date',{headers:{'Accept':'application/json'}});
+    if(!res.ok) throw 0;
+    const arr=await res.json();
+    const out=[];
+    for(const p of arr){ if(p&&p.slug&&(!p.date||p.date>=START)) out.push(p.slug); }
+    return out.length?out:null;
+  }catch(e){ return null; }
+}
+
+function parseResult(r){
+  if(r.isError) throw new Error('tool error');
+  if(r.structuredContent) return r.structuredContent;
+  const t=(r.content&&r.content[0]&&r.content[0].text)||'';
+  return JSON.parse(t.substring(t.indexOf('{'), t.lastIndexOf('}')+1));
+}
+// Supermetrics (GA4) async query helper: submit, then poll until completed; returns data rows (header dropped)
+function smUnwrap(r){
+  let o=r.structuredContent; if(!o){ const t=r.content&&r.content[0]&&r.content[0].text; o=t?JSON.parse(t):{}; }
+  if(o && o.data && (o.data.schedule_id!==undefined || o.data.status!==undefined)) return o.data;
+  return o;
+}
+async function smQuery(fields, filters, opts){
+  const args=Object.assign({ds_id:'GAWA',ds_accounts:GA4_PROP,fields,filters,date_range_type:'last_90_days',max_rows:200}, opts||{});
+  const sub=await window.cowork.callMcpTool(SM_QUERY,args);
+  const sid=smUnwrap(sub).schedule_id; if(!sid) return [];
+  for(let i=0;i<15;i++){
+    const res=await window.cowork.callMcpTool(SM_RESULT,{schedule_id:sid});
+    const d=smUnwrap(res);
+    if(d.status==='completed'){ const rows=Array.isArray(d.data)?d.data:[]; return rows.slice(1); }
+    if(d.status==='failed'||d.status==='error') return [];
+    await new Promise(rs=>setTimeout(rs,2500));
+  }
+  return [];
+}
+function gscWhere(slugs){ return JSON.stringify({or: slugs.map(s=>({field:'url', is:['substring', s]}))}); }
+function waWhere(slugs, channel){
+  const or={or: slugs.map(s=>({field:'page', is:['substring', s]}))};
+  return JSON.stringify(channel?{and:[or,{field:'source_channel',is:['eq',channel]}]}:or);
+}
+function pathOf(url){ try{ return new URL(url).pathname; }catch(e){ return url; } }
+function monthRanges(fromYM, toDate){
+  const out=[]; let [y,m]=fromYM.split('-').map(Number);
+  const end=new Date(toDate);
+  while(y<end.getUTCFullYear() || (y===end.getUTCFullYear() && m<=end.getUTCMonth()+1)){
+    const f=y+'-'+String(m).padStart(2,'0')+'-01';
+    const lastDay=new Date(Date.UTC(y,m,0)).getUTCDate();
+    let t=y+'-'+String(m).padStart(2,'0')+'-'+String(lastDay).padStart(2,'0');
+    if(t>toDate) t=toDate;
+    out.push({f,t,label:MON[m-1]+" '"+String(y).slice(2)});
+    m++; if(m>12){m=1;y++;}
+  }
+  return out;
+}
+
+// draws the value on top of each bar (skips null / 0)
+const barLabels={id:'barLabels',afterDatasetsDraw(c){
+  const ctx=c.ctx; ctx.save(); ctx.font='10px -apple-system,Arial'; ctx.fillStyle='#374151'; ctx.textAlign='center';
+  c.data.datasets.forEach((ds,di)=>{ if(ds.type==='line') return; const meta=c.getDatasetMeta(di); if(meta.hidden) return;
+    meta.data.forEach((bar,i)=>{ const v=ds.data[i]; if(v==null||v===0) return; ctx.fillText(Number(v).toLocaleString(), bar.x, bar.y-3); }); });
+  ctx.restore();
+}};
+
+function drawSpark(ctx,series,w,h,hi){
+  ctx.clearRect(0,0,w,h);
+  const maxI=Math.max(1,...series.map(s=>s.imp)), maxC=Math.max(1,...series.map(s=>s.clk));
+  const bw=w/series.length;
+  series.forEach((s,i)=>{ ctx.fillStyle=(i===hi)?'#9DA8F2':'#E2E6FF'; const bh=(s.imp/maxI)*(h-4); ctx.fillRect(i*bw+1, h-bh, bw-2, bh); });
+  ctx.strokeStyle='#4F46E5'; ctx.lineWidth=1.6; ctx.beginPath();
+  series.forEach((s,i)=>{ const x=i*bw+bw/2, y=h-3-(s.clk/maxC)*(h-8); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.stroke();
+  if(hi!=null){ const s=series[hi]; const x=hi*bw+bw/2, y=h-3-(s.clk/maxC)*(h-8);
+    ctx.fillStyle='#4F46E5'; ctx.beginPath(); ctx.arc(x,y,3,0,7); ctx.fill(); }
+}
+function spark(series, labels){
+  const w=150,h=30,c=document.createElement('canvas');
+  c.width=w;c.height=h;c.className='spark';
+  const ctx=c.getContext('2d');
+  drawSpark(ctx,series,w,h,null);
+  const tip=document.getElementById('tip');
+  c.addEventListener('mousemove',e=>{
+    const rect=c.getBoundingClientRect();
+    const i=Math.min(series.length-1, Math.max(0, Math.floor((e.clientX-rect.left)/(w/series.length))));
+    const s=series[i];
+    drawSpark(ctx,series,w,h,i);
+    tip.innerHTML='<b>'+(labels&&labels[i]?labels[i]:'Month '+(i+1))+'</b> &nbsp; Clicks: <b>'+s.clk.toLocaleString()+'</b> &nbsp; Impressions: <b>'+s.imp.toLocaleString()+'</b>';
+    tip.style.display='block';
+    tip.style.left=Math.min(window.innerWidth-260, e.clientX+14)+'px';
+    tip.style.top=(e.clientY-36)+'px';
+  });
+  c.addEventListener('mouseleave',()=>{ tip.style.display='none'; drawSpark(ctx,series,w,h,null); });
+  return c;
+}
+function attachTip(el, html){
+  const tip=document.getElementById('tip');
+  el.addEventListener('mousemove',e=>{
+    tip.innerHTML=html; tip.style.display='block';
+    tip.style.left=Math.min(window.innerWidth-260, e.clientX+14)+'px';
+    tip.style.top=(e.clientY-46)+'px';
+  });
+  el.addEventListener('mouseleave',()=>{ tip.style.display='none'; });
+}
+
+let LABELS0=[], LABELS1=[];
+let rows0=[], rows1=[], aiRows=[];
+let sort0={k:'impressions',d:-1}, sort1={k:'clicks',d:-1}, sort2={k:'total',d:-1};
+let TREND={new:[], site:[]}, trendMode='new', chart;
+let LLM_POINTS=[], llmMode='monthly', llmChart, ENG_TOTALS={};
+let demosByPath=[], demoFunnel={}, ga4Channels=[], demosByMonth=[], demoTrendChart, chPivot=null, nvrPivot=null, srcPivot=null; const CHARTS={};
+let WIN={};
+function fmtDate(s){ try{ return new Date(s+'T00:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return s; } }
+
+async function load(){
+  const stamp=document.getElementById('stamp');
+  stamp.className='stamp'; stamp.textContent='Loading live data… (first load takes ~30s)';
+  const today=new Date(); const dTo=today.toISOString().slice(0,10);
+  const yAgo=new Date(today.getTime()-365*864e5).toISOString().slice(0,10);
+  const d90=new Date(today.getTime()-90*864e5).toISOString().slice(0,10);
+  WIN={engFrom:fmtDate(yAgo), engTo:fmtDate(dTo), today:fmtDate(dTo), d90:fmtDate(d90), moFrom:'Sep 1, 2025'};
+  try{
+    const live=await fetchLiveSlugs();
+    LIST_SOURCE = live?'live from site CMS':'built-in (could not reach CMS)';
+    const set=new Set(BASE_SLUGS);
+    if(live) live.forEach(s=>set.add(s.replace(/^\/|\/$/g,'')));
+    extraSlugs().forEach(s=>set.add(s));
+    const slugs=[...set];
+    const newPathSet=new Set(slugs.map(slugToPath));
+    const chunks=[]; for(let i=0;i<slugs.length;i+=25) chunks.push(slugs.slice(i,i+25));
+    const months0=monthRanges('2026-03', dTo); months0[0].f=START;
+    LABELS0=months0.map(m=>m.label);
+
+    const perPage={}; const monthly=[];
+    for(const mr of months0){
+      let mi=0,mc=0;
+      for(const c of chunks){
+        const r=await window.cowork.callMcpTool(GSC_TOOL,{project_id:PROJECT,date_from:mr.f,date_to:mr.t,limit:80,where:gscWhere(c)});
+        for(const p of (parseResult(r).pages||[])){
+          const path=pathOf(p.page); if(path.includes('/tag/')) continue;
+          perPage[path]=perPage[path]||{series:Array(months0.length).fill(null).map(()=>({clk:0,imp:0}))};
+          const idx=months0.indexOf(mr);
+          perPage[path].series[idx].clk+=(p.clicks||0); perPage[path].series[idx].imp+=(p.impressions||0);
+          mi+=p.impressions||0; mc+=p.clicks||0;
+        }
+      }
+      monthly.push({label:mr.label,imp:mi,clk:mc});
+    }
+    const gMap={};
+    for(const c of chunks){
+      const r=await window.cowork.callMcpTool(GSC_TOOL,{project_id:PROJECT,date_from:START,date_to:dTo,limit:80,where:gscWhere(c)});
+      for(const p of (parseResult(r).pages||[])) gMap[pathOf(p.page)]=p;
+    }
+    async function waFetch(channel){
+      const m={};
+      for(const c of chunks){
+        const r=await window.cowork.callMcpTool(WA_TOOL,{project_id:PROJECT,from:START+'T00:00:00Z',to:dTo+'T23:59:59Z',limit:80,where:waWhere(c,channel)});
+        for(const p of (parseResult(r).stats||[])) m[pathOf(p.page)]=p;
+      }
+      return m;
+    }
+    const wMap=await waFetch(null), lMap=await waFetch('llm'), sMap=await waFetch('search');
+
+    // LLM by engine (site-wide, last 12 months) — powers tab1 hover, the engine panel, and the AI-tab table
+    const engMap={}; ENG_TOTALS={};
+    for(const e of LLM_ENGINES){
+      engMap[e.key]={}; ENG_TOTALS[e.key]=0;
+      try{
+        const r=await window.cowork.callMcpTool(WA_TOOL,{project_id:PROJECT,from:yAgo+'T00:00:00Z',to:dTo+'T23:59:59Z',limit:100,where:JSON.stringify({field:'source_referer',is:['eq',e.referer]})});
+        for(const p of (parseResult(r).stats||[])){ const v=p.visitors||0; engMap[e.key][pathOf(p.page)]=v; ENG_TOTALS[e.key]+=v; }
+      }catch(err){}
+    }
+    renderLlmEngines(ENG_TOTALS);
+
+    rows0=slugs.map(s=>{
+      const path=slugToPath(s);
+      const g=gMap[path]||{}, w=wMap[path]||{}, l=lMap[path]||{}, sr=sMap[path]||{}, pp=perPage[path];
+      const eng={}; LLM_ENGINES.forEach(e=>eng[e.key]=engMap[e.key][path]||0);
+      return { path, url:DOMAIN+path,
+        series: pp?pp.series:months0.map(()=>({clk:0,imp:0})),
+        impressions:g.impressions||0, clicks:g.clicks||0,
+        ctr:g.impressions?(g.clicks||0)/g.impressions*100:0,
+        position:g.position?+g.position.toFixed(1):null,
+        visitors:w.visitors||0, pageviews:w.pageviews||0,
+        bounce:w.session_bounce_rate!=null?+w.session_bounce_rate.toFixed(0):null,
+        dur:w.avg_page_visit_duration_sec||0, llm:l.visitors||0, eng, search:sr.visitors||0 };
+    });
+    renderTable0(); renderKpis0();
+
+    // AI-tab: top pages AI sends visitors to (site-wide)
+    const aiPaths=new Set(); LLM_ENGINES.forEach(e=>Object.keys(engMap[e.key]).forEach(p=>aiPaths.add(p)));
+    aiRows=[...aiPaths].map(path=>{ const eng={}; let total=0; LLM_ENGINES.forEach(e=>{const v=engMap[e.key][path]||0; eng[e.key]=v; total+=v;});
+      return {path, url:DOMAIN+path, total, chatgpt:eng.chatgpt, perplexity:eng.perplexity, claude:eng.claude, gemini:eng.gemini, copilot:eng.copilot}; }).filter(r=>r.total>0);
+    renderTable2();
+
+    // ---- search-performance trend ----
+    TREND.new=monthly.slice();
+    try{
+      const r=await window.cowork.callMcpTool(PERF_TOOL,{project_id:PROJECT,date_from:'2024-12-01',date_to:dTo,history_grouping:'monthly'});
+      TREND.site=(parseResult(r).metrics||[]).map(m=>{ const d=new Date(m.date);
+        return {label:MON[d.getUTCMonth()]+" '"+String(d.getUTCFullYear()).slice(2), imp:m.impressions||0, clk:m.clicks||0}; });
+    }catch(err){ TREND.site=[]; }
+    setTrend(trendMode);
+
+    // ---- AI traffic trend (site-wide, monthly) ----
+    try{
+      const r=await window.cowork.callMcpTool(SC_CHART_TOOL,{project_id:PROJECT,from:'2025-01-01T00:00:00Z',to:dTo+'T23:59:59Z',granularity:'monthly',source_channels_to_chart:'llm'});
+      LLM_POINTS=(parseResult(r).points||[]).map(p=>{ const d=new Date(p.timestamp); return {y:d.getUTCFullYear(), m:d.getUTCMonth(), v:p.visitors||0}; });
+    }catch(err){ LLM_POINTS=[]; }
+    setLlmTrend(llmMode);
+    renderKpis2();
+
+    // ---- GA4 demo conversions (Supermetrics), month on month ----
+    // each query isolated so one slow/empty result can't blank the whole tab
+    const RANGE={date_range_type:'custom',start_date:'2025-09-01',end_date:dTo};
+    const FILT='eventName == demo_booked AND conversions > 0';
+    const safeSM=async(f,fl,o)=>{ try{ return await smQuery(f,fl,o); }catch(e){ return []; } };
+    // core numbers first so they appear fast
+    demosByMonth=(await safeSM('yearMonth,conversions',FILT,RANGE)).map(r=>({label:fmtYM(r[0]),v:+r[1]}));
+    const fn=await safeSM('eventName,conversions','eventName =@ demo AND conversions > 0');
+    demoFunnel={}; fn.forEach(r=>demoFunnel[r[0]]=+r[1]);
+    demosByPath=(await safeSM('landingPage,conversions',FILT,RANGE)).map(r=>({path:r[0],v:+r[1]})).filter(p=>p.v>0).sort((a,b)=>b.v-a.v);
+    ga4Channels=(await safeSM('sessionDefaultChannelGrouping,sessions,totalUsers','sessions > 0')).map(r=>({label:r[0],s:+r[1],u:+r[2]})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+    chPivot=pivotMonthly(await safeSM('yearMonth,sessionDefaultChannelGrouping,conversions',FILT,RANGE));
+    nvrPivot=pivotMonthly(await safeSM('yearMonth,newVsReturning,conversions',FILT,RANGE));
+    srcPivot=pivotMonthly(await safeSM('yearMonth,sessionSourceMedium,conversions',FILT,RANGE),6);
+    try{ renderDemos(); }catch(err){ document.getElementById('demoWrap').innerHTML='<div class="note">Demo charts hit an error ('+err.message+'). The numbers above are still valid.</div>'; }
+
+    /* ============ TAB 2: all-time ============ */
+    const months1=monthRanges('2025-05', dTo);
+    LABELS1=months1.map(m=>m.label);
+    const all={};
+    for(let i=0;i<months1.length;i++){
+      const mr=months1[i];
+      const r=await window.cowork.callMcpTool(GSC_TOOL,{project_id:PROJECT,date_from:mr.f,date_to:mr.t,limit:100});
+      for(const p of (parseResult(r).pages||[])){
+        const path=pathOf(p.page);
+        if(path.includes('/tag/')) continue;
+        if(newPathSet.has(path)) continue;
+        all[path]=all[path]||{series:months1.map(()=>({clk:0,imp:0})),lastPos:null};
+        all[path].series[i].clk+=(p.clicks||0); all[path].series[i].imp+=(p.impressions||0);
+        if(p.position) all[path].lastPos=+p.position.toFixed(1);
+      }
+    }
+    rows1=Object.entries(all).map(([path,d])=>{
+      const clicks=d.series.reduce((a,s)=>a+s.clk,0), imp=d.series.reduce((a,s)=>a+s.imp,0);
+      const half=Math.floor(d.series.length/2);
+      const c1=d.series.slice(0,half).reduce((a,s)=>a+s.clk,0), c2=d.series.slice(half).reduce((a,s)=>a+s.clk,0);
+      return { path, url:DOMAIN+path, series:d.series, impressions:imp, clicks,
+        ctr:imp?+(clicks/imp*100).toFixed(2):0, lastPos:d.lastPos,
+        trend: c2>c1*1.15?'▲ up':(c2<c1*0.85?'▼ down':'→ flat') };
+    });
+    renderTable1(); renderKpis1();
+    buildInsights();
+
+    stamp.textContent='LIVE · refreshed '+today.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' · post list: '+LIST_SOURCE+' ('+slugs.length+') · GSC lags ~2 days · all-time pages: '+rows1.length;
+  }catch(e){
+    stamp.className='stamp warn';
+    stamp.textContent='Could not load live data ('+e.message+'). Press Reload to retry.';
+  }
+}
+
+function renderLlmEngines(t){
+  const ed=document.getElementById('engDates'); if(ed&&WIN.engFrom) ed.textContent='(site-wide · '+WIN.engFrom+' – '+WIN.engTo+')';
+  const max=Math.max(1,...LLM_ENGINES.map(e=>t[e.key]||0));
+  const total=LLM_ENGINES.reduce((a,e)=>a+(t[e.key]||0),0);
+  document.getElementById('llmEngines').innerHTML =
+    LLM_ENGINES.map(e=>{ const v=t[e.key]||0; const pct=total?((v/total)*100).toFixed(1):0;
+      return '<div class="eng"><span class="lbl" style="color:'+e.color+'">'+e.label+'</span><span class="barwrap"><span class="bar" style="width:'+(v/max*100).toFixed(1)+'%;background:'+e.color+'">'+v.toLocaleString()+'</span></span><span class="val">'+pct+'%</span></div>';
+    }).join('') + '<div class="note" style="margin-top:6px">Total AI-referred visitors (site-wide, last 12 months): <b>'+total.toLocaleString()+'</b></div>';
+}
+
+function renderKpis0(){
+  const sum=k=>rows0.reduce((a,r)=>a+(r[k]||0),0);
+  const vis=sum('visitors'), llm=sum('llm');
+  document.getElementById('kpis0').innerHTML=
+   '<div class="kpi"><b>'+rows0.length+'</b><span>posts tracked</span></div>'+
+   '<div class="kpi"><b>'+rows0.filter(r=>r.impressions>0).length+'</b><span>with impressions</span></div>'+
+   '<div class="kpi"><b>'+rows0.filter(r=>!r.impressions).length+'</b><span>zero impressions</span></div>'+
+   '<div class="kpi"><b>'+sum('impressions').toLocaleString()+'</b><span>impressions</span></div>'+
+   '<div class="kpi"><b>'+sum('clicks').toLocaleString()+'</b><span>clicks</span></div>'+
+   '<div class="kpi"><b>'+vis.toLocaleString()+'</b><span>visitors</span></div>'+
+   '<div class="kpi"><b>'+llm.toLocaleString()+'</b><span>LLM visits</span></div>'+
+   '<div class="kpi"><b>'+(vis?((llm/vis*100).toFixed(1)+'%'):'—')+'</b><span>LLM share of visits</span></div>';
+}
+function renderKpis1(){
+  const sum=k=>rows1.reduce((a,r)=>a+(r[k]||0),0);
+  document.getElementById('kpis1').innerHTML=
+   '<div class="kpi"><b>'+rows1.length+'</b><span>pages (excl. new posts)</span></div>'+
+   '<div class="kpi"><b>'+sum('impressions').toLocaleString()+'</b><span>impressions (13mo)</span></div>'+
+   '<div class="kpi"><b>'+sum('clicks').toLocaleString()+'</b><span>clicks (13mo)</span></div>'+
+   '<div class="kpi"><b>'+rows1.filter(r=>r.trend.includes('up')).length+'</b><span>pages trending up</span></div>'+
+   '<div class="kpi"><b>'+rows1.filter(r=>r.trend.includes('down')).length+'</b><span>pages trending down</span></div>';
+}
+function renderKpis2(){
+  const last12=LLM_POINTS.slice(-12);
+  const tot=last12.reduce((a,p)=>a+p.v,0);
+  let top='—',topv=0; LLM_ENGINES.forEach(e=>{ if((ENG_TOTALS[e.key]||0)>topv){topv=ENG_TOTALS[e.key];top=e.label;} });
+  let peak=null; LLM_POINTS.forEach(p=>{ if(!peak||p.v>peak.v) peak=p; });
+  document.getElementById('kpis2').innerHTML=
+   '<div class="kpi"><b>'+tot.toLocaleString()+'</b><span>AI referral visits (last 12mo)</span></div>'+
+   '<div class="kpi"><b>'+top+'</b><span>top AI engine</span></div>'+
+   '<div class="kpi"><b>'+aiRows.length+'</b><span>pages getting AI traffic</span></div>'+
+   '<div class="kpi"><b>'+(peak?MON[peak.m]+" '"+String(peak.y).slice(2):'—')+'</b><span>peak month ('+(peak?peak.v:0)+')</span></div>';
+}
+function fmtYM(ym){ const p=String(ym).split('|'); return (MON[(+p[1])-1]||p[1])+" '"+String(p[0]).slice(2); }
+function pivotMonthly(rows, topN){
+  const rawMonths=[], seen={}, totals={};
+  rows.forEach(r=>{ const ym=r[0], cat=r[1], v=+r[2]; if(!seen[ym]){seen[ym]=1;rawMonths.push(ym);} totals[cat]=(totals[cat]||0)+v; });
+  rawMonths.sort();
+  const months=rawMonths.map(fmtYM);
+  let cats=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]);
+  let folded=[];
+  if(topN && cats.length>topN){ folded=cats.slice(topN); cats=cats.slice(0,topN).concat(['Other']); }
+  const map={}; cats.forEach(c=>map[c]={});
+  rows.forEach(r=>{ const ml=fmtYM(r[0]); let c=folded.includes(r[1])?'Other':r[1]; if(map[c]) map[c][ml]=(map[c][ml]||0)+(+r[2]); });
+  return {months,cats,map};
+}
+function renderDemos(){
+  const f=demoFunnel||{};
+  const views=f.demo_page_view||0, booked=f.demo_booked||0;
+  let topCh='—',topV=0;
+  if(chPivot) chPivot.cats.forEach(c=>{const t=chPivot.months.reduce((a,m)=>a+(chPivot.map[c][m]||0),0); if(t>topV){topV=t;topCh=c;}});
+  const totMo=demosByMonth.reduce((a,m)=>a+m.v,0);
+  document.getElementById('kpis3').innerHTML=
+    '<div class="kpi"><b>'+totMo.toLocaleString()+'</b><span>demos booked (since Sep ’25)</span></div>'+
+    '<div class="kpi"><b>'+booked.toLocaleString()+'</b><span>demos booked (last 90d)</span></div>'+
+    '<div class="kpi"><b>'+(views?((booked/views*100).toFixed(1)+'%'):'—')+'</b><span>page-view → booked (90d)</span></div>'+
+    '<div class="kpi"><b>'+topCh+'</b><span>top demo channel</span></div>';
+  document.getElementById('demoPages').innerHTML=demosByPath.slice(0,25).map(r=>'<tr><td class="page" title="'+r.path+'">'+r.path+'</td><td><span class="hot">'+r.v+'</span></td></tr>').join('')||'<tr><td colspan="2" class="note">No demo data in this window.</td></tr>';
+  document.getElementById('ga4Channels').innerHTML=ga4Channels.map(r=>'<tr><td>'+r.label+'</td><td>'+r.s.toLocaleString()+'</td><td>'+r.u.toLocaleString()+'</td></tr>').join('')||'<tr><td colspan="3" class="note">No data.</td></tr>';
+  const md=document.getElementById('moDates'); if(md&&WIN.today) md.textContent='(Sep 1, 2025 – '+WIN.today+')';
+  const gd=document.getElementById('ga4Dates'); if(gd&&WIN.today) gd.textContent='(last 90 days · '+WIN.d90+' – '+WIN.today+')';
+  renderDemoCharts();
+}
+function renderDemoCharts(){
+  try{ renderDemoTrend(); }catch(e){}
+  try{ renderStacked('chChart','chInner','ch',chPivot); }catch(e){}
+  try{ renderStacked('nvrChart','nvrInner','nvr',nvrPivot); }catch(e){}
+  try{ renderStacked('srcChart','srcInner','src',srcPivot); }catch(e){}
+}
+function renderDemoTrend(){
+  const cv=document.getElementById('demoTrendChart'); if(!cv||!demosByMonth.length) return;
+  const inner=document.getElementById('demoTrendInner');
+  inner.style.width=Math.max(inner.parentElement.clientWidth-14, demosByMonth.length*60)+'px';
+  if(CHARTS.trend) CHARTS.trend.destroy();
+  CHARTS.trend=new Chart(cv,{type:'bar',
+    data:{labels:demosByMonth.map(m=>m.label),datasets:[{label:'Demos booked',data:demosByMonth.map(m=>m.v),backgroundColor:'#0E9F6E'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,title:{display:true,text:'Demos booked'}}}},
+    plugins:[barLabels]});
+}
+function renderStacked(canvasId, innerId, key, pivot){
+  const cv=document.getElementById(canvasId); if(!cv||!pivot||!pivot.months.length) return;
+  const inner=document.getElementById(innerId);
+  inner.style.width=Math.max(inner.parentElement.clientWidth-14, pivot.months.length*64)+'px';
+  if(CHARTS[key]) CHARTS[key].destroy();
+  const ds=pivot.cats.map((c,i)=>({label:c,data:pivot.months.map(m=>pivot.map[c][m]||0),backgroundColor:CAT_COLORS[i%CAT_COLORS.length]}));
+  CHARTS[key]=new Chart(cv,{type:'bar',data:{labels:pivot.months,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},
+      scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,title:{display:true,text:'Demos booked'}}}}});
+}
+function pctChange(a,b){ return b? Math.round((a-b)/b*100) : null; }
+function insightCard(type,title,detail,action){
+  const col={'Quick win':'#0E9F6E','Opportunity':'#4F46E5','Watch':'#A16207','Win':'#0E9F6E'}[type]||'#4F46E5';
+  return '<div class="insight" style="border-left-color:'+col+'"><span class="tag" style="background:'+col+'">'+type+'</span>'+
+    '<h3>'+title+'</h3><p>'+detail+'</p>'+(action?'<p class="act">→ <b>'+action+'</b></p>':'')+'</div>';
+}
+function buildInsights(){
+  const el=document.getElementById('insights'); if(!el) return; const C=[];
+  const zero=rows0.filter(r=>!r.impressions);
+  if(zero.length) C.push({p:8,html:insightCard('Quick win', zero.length+' new posts are indexed but getting 0 impressions',
+    'They aren’t surfacing for any query yet (e.g. '+zero.slice(0,3).map(r=>r.path).join(', ')+').',
+    'Add internal links from high-traffic pages and sharpen the primary keyword/title — not re-indexing.')});
+  const ic=rows0.filter(r=>r.impressions>0&&!r.clicks);
+  if(ic.length){ const imp=ic.reduce((a,r)=>a+r.impressions,0);
+    C.push({p:7,html:insightCard('Quick win', ic.length+' new posts get impressions but zero clicks',
+      'Combined '+imp.toLocaleString()+' impressions, no clicks — classic title/meta gap or zero-click (AI Overview) pattern.',
+      'Rewrite the title tag + meta description on these to earn the click.')}); }
+  const cand=rows0.filter(r=>r.impressions>=300).sort((a,b)=>b.impressions-a.impressions);
+  const lowctr=cand.find(r=>r.ctr<1);
+  if(lowctr) C.push({p:6,html:insightCard('Opportunity','Biggest CTR opportunity: '+lowctr.path,
+    lowctr.impressions.toLocaleString()+' impressions but only '+(lowctr.ctr?lowctr.ctr.toFixed(2):0)+'% CTR'+(lowctr.position?' (avg pos '+lowctr.position+')':'')+'.',
+    'Improve the snippet — even +1% CTR is ≈'+Math.round(lowctr.impressions*0.01).toLocaleString()+' more clicks/period.')});
+  const best=[...rows0].sort((a,b)=>b.clicks-a.clicks)[0];
+  if(best&&best.clicks>0) C.push({p:3,html:insightCard('Win','Top new post: '+best.path,
+    best.clicks.toLocaleString()+' clicks from '+best.impressions.toLocaleString()+' impressions'+(best.position?' (avg pos '+best.position+')':'')+'.',
+    'Double down — add a strong demo CTA and internally link related new posts to it.')});
+  if(LLM_POINTS.length>=2){ let peak=LLM_POINTS[0]; LLM_POINTS.forEach(p=>{if(p.v>peak.v)peak=p;});
+    const lf=LLM_POINTS[LLM_POINTS.length-2]||LLM_POINTS[LLM_POINTS.length-1]; const ch=pctChange(lf.v,peak.v);
+    if(ch!=null&&peak!==lf) C.push({p:5,html:insightCard('Watch','AI referral traffic is '+(ch<0?'down '+Math.abs(ch)+'%':'up '+ch+'%')+' from its peak',
+      MON[peak.m]+" '"+String(peak.y).slice(2)+' peaked at '+peak.v+' AI visits; '+MON[lf.m]+" '"+String(lf.y).slice(2)+' was '+lf.v+'.',
+      'This is referral clicks (not citations) — keep demo CTAs visible on your most AI-cited pages.')}); }
+  const aiTot=LLM_ENGINES.reduce((a,e)=>a+(ENG_TOTALS[e.key]||0),0);
+  if(aiTot>0 && chPivot && !chPivot.cats.includes('AI Assistant')) C.push({p:6,html:insightCard('Opportunity','AI assistants drive visits but ≈0 booked demos',
+    'ChatGPT/Perplexity/Claude/etc sent '+aiTot.toLocaleString()+' visits (12mo), yet AI isn’t showing up as a demo channel in GA4.',
+    'Add a clear above-the-fold demo CTA to your top AI-cited pages to convert that traffic.')});
+  const dv=demoFunnel.demo_page_view||0, db=demoFunnel.demo_booked||0;
+  if(dv>0) C.push({p:5,html:insightCard('Opportunity','Only '+(db/dv*100).toFixed(1)+'% of demo-page views become booked demos',
+    db+' demos from '+dv+' demo-page views (last 90d). In GA4 the steepest drop is "selected a time → booked".',
+    'Tighten the scheduler step — add reminders/confirmation to recover drop-off on the booking page.')});
+  if(nvrPivot){ const tot={}; nvrPivot.cats.forEach(c=>tot[c]=nvrPivot.months.reduce((a,m)=>a+(nvrPivot.map[c][m]||0),0));
+    if(tot['returning']&&tot['new']) C.push({p:4,html:insightCard('Opportunity','Returning visitors punch above their weight on demos',
+      'Returning booked '+tot['returning']+' demos vs '+tot['new']+' from new — despite being a far smaller audience.',
+      'Invest in retargeting and email nurture to bring qualified visitors back.')}); }
+  if(rows1.length){ const down=rows1.filter(r=>r.trend.includes('down')); const worst=[...down].sort((a,b)=>b.clicks-a.clicks)[0];
+    if(down.length) C.push({p:5,html:insightCard('Watch',down.length+' established pages are losing clicks',
+      'Top decliner by volume: '+(worst?worst.path+' ('+worst.clicks.toLocaleString()+' clicks/13mo)':'')+'.',
+      'Refresh the biggest decliners first — update stats, search intent and internal links.')}); }
+  if(chPivot){ let topCh='',topV=0; chPivot.cats.forEach(c=>{const t=chPivot.months.reduce((a,m)=>a+(chPivot.map[c][m]||0),0); if(t>topV){topV=t;topCh=c;}});
+    if(topCh) C.push({p:3,html:insightCard('Win',topCh+' is your #1 demo channel',
+      topCh+' booked '+topV+' demos since Sep 2025.',
+      'Prioritize the content and keywords that feed this channel — it is your proven pipeline source.')}); }
+  C.sort((a,b)=>b.p-a.p);
+  el.innerHTML = C.length? C.map(c=>c.html).join('') : '<span class="note">Not enough data loaded yet — press Reload.</span>';
+}
+
+function sortRows(rows,s){ return [...rows].sort((a,b)=>{ const x=a[s.k],y=b[s.k];
+  if(typeof x==='string') return s.d*String(x).localeCompare(String(y));
+  return s.d*((x==null?-1e9:x)-(y==null?-1e9:y)); }); }
+
+function ctrCell(r){ return r.impressions ? (r.clicks>0 && r.ctr<0.01 ? '&lt;0.01' : r.ctr.toFixed(2)) : '<span class="zero">—</span>'; }
+
+function renderTable0(){
+  const tb=document.getElementById('tbody0'); tb.innerHTML='';
+  for(const r of sortRows(rows0,sort0)){
+    const tr=document.createElement('tr');
+    const z=v=>v?v.toLocaleString():'<span class="zero">0</span>';
+    tr.innerHTML='<td class="page" title="'+r.url+'"><a href="'+r.url+'" target="_blank">'+r.url+'</a></td><td class="sparkcell"></td>'+
+      '<td>'+z(r.impressions)+'</td><td>'+(r.clicks?'<span class="hot">'+r.clicks+'</span>':'<span class="zero">0</span>')+'</td>'+
+      '<td>'+ctrCell(r)+'</td><td>'+(r.position??'<span class="zero">—</span>')+'</td>'+
+      '<td>'+z(r.visitors)+'</td><td>'+z(r.pageviews)+'</td><td>'+(r.bounce!=null?r.bounce:'<span class="zero">—</span>')+'</td><td>'+(r.dur||'<span class="zero">—</span>')+'</td>'+
+      '<td class="llmcell">'+(r.llm?'<span class="hot">'+r.llm+'</span>':'<span class="zero">0</span>')+'</td><td>'+z(r.search)+'</td>';
+    tr.querySelector('.sparkcell').appendChild(spark(r.series, LABELS0));
+    const engSum=LLM_ENGINES.reduce((a,e)=>a+(r.eng[e.key]||0),0);
+    const tipHtml='<b>LLM visits by engine</b> <span style="color:#9aa">(last 12mo)</span><br>'+LLM_ENGINES.map(e=>e.label+': <b>'+(r.eng[e.key]||0)+'</b>').join(' &nbsp; ');
+    attachTip(tr.querySelector('.llmcell'), tipHtml);
+    tb.appendChild(tr);
+  }
+}
+function renderTable1(){
+  const tb=document.getElementById('tbody1'); tb.innerHTML='';
+  for(const r of sortRows(rows1,sort1)){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="page" title="'+r.url+'"><a href="'+r.url+'" target="_blank">'+r.url+'</a></td><td class="sparkcell"></td>'+
+      '<td>'+r.impressions.toLocaleString()+'</td><td>'+r.clicks.toLocaleString()+'</td><td>'+r.ctr+'</td><td>'+(r.lastPos??'—')+'</td>'+
+      '<td>'+(r.trend.includes('up')?'<span class="hot">'+r.trend+'</span>':(r.trend.includes('down')?'<span style="color:var(--red);font-weight:700">'+r.trend+'</span>':r.trend))+'</td>';
+    tr.querySelector('.sparkcell').appendChild(spark(r.series, LABELS1));
+    tb.appendChild(tr);
+  }
+}
+function renderTable2(){
+  const tb=document.getElementById('tbody2'); tb.innerHTML='';
+  const rows=sortRows(aiRows,sort2).slice(0,80);
+  if(!rows.length){ tb.innerHTML='<tr><td colspan="7" class="note">No AI referral traffic recorded in this window.</td></tr>'; return; }
+  const z=v=>v?v.toLocaleString():'<span class="zero">0</span>';
+  for(const r of rows){
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="page" title="'+r.url+'"><a href="'+r.url+'" target="_blank">'+r.url+'</a></td>'+
+      '<td><span class="hot">'+r.total.toLocaleString()+'</span></td>'+
+      '<td>'+z(r.chatgpt)+'</td><td>'+z(r.perplexity)+'</td><td>'+z(r.claude)+'</td><td>'+z(r.gemini)+'</td><td>'+z(r.copilot)+'</td>';
+    tb.appendChild(tr);
+  }
+}
+
+document.querySelectorAll('#tbl0 th').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.k; if(k==='spark')return;
+  if(sort0.k===k) sort0.d*=-1; else {sort0.k=k;sort0.d=-1;} renderTable0(); }));
+document.querySelectorAll('#tbl1 th').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.k; if(k==='spark')return;
+  if(sort1.k===k) sort1.d*=-1; else {sort1.k=k;sort1.d=-1;} renderTable1(); }));
+document.querySelectorAll('#tbl2 th').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.k;
+  if(sort2.k===k) sort2.d*=-1; else {sort2.k=k;sort2.d=-1;} renderTable2(); }));
+
+function switchTab(i,btn){
+  document.querySelectorAll('.view').forEach((v,j)=>v.classList.toggle('active',j===i));
+  document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(i===2) setTimeout(()=>setLlmTrend(llmMode),30); // size chart now the tab is visible
+  if(i===3) setTimeout(()=>renderDemoCharts(),30);
+}
+
+function setTrend(mode){
+  trendMode=mode;
+  document.getElementById('tgNew').classList.toggle('active',mode==='new');
+  document.getElementById('tgSite').classList.toggle('active',mode==='site');
+  const data=TREND[mode]||[];
+  document.getElementById('trendNote').innerHTML = mode==='new'
+    ? 'Combined GSC impressions (bars) and clicks (line) of the tracked new posts, by month.'
+    : 'Whole-site GSC impressions (bars) and clicks (line) by month, back to Dec 2024. Scroll left/right through the months.';
+  const inner=document.getElementById('chartinner');
+  inner.style.width=Math.max(inner.parentElement.clientWidth-14, data.length*56)+'px';
+  if(chart) chart.destroy();
+  chart=new Chart(document.getElementById('trendChart'),{
+    data:{labels:data.map(m=>m.label),datasets:[
+      {type:'bar',label:'Impressions',data:data.map(m=>m.imp),backgroundColor:'#C7CDF8',yAxisID:'y'},
+      {type:'line',label:'Clicks',data:data.map(m=>m.clk),borderColor:'#4F46E5',backgroundColor:'#4F46E5',yAxisID:'y1',tension:.3}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      scales:{y:{position:'left',title:{display:true,text:'Impressions'}},y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Clicks'}}}}
+  });
+}
+
+function setLlmTrend(mode){
+  llmMode=mode;
+  document.getElementById('lmMonthly').classList.toggle('active',mode==='monthly');
+  document.getElementById('lmYoy').classList.toggle('active',mode==='yoy');
+  const inner=document.getElementById('llmChartInner');
+  if(llmChart) llmChart.destroy();
+  let cfg, width;
+  const today=new Date(), curY=today.getUTCFullYear(), curM=today.getUTCMonth();
+  if(mode==='monthly'){
+    const labels=LLM_POINTS.map(p=>MON[p.m]+" '"+String(p.y).slice(2));
+    width=Math.max(inner.parentElement.clientWidth-14, LLM_POINTS.length*54);
+    document.getElementById('llmTrendNote').innerHTML='Site-wide AI-referred visitors by month. The real trend: AI traffic rose through 2025, peaked late 2025, and has softened in 2026 (current month is partial).';
+    cfg={type:'bar',data:{labels,datasets:[{label:'AI visitors',data:LLM_POINTS.map(p=>p.v),backgroundColor:'#4F46E5'}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Visitors'},beginAtZero:true}}},plugins:[barLabels]};
+  } else {
+    const years=[...new Set(LLM_POINTS.map(p=>p.y))].sort();
+    const byYear={}; years.forEach(y=>byYear[y]=Array(12).fill(null));
+    LLM_POINTS.forEach(p=>{ if(p.y===curY && p.m>curM) return; byYear[p.y][p.m]=p.v; });
+    const palette=['#C7CDF8','#4F46E5','#0E9F6E'];
+    width=Math.max(inner.parentElement.clientWidth-14, 12*60);
+    document.getElementById('llmTrendNote').innerHTML='Same month compared across years. A blank slot means AI-referral tracking had no data that month (Ahrefs began tracking in early 2025; future months not yet reached).';
+    cfg={type:'bar',data:{labels:MON,datasets:years.map((y,i)=>({label:String(y),data:byYear[y],backgroundColor:palette[i%palette.length]}))},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{title:{display:true,text:'Visitors'},beginAtZero:true}}},plugins:[barLabels]};
+  }
+  inner.style.width=width+'px';
+  llmChart=new Chart(document.getElementById('llmTrendChart'),cfg);
+}
+
+renderChips();
+load();
+</script>
+</body>
+</html>
